@@ -12,7 +12,6 @@
 
 #include <string>
 #include <exception>
-
 #include "StrDefine.h"
 
 NAO_NAMESPACE_BEGIN
