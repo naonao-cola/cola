@@ -4,40 +4,46 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 15:31:28
-**/
+ * @LastEditTime : 2024-06-20 19:56:57
+ **/
 #ifndef NAO_UTIMECOUNTER_H
 #define NAO_UTIMECOUNTER_H
 
-#include <string>
 #include <chrono>
+#include <string>
+
 
 #include "../UtilsObject.h"
 
 NAO_NAMESPACE_BEGIN
 
-class UTimeCounter : public UtilsObject {
+class UTimeCounter : public UtilsObject
+{
 public:
-    explicit UTimeCounter() {
-        key_ = CGRAPH_DEFAULT;
+    explicit UTimeCounter()
+    {
+        key_      = NAO_DEFAULT;
         start_ts_ = std::chrono::steady_clock::now();
     }
 
-    explicit UTimeCounter(const std::string& key) {
+    explicit UTimeCounter(const std::string& key)
+    {
         start_ts_ = std::chrono::steady_clock::now();
-        key_ = key;
+        key_      = key;
     }
 
-    ~UTimeCounter() override {
-        std::chrono::duration<double, std::milli> span = std::chrono::steady_clock::now() - start_ts_;
+    ~UTimeCounter() override
+    {
+        std::chrono::duration<double, std::milli> span =
+            std::chrono::steady_clock::now() - start_ts_;
         nao::NAO_ECHO("[%s]: time counter is : [%0.2lf] ms", key_.c_str(), span.count());
     }
 
 private:
     std::chrono::steady_clock::time_point start_ts_;
-    std::string key_;
+    std::string                           key_;
 };
 
 NAO_NAMESPACE_END
 
-#endif //NAO_UTIMECOUNTER_H
+#endif   // NAO_UTIMECOUNTER_H
