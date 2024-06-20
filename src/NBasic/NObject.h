@@ -1,21 +1,23 @@
 ﻿/**
- * @FilePath     : /cola/src/Basic/NObject.h
+ * @FilePath     : /cola/src/NBasic/NObject.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 11:54:02
+ * @LastEditTime : 2024-06-20 19:48:47
  * @Copyright    :
-**/
+ **/
 #ifndef NAO_OBJECT_H
 #define NAO_OBJECT_H
 
 #include "NBasicDefine.h"
-#include "NValType.h"
 #include "NFuncType.h"
+#include "NValType.h"
+
 NAO_NAMESPACE_BEGIN
 
-class NObject {
+class NObject
+{
 public:
     /**
      * 默认构造函数
@@ -25,21 +27,17 @@ public:
     /**
      * 初始化函数
      */
-    virtual NSTATUS init() {
-        NAO_EMPTY_FUNCTION
-    }
+    virtual NStatus init() { NAO_EMPTY_FUNCTION }
 
     /**
      * 流程处理函数
      */
-    virtual NSTATUS run() = 0;
+    virtual NStatus run() = 0;
 
     /**
      * 释放函数
      */
-    virtual NSTATUS destroy() {
-        NAO_EMPTY_FUNCTION
-    }
+    virtual NStatus destroy() { NAO_EMPTY_FUNCTION }
 
     /**
      * 默认析构函数
@@ -48,4 +46,4 @@ public:
 };
 
 NAO_NAMESPACE_END
-#endif //NAO_OBJECT_H
+#endif   // NAO_OBJECT_H

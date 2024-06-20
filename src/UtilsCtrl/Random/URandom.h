@@ -4,8 +4,8 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 15:58:24
-**/
+ * @LastEditTime : 2024-06-20 19:57:45
+ **/
 #ifndef NAO_URANDOM_H
 #define NAO_URANDOM_H
 
@@ -17,8 +17,9 @@
 NAO_NAMESPACE_BEGIN
 
 /** 当传入的seed为 CGRAPH_REAL_RANDOM 的时候，表示完全随机。其他值为固定随机值 */
-template<typename T = NFloat,CInt SEED = NAO_REAL_RANDOM,    typename TEngine = NAO_RANDOM_MT19937>
-class URandom : public UtilsObject {
+template<typename T = NFloat, NInt SEED = NAO_REAL_RANDOM, typename TEngine = NAO_RANDOM_MT19937>
+class URandom : public UtilsObject
+{
 public:
     /**
      * 构建随机一维向量
@@ -29,10 +30,10 @@ public:
      * @return
      * @notice 暂时不支持int类型的随机数生成
      */
-    static NStatus generate(std::vector<T>& data, NSize dim,
-                            const T& minValue, const T& maxValue) {
-        std::random_device rd;
-        TEngine eng(NAO_REAL_RANDOM == SEED ? rd() : SEED);
+    static NStatus generate(std::vector<T>& data, NSize dim, const T& minValue, const T& maxValue)
+    {
+        std::random_device                rd;
+        TEngine                           eng(NAO_REAL_RANDOM == SEED ? rd() : SEED);
         std::uniform_real_distribution<T> urd(minValue, maxValue);
 
         data.clear();
@@ -53,10 +54,11 @@ public:
      * @param maxValue
      * @return
      */
-    static NStatus generate(std::vector<std::vector<T> >& data, NSize height, NSize column,
-                            const T& minValue, const T& maxValue) {
-        std::random_device rd;
-        TEngine eng(NAO_REAL_RANDOM == SEED ? rd() : SEED);
+    static NStatus generate(std::vector<std::vector<T>>& data, NSize height, NSize column,
+                            const T& minValue, const T& maxValue)
+    {
+        std::random_device                rd;
+        TEngine                           eng(NAO_REAL_RANDOM == SEED ? rd() : SEED);
         std::uniform_real_distribution<T> urd(minValue, maxValue);
 
         data.clear();
@@ -80,8 +82,9 @@ public:
      * @param size
      * @return
      */
-    static std::string generateSession(const std::string& key = NAO_UNKNOWN, NSize size = 3) {
-        std::string session;    // 形式是 a-b-c-key，其中 a表示6位随机数字
+    static std::string generateSession(const std::string& key = NAO_UNKNOWN, NSize size = 3)
+    {
+        std::string         session;   // 形式是 a-b-c-key，其中 a表示6位随机数字
         std::vector<NFloat> vec;
         URandom<NFloat>::generate(vec, size, 100000, 999999);
         for (NSize i = 0; i < size; i++) {
@@ -95,4 +98,4 @@ public:
 
 NAO_NAMESPACE_END
 
-#endif //NAO_URANDOM_H
+#endif   // NAO_URANDOM_H

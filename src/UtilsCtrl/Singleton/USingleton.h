@@ -4,20 +4,23 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 15:45:58
-**/
+ * @LastEditTime : 2024-06-20 19:54:44
+ **/
 #ifndef NAO_USINGLETON_H
 #define NAO_USINGLETON_H
 
-#include "USingletonDefine.h"
 #include "../UtilsObject.h"
+#include "USingletonDefine.h"
+
 
 NAO_NAMESPACE_BEGIN
 
-template<typename T,USingletonType type = USingletonType::HUNGRY,NBool autoInit = false>
-class USingleton : public UtilsObject {
+template<typename T, USingletonType type = USingletonType::HUNGRY, NBool autoInit = false>
+class USingleton : public UtilsObject
+{
 public:
-    explicit USingleton() noexcept {
+    explicit USingleton() noexcept
+    {
         if (USingletonType::HUNGRY == type || autoInit) {
             /* 如果是饥汉模式，则直接构造 */
             create();
@@ -28,15 +31,14 @@ public:
         }
     }
 
-    ~USingleton() override {
-        clear();
-    }
+    ~USingleton() override { clear(); }
 
     /**
      * 获取singleton句柄信息
      * @return
      */
-    T* get() {
+    T* get()
+    {
         if (USingletonType::LAZY == type) {
             create();
         }
@@ -46,7 +48,8 @@ public:
     }
 
 protected:
-    CStatus init() override {
+    NStatus init() override
+    {
         NAO_FUNCTION_BEGIN
 
         // 如果传入的是NObject类型的对象的话，则调用其init接口
@@ -56,7 +59,8 @@ protected:
         NAO_FUNCTION_END
     }
 
-    CStatus destroy() override {
+    NStatus destroy() override
+    {
         NAO_FUNCTION_BEGIN
         if (std::is_base_of<NObject, T>::value) {
             status = this->get()->destroy();
@@ -68,7 +72,8 @@ protected:
      * 单例的创建一个句柄
      * @return
      */
-    NVoid create() {
+    NVoid create()
+    {
         if (unlikely(nullptr == handle_)) {
             NAO_LOCK_GUARD lock(lock_);
             if (nullptr == handle_) {
@@ -81,7 +86,8 @@ protected:
      * 销毁单例句柄
      * @return
      */
-    CStatus clear() {
+    NStatus clear()
+    {
         NAO_FUNCTION_BEGIN
         NAO_LOCK_GUARD lock(lock_);
         NAO_DELETE_PTR(handle_)
@@ -91,10 +97,10 @@ protected:
     NAO_NO_ALLOWED_COPY(USingleton);
 
 private:
-    T* handle_ { nullptr };             // 对应的单例句柄信息
+    T*         handle_{nullptr};   // 对应的单例句柄信息
     std::mutex lock_;
 };
 
 NAO_NAMESPACE_END
 
-#endif //NAO_USINGLETON_H
+#endif   // NAO_USINGLETON_H

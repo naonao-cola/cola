@@ -4,19 +4,20 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 15:20:38
-**/
+ * @LastEditTime : 2024-06-20 19:47:15
+ **/
 #ifndef NAO_UTILSFUNCTION_H
 #define NAO_UTILSFUNCTION_H
 
-#include <mutex>
-#include <chrono>
-#include <iomanip>
-#include <ctime>
-#include <cstdarg>
 #include <algorithm>
-#include <thread>
 #include <chrono>
+#include <cstdarg>
+#include <ctime>
+#include <future>
+#include <iomanip>
+#include <mutex>
+#include <thread>
+
 
 #include "../NBasic/NBasicInclude.h"
 
@@ -26,10 +27,13 @@ NAO_NAMESPACE_BEGIN
  * 获取当前的ms信息
  * @return
  */
-inline NMSec NAO_GET_CURRENT_MS() {
+inline NMSec NAO_GET_CURRENT_MS()
+{
     // 获取当前的时间戳信息
-    return (NMSec)std::chrono::time_point_cast<std::chrono::milliseconds>    \
-        (std::chrono::steady_clock::now()).time_since_epoch().count();
+    return (NMSec)std::chrono::time_point_cast<std::chrono::milliseconds>(
+               std::chrono::steady_clock::now())
+        .time_since_epoch()
+        .count();
 }
 
 
@@ -37,10 +41,14 @@ inline NMSec NAO_GET_CURRENT_MS() {
  * 获取当前的ms信息(包含小数)
  * @return
  */
-inline NFMSec NAO_GET_CURRENT_ACCURATE_MS() {
+inline NFMSec NAO_GET_CURRENT_ACCURATE_MS()
+{
     // 获取当前的时间戳信息
-    return (NFMSec)std::chrono::time_point_cast<std::chrono::microseconds>    \
-                (std::chrono::steady_clock::now()).time_since_epoch().count() / (CFMSec)1000.0;
+    return (NFMSec)std::chrono::time_point_cast<std::chrono::microseconds>(
+               std::chrono::steady_clock::now())
+               .time_since_epoch()
+               .count() /
+           (NFMSec)1000.0;
 }
 
 
@@ -50,8 +58,8 @@ inline NFMSec NAO_GET_CURRENT_ACCURATE_MS() {
  * @param container
  * @return
  */
-template<typename T>
-typename T::value_type NAO_CONTAINER_SUM(const T& container) {
+template<typename T> typename T::value_type NAO_CONTAINER_SUM(const T& container)
+{
     typename T::value_type result = 0;
     for (const auto& val : container) {
         result += val;
@@ -66,8 +74,8 @@ typename T::value_type NAO_CONTAINER_SUM(const T& container) {
  * @param container
  * @return
  */
-template<typename T>
-typename T::value_type NAO_CONTAINER_MULTIPLY(const T& container) {
+template<typename T> typename T::value_type NAO_CONTAINER_MULTIPLY(const T& container)
+{
     typename T::value_type result = 1;
     for (const auto& val : container) {
         result *= val;
@@ -82,13 +90,13 @@ typename T::value_type NAO_CONTAINER_MULTIPLY(const T& container) {
  * @param value
  * @return
  */
-template <typename T>
-T NAO_MAX(T val) {
+template<typename T> T NAO_MAX(T val)
+{
     return val;
 }
 
-template <typename T, typename... Args>
-T NAO_MAX(T val, Args... args) {
+template<typename T, typename... Args> T NAO_MAX(T val, Args... args)
+{
     return std::max(val, NAO_MAX(args...));
 }
 
@@ -99,13 +107,13 @@ T NAO_MAX(T val, Args... args) {
  * @param t
  * @return
  */
-template<typename T>
-T NAO_SUM(T t) {
+template<typename T> T NAO_SUM(T t)
+{
     return t;
 }
 
-template<typename T, typename... Args>
-T NAO_SUM(T val, Args... args) {
+template<typename T, typename... Args> T NAO_SUM(T val, Args... args)
+{
     return val + NAO_SUM(args...);
 }
 
@@ -115,7 +123,8 @@ T NAO_SUM(T val, Args... args) {
  * 考虑到yield 在不同的os中，会有不同的实现方式，提供不同实现版本的yield方法
  * @return
  */
-inline NVoid NAO_YIELD() {
+inline NVoid NAO_YIELD()
+{
 #ifdef _NAO_SLEEP_MS_AS_YIELD_
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
 #elif _NAO_SLEEP_US_AS_YIELD_
@@ -130,4 +139,4 @@ inline NVoid NAO_YIELD() {
 
 NAO_NAMESPACE_END
 
-#endif //CGRAPH_UTILSFUNCTION_H
+#endif   // NAO_UTILSFUNCTION_H
