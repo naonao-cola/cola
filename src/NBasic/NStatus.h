@@ -1,19 +1,18 @@
 ﻿/**
- * @FilePath     : /cola/src/Basic/Status.h
+ * @FilePath     : /cola/src/NBasic/NStatus.h
  * @Description  :
- * @Author       : naonao 1319144981@qq.com
+ * @Author       : naonao
  * @Version      : 0.0.1
- * @LastEditors  : naonao 1319144981@qq.com
- * @LastEditTime : 2024-06-04 16:04:57
- * @Copyright    : G AUTOMOBILE RESEARCH INSTITUTE CO.,LTD Copyright (c) 2024.
+ * @LastEditors  : naonao
+ * @LastEditTime : 2024-06-20 15:10:39
+ * @Copyright    :
 **/
 #ifndef NAO_STATUS_H
 #define NAO_STATUS_H
 
 #include <string>
-
-#include "BasicDefine.h"
-#include "StrDefine.h"
+#include "NBasicDefine.h"
+#include "NStrDefine.h"
 
 NAO_NAMESPACE_BEGIN
 NAO_INTERNAL_NAMESPACE_BEGIN

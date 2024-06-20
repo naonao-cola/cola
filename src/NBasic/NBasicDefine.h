@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Basic/BasicDefine.h
+ * @FilePath     : /cola/src/NBasic/NBasicDefine.h
  * @Description  :
- * @Author       : naonao 1319144981@qq.com
+ * @Author       : naonao
  * @Version      : 0.0.1
- * @LastEditors  : naonao 1319144981@qq.com
- * @LastEditTime : 2024-06-04 15:48:37
- * @Copyright    : G AUTOMOBILE RESEARCH INSTITUTE CO.,LTD Copyright (c) 2024.
+ * @LastEditors  : naonao
+ * @LastEditTime : 2024-06-20 15:13:57
+ * @Copyright    :
 **/
 #ifndef NAO_BASICDEFINE_H
 #define NAO_BASICDEFINE_H

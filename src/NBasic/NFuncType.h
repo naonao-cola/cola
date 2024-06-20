@@ -1,20 +1,18 @@
 ﻿/**
- * @FilePath     : /cola/src/Basic/FuncType.h
+ * @FilePath     : /cola/src/NBasic/NFuncType.h
  * @Description  :
- * @Author       : naonao 1319144981@qq.com
+ * @Author       : naonao
  * @Version      : 0.0.1
- * @LastEditors  : naonao 1319144981@qq.com
- * @LastEditTime : 2024-06-04 18:09:38
- * @Copyright    : G AUTOMOBILE RESEARCH INSTITUTE CO.,LTD Copyright (c) 2024.
+ * @LastEditors  : naonao
+ * @LastEditTime : 2024-06-20 15:09:40
+ * @Copyright    :
 **/
-
 #ifndef NAO_FUNCTYPE_H
 #define NAO_FUNCTYPE_H
 
 #include <functional>
-
-#include "StrDefine.h"
-#include "ValType.h"
+#include "NStrDefine.h"
+#include "NValType.h"
 
 NAO_NAMESPACE_BEGIN
 
@@ -24,7 +22,6 @@ using NGRAPH_NSTATUS_FUNCTION = std::function<NStatus()>;
 using NGRAPH_NSTATUS_CONST_FUNCTION_REF = const std::function<NStatus()>&;
 using NGRAPH_CALLBACK_FUNCTION = std::function<void(NStatus)>;
 using NGRAPH_CALLBACK_CONST_FUNCTION_REF = const std::function<void(NStatus)>&;
-
 
 /**
  * 描述函数类型
@@ -90,7 +87,5 @@ enum class NFunctionType {
 #define NAO_THROW_EXCEPTION_BY_CONDITION(cond, info)                 \
     if (unlikely(cond)) { NAO_THROW_EXCEPTION(info); }               \
 
-
 NAO_NAMESPACE_END
-
 #endif //NAO_FUNCTYPE_H

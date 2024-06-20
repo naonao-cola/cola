@@ -1,18 +1,18 @@
 ﻿/**
- * @FilePath     : /cola/src/Basic/Exception.h
+ * @FilePath     : /cola/src/Basic/NException.h
  * @Description  :
- * @Author       : naonao 1319144981@qq.com
+ * @Author       : naonao
  * @Version      : 0.0.1
- * @LastEditors  : naonao 1319144981@qq.com
+ * @LastEditors  : naonao
  * @LastEditTime : 2024-06-04 15:55:49
- * @Copyright    : G AUTOMOBILE RESEARCH INSTITUTE CO.,LTD Copyright (c) 2024.
+ * @Copyright    :
 **/
 #ifndef NAO_EXCEPTION_H
 #define NAO_EXCEPTION_H
 
 #include <string>
 #include <exception>
-#include "StrDefine.h"
+#include "NStrDefine.h"
 
 NAO_NAMESPACE_BEGIN
 NAO_INTERNAL_NAMESPACE_BEGIN

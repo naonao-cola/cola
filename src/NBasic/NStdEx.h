@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Basic/StdEx.h
+ * @FilePath     : /cola/src/Basic/NStdEx.h
  * @Description  :
- * @Author       : naonao 1319144981@qq.com
+ * @Author       : naonao
  * @Version      : 0.0.1
- * @LastEditors  : naonao 1319144981@qq.com
+ * @LastEditors  : naonao
  * @LastEditTime : 2024-06-04 16:39:49
- * @Copyright    : G AUTOMOBILE RESEARCH INSTITUTE CO.,LTD Copyright (c) 2024.
+ * @Copyright    :
 **/
 #ifndef NAO_STDEX_H
 #define NAO_STDEX_H

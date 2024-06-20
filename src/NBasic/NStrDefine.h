@@ -1,17 +1,17 @@
 ﻿/**
- * @FilePath     : /cola/src/Basic/StrDefine.h
+ * @FilePath     : /cola/src/Basic/NStrDefine.h
  * @Description  :
- * @Author       : naonao 1319144981@qq.com
+ * @Author       : naonao
  * @Version      : 0.0.1
- * @LastEditors  : naonao 1319144981@qq.com
+ * @LastEditors  : naonao
  * @LastEditTime : 2024-06-04 15:53:46
- * @Copyright    : G AUTOMOBILE RESEARCH INSTITUTE CO.,LTD Copyright (c) 2024.
+ * @Copyright    :
 **/
 
 #ifndef NAO_STRDEFINE_H
 #define NAO_STRDEFINE_H
 
-#include "BasicDefine.h"
+#include "NBasicDefine.h"
 
 NAO_NAMESPACE_BEGIN
 

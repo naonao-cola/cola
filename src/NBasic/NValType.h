@@ -1,18 +1,18 @@
 ﻿/**
  * @FilePath     : /cola/src/Basic/ValType.h
  * @Description  :
- * @Author       : naonao 1319144981@qq.com
+ * @Author       : naonao
  * @Version      : 0.0.1
- * @LastEditors  : naonao 1319144981@qq.com
+ * @LastEditors  : naonao
  * @LastEditTime : 2024-06-04 16:35:25
- * @Copyright    : G AUTOMOBILE RESEARCH INSTITUTE CO.,LTD Copyright (c) 2024.
+ * @Copyright    :
 **/
 #ifndef NAO_VALTYPE_H
 #define NAO_VALTYPE_H
 
-#include "BasicDefine.h"
-#include "Status.h"
-#include "Exception.h"
+#include "NBasicDefine.h"
+#include "NStatus.h"
+#include "NException.h"
 
 using NChar = nao::internal::NCHAR;
 using NCharPtr = nao::internal::NCHAR *;

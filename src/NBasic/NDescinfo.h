@@ -1,20 +1,17 @@
 ﻿/**
  * @FilePath     : /cola/src/Basic/Descinfo.h
  * @Description  :
- * @Author       : naonao 1319144981@qq.com
+ * @Author       : naonao
  * @Version      : 0.0.1
- * @LastEditors  : naonao 1319144981@qq.com
+ * @LastEditors  : naonao
  * @LastEditTime : 2024-06-04 16:45:09
- * @Copyright    : G AUTOMOBILE RESEARCH INSTITUTE CO.,LTD Copyright (c) 2024.
+ * @Copyright    :
 **/
-
 #ifndef NAO_DESCINFO_H
 #define NAO_DESCINFO_H
 
 #include <string>
-
-#include "BasicDefine.h"
-
+#include "NBasicDefine.h"
 NAO_NAMESPACE_BEGIN
 
 class NDescInfo {
