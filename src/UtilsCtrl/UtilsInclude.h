@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-21 12:47:43
+ * @LastEditTime : 2024-06-21 18:24:18
  **/
 #ifndef NAO_UTILSINCLUDE_H
 #define NAO_UTILSINCLUDE_H
@@ -20,5 +20,7 @@
 #include "Distance/UDistanceInclude.h"
 #include "Random/URandom.h"
 #include "SerialUniqueArray/USerialUniqueArray.h"
+#include "FileSystem/UFs.h"
+#include "Str/UStr.h"
 
 #endif   // NAO_UTILSINCLUDE_H
