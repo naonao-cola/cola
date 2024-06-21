@@ -15,7 +15,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-template<typename T> class UAtomicPriorityQueue : public UQueueObject
+template<typename T>
+class UAtomicPriorityQueue : public UQueueObject
 {
 public:
     UAtomicPriorityQueue() = default;
@@ -90,8 +91,7 @@ public:
     NAO_NO_ALLOWED_COPY(UAtomicPriorityQueue)
 
 private:
-    std::priority_queue<std::unique_ptr<T>>
-        priority_queue_;   // 优先队列信息，根据重要级别决定先后执行顺序
+    std::priority_queue<std::unique_ptr<T>> priority_queue_;   // 优先队列信息，根据重要级别决定先后执行顺序
 };
 
 NAO_NAMESPACE_END

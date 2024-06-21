@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:47:04
+ * @LastEditTime : 2024-06-21 10:49:53
  * @Copyright    :
  **/
 #ifndef NAO_UTILSDEFINE_H
@@ -51,12 +51,14 @@ using NAO_WRITE_LOCK = NAO_LOCK_GUARD;
 #endif
 
 
-template<typename T> NStatus __ASSERT_NOT_NULL(T t)
+template<typename T>
+NStatus __ASSERT_NOT_NULL(T t)
 {
     return (unlikely(nullptr == t)) ? NErrStatus(NAO_INPUT_IS_NULL) : NStatus();
 }
 
-template<typename T, typename... Args> NStatus __ASSERT_NOT_NULL(T t, Args... args)
+template<typename T, typename... Args>
+NStatus __ASSERT_NOT_NULL(T t, Args... args)
 {
     if (unlikely(t == nullptr)) {
         return __ASSERT_NOT_NULL(t);
@@ -65,14 +67,16 @@ template<typename T, typename... Args> NStatus __ASSERT_NOT_NULL(T t, Args... ar
     return __ASSERT_NOT_NULL(args...);
 }
 
-template<typename T> NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T t)
+template<typename T>
+NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T t)
 {
     if (unlikely(nullptr == t)) {
         NAO_THROW_EXCEPTION("[CException] " + std::string(NAO_INPUT_IS_NULL))
     }
 }
 
-template<typename T, typename... Args> NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T t, Args... args)
+template<typename T, typename... Args>
+NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T t, Args... args)
 {
     if (unlikely(nullptr == t)) {
         __ASSERT_NOT_NULL_THROW_EXCEPTION(t);
@@ -93,8 +97,7 @@ template<typename T, typename... Args> NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T
 
 
 /** 判断传入的多个指针，是否为空。如果为空，则抛出异常信息 */
-#define NAO_ASSERT_NOT_NULL_THROW_ERROR(ptr, ...) \
-    __ASSERT_NOT_NULL_THROW_EXCEPTION(ptr, ##__VA_ARGS__);
+#define NAO_ASSERT_NOT_NULL_THROW_ERROR(ptr, ...) __ASSERT_NOT_NULL_THROW_EXCEPTION(ptr, ##__VA_ARGS__);
 
 /* 删除资源信息 */
 #define NAO_DELETE_PTR(ptr)           \
@@ -122,17 +125,14 @@ template<typename T, typename... Args> NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T
 
 #define NAO_SLEEP_MILLISECOND(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
-#define NAO_FUNCTION_CHECK_STATUS                           \
-    if (unlikely(status.isErr())) {                         \
-        if (status.isCrash()) {                             \
-            throw NException(status.getInfo());             \
-        }                                                   \
-        NAO_LOCK_GUARD lock{internal::g_check_status_mtx};  \
-        NAO_ECHO("%s, errorCode = [%d], errorInfo = [%s].", \
-                 status.getLocate().c_str(),                \
-                 status.getCode(),                          \
-                 status.getInfo().c_str());                 \
-        return status;                                      \
+#define NAO_FUNCTION_CHECK_STATUS                                                                                                    \
+    if (unlikely(status.isErr())) {                                                                                                  \
+        if (status.isCrash()) {                                                                                                      \
+            throw NException(status.getInfo());                                                                                      \
+        }                                                                                                                            \
+        NAO_LOCK_GUARD lock{internal::g_check_status_mtx};                                                                           \
+        NAO_ECHO("%s, errorCode = [%d], errorInfo = [%s].", status.getLocate().c_str(), status.getCode(), status.getInfo().c_str()); \
+        return status;                                                                                                               \
     }
 
 /**
@@ -150,11 +150,8 @@ inline NVoid NAO_ECHO(const char* cmd, ...)
     std::lock_guard<std::mutex> lock{internal::g_echo_mtx};
     auto                        now  = std::chrono::system_clock::now();
     auto                        time = std::chrono::system_clock::to_time_t(now);
-    auto                        ms =
-        std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() %
-        1000;
-    std::cout << "[" << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S.")
-              << std::setfill('0') << std::setw(3) << ms << "] ";
+    auto                        ms   = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000;
+    std::cout << "[" << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S.") << std::setfill('0') << std::setw(3) << ms << "] ";
 
     va_list args;
     va_start(args, cmd);

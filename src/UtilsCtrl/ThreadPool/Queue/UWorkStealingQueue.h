@@ -15,7 +15,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-template<typename T> class UWorkStealingQueue : public UQueueObject
+template<typename T>
+class UWorkStealingQueue : public UQueueObject
 {
 public:
     /**

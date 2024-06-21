@@ -1,4 +1,14 @@
-﻿#ifndef NAO_UTHREADPOOL_INL
+﻿/**
+ * @FilePath     : /cola/src/UtilsCtrl/ThreadPool/UThreadPool.inl
+ * @Description  :
+ * @Author       : naonao
+ * @Date         : 2024-06-20 20:02:43
+ * @Version      : 0.0.1
+ * @LastEditors  : naonao
+ * @LastEditTime : 2024-06-21 13:12:05
+ */
+
+#ifndef NAO_UTHREADPOOL_INL
 #define NAO_UTHREADPOOL_INL
 
 #include "UThreadPool.h"

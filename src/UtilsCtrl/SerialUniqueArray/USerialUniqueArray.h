@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:57:30
+ * @LastEditTime : 2024-06-21 10:04:08
  **/
 #ifndef NAO_USERIALUNIQUEARRAY_H
 #define NAO_USERIALUNIQUEARRAY_H
@@ -12,12 +12,12 @@
 #include <set>
 #include <vector>
 
-
 #include "../UtilsObject.h"
 
 NAO_NAMESPACE_BEGIN
 
-template<class T> class USerialUniqueArray : public UtilsObject
+template<class T>
+class USerialUniqueArray : public UtilsObject
 {
 public:
     /**

@@ -12,8 +12,6 @@
 #include <ostream>
 #include <string>
 
-
-
 #include "../UThreadObject.h"
 
 NAO_NAMESPACE_BEGIN
