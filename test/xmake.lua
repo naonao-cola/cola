@@ -1,6 +1,7 @@
 ﻿tutorial_list = {
         "01",
         "02",
+        "03",
 }
 
 -- add tutorial target one by one

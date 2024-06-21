@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 16:55:15
+ * @LastEditTime : 2024-06-21 15:39:35
  * @Copyright    :
  **/
 #ifndef NAO_UTIMER_H
@@ -25,7 +25,8 @@ public:
      * @param interval 间隔时间，单位ms
      * @param task
      */
-    template<typename FunctionType> NVoid start(NMSec interval, const FunctionType& task)
+    template<typename FunctionType>
+    NVoid start(NMSec interval, const FunctionType& task)
     {
         if (!is_stop_.exchange(false)) {
             return;   // 如果正在执行中，则无法继续执行
@@ -41,7 +42,7 @@ public:
         future_ = std::async(std::launch::async, [this, task]() {
             while (!is_stop_) {
                 NAO_UNIQUE_LOCK lk(mutex_);
-                auto result = cv_.wait_for(lk, std::chrono::milliseconds(left_interval_));
+                auto            result = cv_.wait_for(lk, std::chrono::milliseconds(left_interval_));
                 if (std::cv_status::timeout == result && !is_stop_) {
                     NMSec start = NAO_GET_CURRENT_MS();
                     task();
@@ -50,8 +51,7 @@ public:
                      * 如果任务执行时间 < 设定的时间，则消除任务耗时影响
                      * 如果任务执行时间 > 设定的时间，则继续sleep设定时长
                      */
-                    left_interval_ =
-                        (origin_interval_ > span) ? (origin_interval_ - span) : (origin_interval_);
+                    left_interval_ = (origin_interval_ > span) ? (origin_interval_ - span) : (origin_interval_);
                 }
             }
         });
@@ -76,7 +76,7 @@ private:
     std::condition_variable cv_;
     std::future<NVoid>      future_{};
     NMSec                   origin_interval_ = 0;   // 设定的耗时信息
-    NMSec                   left_interval_ = 0;   // 除去task运行的时间，还剩下的时间
+    NMSec                   left_interval_   = 0;   // 除去task运行的时间，还剩下的时间
 };
 
 NAO_NAMESPACE_END

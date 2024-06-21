@@ -66,7 +66,7 @@ public:
     NStatus init() final;
 
     /**
-     * 提交任务信息
+     * 提交任务信息,任务是无序执行
      * @tparam FunctionType
      * @param task
      * @param index
@@ -103,7 +103,7 @@ public:
 
     /**
      * 执行任务组信息
-     * 取taskGroup内部ttl和入参ttl的最小值，为计算ttl标准
+     * 取taskGroup内部ttl和入参ttl的最小值，为计算ttl标准，任务组内的任务无序执行，不同任务组之间是阻塞执行
      * @param taskGroup
      * @param ttl
      * @return
