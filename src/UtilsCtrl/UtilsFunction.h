@@ -30,10 +30,7 @@ NAO_NAMESPACE_BEGIN
 inline NMSec NAO_GET_CURRENT_MS()
 {
     // 获取当前的时间戳信息
-    return (NMSec)std::chrono::time_point_cast<std::chrono::milliseconds>(
-               std::chrono::steady_clock::now())
-        .time_since_epoch()
-        .count();
+    return (NMSec)std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
 }
 
 
@@ -44,10 +41,7 @@ inline NMSec NAO_GET_CURRENT_MS()
 inline NFMSec NAO_GET_CURRENT_ACCURATE_MS()
 {
     // 获取当前的时间戳信息
-    return (NFMSec)std::chrono::time_point_cast<std::chrono::microseconds>(
-               std::chrono::steady_clock::now())
-               .time_since_epoch()
-               .count() /
+    return (NFMSec)std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()).time_since_epoch().count() /
            (NFMSec)1000.0;
 }
 
@@ -58,7 +52,8 @@ inline NFMSec NAO_GET_CURRENT_ACCURATE_MS()
  * @param container
  * @return
  */
-template<typename T> typename T::value_type NAO_CONTAINER_SUM(const T& container)
+template<typename T>
+typename T::value_type NAO_CONTAINER_SUM(const T& container)
 {
     typename T::value_type result = 0;
     for (const auto& val : container) {
@@ -74,7 +69,8 @@ template<typename T> typename T::value_type NAO_CONTAINER_SUM(const T& container
  * @param container
  * @return
  */
-template<typename T> typename T::value_type NAO_CONTAINER_MULTIPLY(const T& container)
+template<typename T>
+typename T::value_type NAO_CONTAINER_MULTIPLY(const T& container)
 {
     typename T::value_type result = 1;
     for (const auto& val : container) {
@@ -90,12 +86,14 @@ template<typename T> typename T::value_type NAO_CONTAINER_MULTIPLY(const T& cont
  * @param value
  * @return
  */
-template<typename T> T NAO_MAX(T val)
+template<typename T>
+T NAO_MAX(T val)
 {
     return val;
 }
 
-template<typename T, typename... Args> T NAO_MAX(T val, Args... args)
+template<typename T, typename... Args>
+T NAO_MAX(T val, Args... args)
 {
     return std::max(val, NAO_MAX(args...));
 }
@@ -107,12 +105,14 @@ template<typename T, typename... Args> T NAO_MAX(T val, Args... args)
  * @param t
  * @return
  */
-template<typename T> T NAO_SUM(T t)
+template<typename T>
+T NAO_SUM(T t)
 {
     return t;
 }
 
-template<typename T, typename... Args> T NAO_SUM(T val, Args... args)
+template<typename T, typename... Args>
+T NAO_SUM(T val, Args... args)
 {
     return val + NAO_SUM(args...);
 }

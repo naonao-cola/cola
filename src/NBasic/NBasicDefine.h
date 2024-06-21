@@ -13,14 +13,14 @@
 #include <cstddef>
 
 #define NAO_NAMESPACE_BEGIN namespace nao {
-
-#define NAO_NAMESPACE_END } /* end of namespace nao */
+/* end of namespace nao */
+#define NAO_NAMESPACE_END }
 
 NAO_NAMESPACE_BEGIN
 
 #define NAO_INTERNAL_NAMESPACE_BEGIN namespace internal {
-
-#define NAO_INTERNAL_NAMESPACE_END } /* end of namespace internal */
+/* end of namespace internal */
+#define NAO_INTERNAL_NAMESPACE_END }
 
 NAO_INTERNAL_NAMESPACE_BEGIN
 
@@ -38,6 +38,6 @@ using NCONSTR  = const char*;
 using NSIZE    = size_t;
 
 NAO_INTERNAL_NAMESPACE_END
-NAO_NAMESPACE_END
 
+NAO_NAMESPACE_END
 #endif   // NAO_BASICDEFINE_H

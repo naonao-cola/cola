@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:55:56
+ * @LastEditTime : 2024-06-21 10:24:48
  **/
 #include "UTrie.h"
 
@@ -29,14 +29,10 @@ bool UTrie::find(const std::string& path)
 {
     return innerFind(head_, path, 0);
 }
-
-
 void UTrie::clear()
 {
     innerClear(head_);
 }
-
-
 void UTrie::eraser(const std::string& path)
 {
     bool isErased = false;
@@ -64,7 +60,6 @@ bool UTrie::innerFind(UTrieNodePtr node, const std::string& path, int index)
     return result;
 }
 
-
 void UTrie::innerInsert(UTrieNodePtr node, const std::string& path, int index)
 {
     if (nullptr == node) {
@@ -86,7 +81,6 @@ void UTrie::innerInsert(UTrieNodePtr node, const std::string& path, int index)
     innerInsert(node->children_[i], path, index);
 }
 
-
 void UTrie::innerClear(UTrieNodePtr node)
 {
     if (nullptr == node) {
@@ -98,7 +92,6 @@ void UTrie::innerClear(UTrieNodePtr node)
         NAO_DELETE_PTR(child)
     }
 }
-
 
 void UTrie::innerEraser(UTrieNodePtr node, const std::string& path, int index, bool& isErased)
 {

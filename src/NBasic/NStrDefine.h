@@ -22,5 +22,4 @@ static const char* NAO_FUNCTION_NO_SUPPORT = "function no support";
 static const char* NAO_INPUT_IS_NULL       = "input is nullptr";
 
 NAO_NAMESPACE_END
-
 #endif   // NAO_STRDEFINE_H

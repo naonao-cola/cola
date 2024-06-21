@@ -13,7 +13,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-template<typename K, typename V> struct ULruNode : public UtilsObject
+template<typename K, typename V>
+struct ULruNode : public UtilsObject
 {
     K key_;
     V value_;
@@ -26,5 +27,4 @@ template<typename K, typename V> struct ULruNode : public UtilsObject
 };
 
 NAO_NAMESPACE_END
-
 #endif   // NAO_ULRUNODE_H

@@ -20,7 +20,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-template<typename T> class UAtomicQueue : public UQueueObject
+template<typename T>
+class UAtomicQueue : public UQueueObject
 {
 public:
     UAtomicQueue() = default;

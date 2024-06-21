@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:51:42
+ * @LastEditTime : 2024-06-21 10:34:09
  **/
 #ifndef NAO_UATOMICRINGBUFFERQUEUE_H
 #define NAO_UATOMICRINGBUFFERQUEUE_H
@@ -58,15 +58,14 @@ public:
      * @param strategy
      * @return
      */
-    template<class TImpl = T> NVoid push(const TImpl& value, URingBufferPushStrategy strategy)
+    template<class TImpl = T>
+    NVoid push(const TImpl& value, URingBufferPushStrategy strategy)
     {
         {
             NAO_UNIQUE_LOCK lk(mutex_);
             if (isFull()) {
                 switch (strategy) {
-                case URingBufferPushStrategy::WAIT:
-                    push_cv_.wait(lk, [this] { return !isFull(); });
-                    break;
+                case URingBufferPushStrategy::WAIT: push_cv_.wait(lk, [this] { return !isFull(); }); break;
                 case URingBufferPushStrategy::REPLACE: head_ = (head_ + 1) % capacity_; break;
                 case URingBufferPushStrategy::DROP: return;   // 直接返回，不写入即可
                 }
@@ -92,9 +91,7 @@ public:
             NAO_UNIQUE_LOCK lk(mutex_);
             if (isFull()) {
                 switch (strategy) {
-                case URingBufferPushStrategy::WAIT:
-                    push_cv_.wait(lk, [this] { return !isFull(); });
-                    break;
+                case URingBufferPushStrategy::WAIT: push_cv_.wait(lk, [this] { return !isFull(); }); break;
                 case URingBufferPushStrategy::REPLACE: head_ = (head_ + 1) % capacity_; break;
                 case URingBufferPushStrategy::DROP: return;   // 直接返回，不写入即可
                 }
@@ -112,14 +109,13 @@ public:
      * @param timeout
      * @return
      */
-    template<class TImpl = T> NStatus waitPopWithTimeout(TImpl& value, NMSec timeout)
+    template<class TImpl = T>
+    NStatus waitPopWithTimeout(TImpl& value, NMSec timeout)
     {
         NAO_FUNCTION_BEGIN
         {
             NAO_UNIQUE_LOCK lk(mutex_);
-            if (isEmpty() && !pop_cv_.wait_for(lk, std::chrono::milliseconds(timeout), [this] {
-                    return !isEmpty();
-                })) {
+            if (isEmpty() && !pop_cv_.wait_for(lk, std::chrono::milliseconds(timeout), [this] { return !isEmpty(); })) {
                 // 如果timeout的时间内，等不到消息，则返回错误信息
                 NAO_RETURN_ERROR_STATUS("receive message timeout.")
             }
@@ -144,9 +140,7 @@ public:
         NAO_FUNCTION_BEGIN
         {
             NAO_UNIQUE_LOCK lk(mutex_);
-            if (isEmpty() && !pop_cv_.wait_for(lk, std::chrono::milliseconds(timeout), [this] {
-                    return !isEmpty();
-                })) {
+            if (isEmpty() && !pop_cv_.wait_for(lk, std::chrono::milliseconds(timeout), [this] { return !isEmpty(); })) {
                 // 如果timeout的时间内，等不到消息，则返回错误信息
                 NAO_RETURN_ERROR_STATUS("receive message timeout.")
             }
@@ -199,10 +193,8 @@ private:
     NUint tail_;       // 尾结点位置
     NUint capacity_;   // 环形缓冲的容量大小
 
-    std::condition_variable push_cv_;   // 写入的条件变量。为了保持语义完整，也考虑今后多入多出的可能性，不使用
-                                        // 父类中的 cv_了
-    std::condition_variable pop_cv_;    // 读取的条件变量
-
+    std::condition_variable         push_cv_;             // 写入的条件变量。为了保持语义完整，也考虑今后多入多出的可能性，不使用// 父类中的 cv_了
+    std::condition_variable         pop_cv_;              // 读取的条件变量
     std::vector<std::unique_ptr<T>> ring_buffer_queue_;   // 环形缓冲区
 };
 

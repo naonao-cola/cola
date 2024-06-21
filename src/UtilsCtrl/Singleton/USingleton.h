@@ -11,8 +11,6 @@
 
 #include "../UtilsObject.h"
 #include "USingletonDefine.h"
-
-
 NAO_NAMESPACE_BEGIN
 
 template<typename T, USingletonType type = USingletonType::HUNGRY, NBool autoInit = false>
@@ -51,7 +49,6 @@ protected:
     NStatus init() override
     {
         NAO_FUNCTION_BEGIN
-
         // 如果传入的是NObject类型的对象的话，则调用其init接口
         if (std::is_base_of<NObject, T>::value) {
             status = this->get()->init();

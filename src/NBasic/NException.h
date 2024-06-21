@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:48:26
+ * @LastEditTime : 2024-06-21 09:41:31
  * @Copyright    :
  **/
 #ifndef NAO_EXCEPTION_H
@@ -13,7 +13,6 @@
 #include "NStrDefine.h"
 #include <exception>
 #include <string>
-
 
 NAO_NAMESPACE_BEGIN
 NAO_INTERNAL_NAMESPACE_BEGIN
@@ -24,7 +23,7 @@ public:
     explicit NEXCEPTION(const std::string& info, const std::string& locate = NAO_EMPTY)
     {
         /**
-         * 这里的设计，和CStatus有一个联动
+         * 这里的设计，和NStatus有一个联动
          * 如果不了解具体情况，不建议做任何修改
          */
         exception_info_ = locate + " | " + info;
@@ -42,5 +41,4 @@ private:
 
 NAO_INTERNAL_NAMESPACE_END
 NAO_NAMESPACE_END
-
 #endif   // NAO_EXCEPTION_H

@@ -17,7 +17,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-template<typename K, typename V, NSize DefaultCapacity = 16> class ULru : public UtilsObject
+template<typename K, typename V, NSize DefaultCapacity = 16>
+class ULru : public UtilsObject
 {
 public:
     explicit ULru()
@@ -99,5 +100,4 @@ private:
 };
 
 NAO_NAMESPACE_END
-
 #endif   // NAO_ULRU_H

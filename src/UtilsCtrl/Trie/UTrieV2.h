@@ -14,6 +14,11 @@
 
 NAO_NAMESPACE_BEGIN
 
+/**
+ * @brief: 使用非递归方式实现，将子节点赋给父节点。
+ * @return
+ * @note :
+**/
 class UTrieV2 : public UtilsObject
 {
 public:
@@ -29,7 +34,7 @@ public:
     /**
      * 查询路径信息
      * @param path
-     * @return
+     * @return 找到返回1，未找到返回0
      */
     bool find(const std::string& path);
 

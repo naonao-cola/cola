@@ -1,6 +1,6 @@
 ﻿/**
  * @FilePath     : /cola/src/UtilsCtrl/ThreadPool/Semaphore/USemaphore.h
- * @Description  :NAO
+ * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao

@@ -10,6 +10,9 @@
 # Precompiled Headers
 *.gch
 *.pch
+vs2022/
+.vscode/
+.xmake/
 
 # Compiled Dynamic libraries
 *.so
