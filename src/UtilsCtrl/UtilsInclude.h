@@ -22,5 +22,6 @@
 #include "SerialUniqueArray/USerialUniqueArray.h"
 #include "FileSystem/UFs.h"
 #include "Str/UStr.h"
+#include "Hash/UHash.h"
 
 #endif   // NAO_UTILSINCLUDE_H

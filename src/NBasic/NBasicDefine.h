@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:47:52
+ * @LastEditTime : 2024-06-22 11:39:31
  * @Copyright    :
  **/
 #ifndef NAO_BASICDEFINE_H
@@ -36,6 +36,8 @@ using NFLOAT   = float;
 using NDOUBLE  = double;
 using NCONSTR  = const char*;
 using NSIZE    = size_t;
+
+
 
 NAO_INTERNAL_NAMESPACE_END
 
