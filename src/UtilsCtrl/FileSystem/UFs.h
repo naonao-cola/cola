@@ -17,17 +17,15 @@
 #include <regex>
 #include <utility>
 
-
-
 #include "../UtilsObject.h"
 
 NAO_NAMESPACE_BEGIN
+
 class UFs : public UtilsObject
 {
 public:
     UFs();
     ~UFs() override = default;
-
 
     /**
      * @brief: 目录是否存在
@@ -160,6 +158,7 @@ public:
      */
     UFile() = default;
     ~UFile() override;
+
     /**
      * @brief 第 2 个版本是 move 构造函数，支持将 file 对象放到 STL 容器中。
      * @param f

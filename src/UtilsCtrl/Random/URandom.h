@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:57:45
+ * @LastEditTime : 2024-06-22 22:28:21
  **/
 #ifndef NAO_URANDOM_H
 #define NAO_URANDOM_H
@@ -16,7 +16,7 @@
 
 NAO_NAMESPACE_BEGIN
 
-/** 当传入的seed为 CGRAPH_REAL_RANDOM 的时候，表示完全随机。其他值为固定随机值 */
+/** 当传入的seed为 NAO_REAL_RANDOM 的时候，表示完全随机。其他值为固定随机值 */
 template<typename T = NFloat, NInt SEED = NAO_REAL_RANDOM, typename TEngine = NAO_RANDOM_MT19937>
 class URandom : public UtilsObject
 {
@@ -54,8 +54,7 @@ public:
      * @param maxValue
      * @return
      */
-    static NStatus generate(std::vector<std::vector<T>>& data, NSize height, NSize column,
-                            const T& minValue, const T& maxValue)
+    static NStatus generate(std::vector<std::vector<T>>& data, NSize height, NSize column, const T& minValue, const T& maxValue)
     {
         std::random_device                rd;
         TEngine                           eng(NAO_REAL_RANDOM == SEED ? rd() : SEED);
