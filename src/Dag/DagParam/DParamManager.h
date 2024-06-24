@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagParam/DParamManger.h
+ * @FilePath     : /cola/src/Dag/DagParam/DParamManager.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 11:51:24
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 13:21:02
+ * @LastEditTime : 2024-06-24 15:11:52
  **/
 
 #ifndef NAO_DPARAMMANGER_H
@@ -20,8 +20,10 @@
 #include "../DagObject.h"
 #include "DParam.h"
 
-
 NAO_NAMESPACE_BEGIN
+/**
+param 管理类，主要用来管理 param，增加param 移除与查询
+ */
 class DParamManager : public DParamObject, public DagManager<DParam>
 {
 public:
@@ -87,5 +89,10 @@ private:
     friend class DPipeline;
     friend class UAllocator;
 };
+using DParamManagerPtr = DParamManager *;
+
 NAO_NAMESPACE_END
+
+#include "DParamManager.inl"
+
 #endif   // NAO_DPARAMMANGER_H
