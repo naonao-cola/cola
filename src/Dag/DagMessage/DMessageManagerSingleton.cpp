@@ -9,7 +9,7 @@
 **/
 #include "DMessageManagerSingleton.h"
 
-CGRAPH_NAMESPACE_BEGIN
+NAO_NAMESPACE_BEGIN
 
 /**
  * GMessageManager单例的句柄信息
@@ -18,6 +18,6 @@ CGRAPH_NAMESPACE_BEGIN
  * 在cpp文件中引用的时候，会出现被多次构造的情况
  * 参考：https://github.com/ChunelFeng/CGraph/issues/221
  */
-USingleton<GMessageManager<>, USingletonType::LAZY, false> GMessageManagerSingleton::singleton_;
+USingleton<DMessageManager<>, USingletonType::LAZY, false> DMessageManagerSingleton::singleton_;
 
-CGRAPH_NAMESPACE_END
+NAO_NAMESPACE_END

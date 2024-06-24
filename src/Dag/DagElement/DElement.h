@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:31:32
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 11:43:51
+ * @LastEditTime : 2024-06-24 18:04:52
  **/
 #ifndef NAO_DELEMENT_H
 #define NAO_DELEMENT_H
@@ -27,7 +27,7 @@ enum class GMultiConditionType;
 struct DPerfInfo;
 
 /**
-元素依赖 event aspect param,可以先看这几个
+元素依赖 event aspect param,可以先看这几个,顺序，param  event message daemon aspect
  */
 class DElement : public DElementObject, public NDescInfo
 {

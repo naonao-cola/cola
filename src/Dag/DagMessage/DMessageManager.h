@@ -249,7 +249,7 @@ public:
             NAO_RETURN_ERROR_STATUS("no find [" + std::to_string(connId) + "] connect");
         }
 
-        auto message = (GMessagePtr<TImpl>)(conn_message_map_[connId]);
+        auto message = (DMessagePtr<TImpl>)(conn_message_map_[connId]);
         status       = message->recv(value, timeout);
         NAO_FUNCTION_END
     }
