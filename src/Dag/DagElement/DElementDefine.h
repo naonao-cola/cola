@@ -15,12 +15,12 @@
 
 NAO_NAMESPACE_BEGIN
 
-const static NSize  CGRAPH_DEFAULT_LOOP_TIMES      = 1;    // 默认循环次数信息
-const static NLevel CGRAPH_DEFAULT_ELEMENT_LEVEL   = 0;    // 默认的element级别，用于控制init函数
-const static NIndex CGRAPH_DEFAULT_BINDING_INDEX   = -1;   // 默认绑定线程id，-1表示不绑定
-const static NMSec  CGRAPH_DEFAULT_ELEMENT_TIMEOUT = 0;    // 默认element的超时时间
+const static NSize  NAO_DEFAULT_LOOP_TIMES      = 1;    // 默认循环次数信息
+const static NLevel NAO_DEFAULT_ELEMENT_LEVEL   = 0;    // 默认的element级别，用于控制init函数
+const static NIndex NAO_DEFAULT_BINDING_INDEX   = -1;   // 默认绑定线程id，-1表示不绑定
+const static NMSec  NAO_DEFAULT_ELEMENT_TIMEOUT = 0;    // 默认element的超时时间
 
-enum class GElementType
+enum class DElementType
 {
     ELEMENT         = 0x00000000,   // 元素
     NODE            = 0x00010000,   // 节点
@@ -39,7 +39,7 @@ enum class GElementType
 };
 
 
-enum class GElementState
+enum class DElementState
 {
     CREATE  = 0x0000,   // 创建状态（暂未init的情况，包含 destroy之后的情况）
     NORMAL  = 0x1000,   // 正常执行状态
@@ -47,10 +47,10 @@ enum class GElementState
     YIELD   = 0x1002,   // 暂停状态
     TIMEOUT = 0x1010,   // 超时状态
 };
-using GPipelineState = GElementState;   // pipeline 同element共享状态
+using DPipelineState = DElementState;   // pipeline 同element共享状态
 
 
-enum class GElementTimeoutStrategy
+enum class DElementTimeoutStrategy
 {
     AS_ERROR         = 1,   // 当做异常处理（默认）
     HOLD_BY_PIPELINE = 2,   // pipeline run执行完成之前，等待结束

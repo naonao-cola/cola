@@ -16,14 +16,14 @@
 
 NAO_NAMESPACE_BEGIN
 
-class GElement;
+class DElement;
 
-struct GElementRelation : public NStruct
+struct DElementRelation : public NStruct
 {
 public:
-    std::set<GElement*> predecessors_;       // 前驱信息
-    std::set<GElement*> successors_;         // 后继信息
-    GElement*           belong_ = nullptr;   // 从属信息。如果从属于group，则为该group的值；如果从属于pipeline，则为nullptr
+    std::set<DElement*> predecessors_;       // 前驱信息
+    std::set<DElement*> successors_;         // 后继信息
+    DElement*           belong_ = nullptr;   // 从属信息。如果从属于group，则为该group的值；如果从属于pipeline，则为nullptr
 };
 
 NAO_NAMESPACE_END

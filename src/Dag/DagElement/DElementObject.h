@@ -17,7 +17,7 @@
 
 NAO_NAMESPACE_BEGIN
 
-class GElementObject : public GraphObject
+class DElementObject : public DagObject
 {};
 
 NAO_NAMESPACE_END

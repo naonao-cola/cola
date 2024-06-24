@@ -24,12 +24,12 @@
 NAO_NAMESPACE_BEGIN
 
 enum class GMultiConditionType;
-struct GPerfInfo;
+struct DPerfInfo;
 
 /**
 元素依赖 event aspect param,可以先看这几个
  */
-class GElement : public GElementObject, public NDescInfo
+class DElement : public DElementObject, public NDescInfo
 {
 public:
 };

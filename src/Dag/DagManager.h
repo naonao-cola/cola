@@ -18,9 +18,12 @@
 
 NAO_NAMESPACE_BEGIN
 
+/**
+    管理有向无环图的子类型，增删改查
+ */
 template<typename T,
-        c_enable_if_t<std::is_base_of<GraphObject, T>::value, int> = 0>
-class GraphManager : public NObject {
+        c_enable_if_t<std::is_base_of<DagObject, T>::value, int> = 0>
+class DagManager : public NObject {
 protected:
     /**
      * 添加一个object

@@ -15,7 +15,7 @@
 
 NAO_NAMESPACE_BEGIN
 
-class GParamObject : public GraphObject {
+class DParamObject : public DagObject {
 protected:
     /**
      * GParam相关内容，无法通过run()方法执行

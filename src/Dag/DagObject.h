@@ -17,7 +17,7 @@
 
 NAO_NAMESPACE_BEGIN
 
-class GraphObject : public NObject
+class DagObject : public NObject
 {};
 
 NAO_NAMESPACE_END
