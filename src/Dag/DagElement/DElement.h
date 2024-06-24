@@ -34,6 +34,12 @@ class DElement : public DElementObject, public NDescInfo
 public:
 };
 
+using DElementRef = DElement &;
+using DElementPtr = DElement *;
+using DElementCPtr = const DElement *;
+using DElementPPtr = DElementPtr *;
+using DElementPtrArr = std::vector<DElementPtr>;
+using DElementPtrSet = std::set<DElementPtr>;
 NAO_NAMESPACE_END
 
 #endif   // NAO_DELEMENT_H
