@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:51:24
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 12:24:27
+ * @LastEditTime : 2024-06-24 13:21:02
  **/
 
 #ifndef NAO_DPARAMMANGER_H
@@ -80,8 +80,12 @@ protected:
     NVoid resetWithStatus(const NStatus& curStatus);
 
     NAO_NO_ALLOWED_COPY(DParamManager)
+private:
+    std::unordered_map<std::string, DParamPtr> params_map_;   // 记录param信息的hash表
+    std::mutex                                 mutex_;        // 创建param的时候上锁
 
-
+    friend class DPipeline;
+    friend class UAllocator;
 };
 NAO_NAMESPACE_END
 #endif   // NAO_DPARAMMANGER_H
