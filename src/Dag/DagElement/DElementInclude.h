@@ -11,9 +11,9 @@
 #define NAO_DELEMENTINCLUDE_H
 
 #include "DElement.h"
-// #include "DElementRepository.h"
-// #include "DNode/DNodeInclude.h"
-// #include "DGroup/DDagInclude.h"
-// #include "DAdapter/DAdapterInclude.h"
+#include "DElementRepository.h"
+//#include "DNode/DNodeInclude.h"
+//#include "DGroup/DDagInclude.h"
+//#include "DAdapter/DAdapterInclude.h"
 
 #endif   // NAO_DELEMENTINCLUDE_H
