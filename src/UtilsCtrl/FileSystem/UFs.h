@@ -10,12 +10,7 @@
 #ifndef NAO_UFS_H
 #define NAO_UFS_H
 
-#include <array>
-#include <filesystem>
 #include <fstream>
-#include <iostream>
-#include <regex>
-#include <utility>
 
 #include "../UtilsObject.h"
 
