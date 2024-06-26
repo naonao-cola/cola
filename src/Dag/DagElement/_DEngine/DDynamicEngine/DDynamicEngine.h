@@ -6,7 +6,7 @@
  * @Version      : 0.0.1
  * @LastEditors  : naonao
  * @LastEditTime : 2024-06-26 11:36:02
-**/
+ **/
 #ifndef NAO_DDYNAMICENGINE_H
 #define NAO_DDYNAMICENGINE_H
 
@@ -16,7 +16,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-class DDynamicEngine : public DEngine {
+class DDynamicEngine : public DEngine
+{
 protected:
     explicit DDynamicEngine() = default;
 
@@ -43,14 +44,14 @@ protected:
      * 动态图运行
      * @param
      * @return
-    */
+     */
     NVoid asyncRunAndWait();
 
     /**
      * 动态图运行前重置
      * @param
      * @return
-    */
+     */
     NVoid beforeRun();
 
     /**
@@ -58,7 +59,7 @@ protected:
      * @param element
      * @param affinity 是否本地执行
      * @return
-    */
+     */
     NVoid process(DElementPtr element, NBool affinity);
 
     /**
@@ -72,7 +73,7 @@ protected:
      * 动态图运行等待
      * @param
      * @return
-    */
+     */
     NVoid fatWait();
 
     /**
@@ -88,14 +89,14 @@ protected:
     NVoid serialRunAll();
 
 private:
-    DElementPtrArr total_element_arr_;                                                   // pipeline中所有的元素信息集合
-    DElementPtrArr front_element_arr_;                                                   // 没有依赖的元素信息
-    NSize total_end_size_ = 0;                                                           // 图结束节点数量
-    NSize finished_end_size_ = 0;                                                        // 执行结束节点数量
-    NStatus cur_status_;                                                                 // 当前全局的状态信息
-    internal::DEngineDagType dag_type_ = { internal::DEngineDagType::COMMON };           // 当前元素的排布形式
+    DElementPtrArr           total_element_arr_;                               // pipeline中所有的元素信息集合
+    DElementPtrArr           front_element_arr_;                               // 没有依赖的元素信息
+    NSize                    total_end_size_    = 0;                           // 图结束节点数量
+    NSize                    finished_end_size_ = 0;                           // 执行结束节点数量
+    NStatus                  cur_status_;                                      // 当前全局的状态信息
+    internal::DEngineDagType dag_type_ = {internal::DEngineDagType::COMMON};   // 当前元素的排布形式
 
-    std::mutex lock_;
+    std::mutex              lock_;
     std::condition_variable cv_;
 
     friend class UAllocator;
@@ -103,4 +104,4 @@ private:
 
 NAO_NAMESPACE_END
 
-#endif // NAO_DDYNAMICENGINE_H
+#endif   // NAO_DDYNAMICENGINE_H

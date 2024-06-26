@@ -45,8 +45,8 @@ NStatus DElementManager::init() {
 NStatus DElementManager::destroy() {
     NAO_FUNCTION_BEGIN
 
-    for (GElementPtr element : manager_elements_) {
-        status = element->fatProcessor(CFunctionType::DESTROY);
+    for (DElementPtr element : manager_elements_) {
+        status = element->fatProcessor(NFunctionType::DESTROY);
         NAO_FUNCTION_CHECK_STATUS
         element->is_init_ = false;
     }
@@ -129,8 +129,8 @@ NStatus DElementManager::initEngine() {
     NAO_DELETE_PTR(engine_)
 
     switch (engine_type_) {
-        case DEngineType::DYNAMIC : engine_ = NAO_SAFE_MALLOC_COBJECT(DDynamicEngine) break;
-        case DEngineType::TOPO: engine_ = NAO_SAFE_MALLOC_COBJECT(DTopoEngine) break;
+        case DEngineType::DYNAMIC : engine_ = NAO_SAFE_MALLOC_NOBJECT(DDynamicEngine) break;
+        case DEngineType::TOPO: engine_ = NAO_SAFE_MALLOC_NOBJECT(DTopoEngine) break;
         default: NAO_RETURN_ERROR_STATUS("unknown engine type")
     }
 

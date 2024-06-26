@@ -6,14 +6,15 @@
  * @Version      : 0.0.1
  * @LastEditors  : naonao
  * @LastEditTime : 2024-06-26 11:48:41
-**/
+ **/
 #include <queue>
 
 #include "DTopoEngine.h"
 
 NAO_NAMESPACE_BEGIN
 
-NStatus DTopoEngine::setup(const DSortedDElementPtrSet& elements) {
+NStatus DTopoEngine::setup(const DSortedDElementPtrSet& elements)
+{
     NAO_FUNCTION_BEGIN
 
     topo_elements_.clear();
@@ -25,7 +26,7 @@ NStatus DTopoEngine::setup(const DSortedDElementPtrSet& elements) {
         }
     }
 
-    while(!readyQueue.empty()) {
+    while (!readyQueue.empty()) {
         auto* cur = readyQueue.front();
         readyQueue.pop();
         topo_elements_.push_back(cur);
@@ -37,14 +38,14 @@ NStatus DTopoEngine::setup(const DSortedDElementPtrSet& elements) {
         }
     }
 
-    NAO_RETURN_ERROR_STATUS_BY_CONDITION(topo_elements_.size() != elements.size(),     \
-                                            "topo engine parse size is not right")
+    NAO_RETURN_ERROR_STATUS_BY_CONDITION(topo_elements_.size() != elements.size(), "topo engine parse size is not right")
 
     NAO_FUNCTION_END
 }
 
 
-NStatus DTopoEngine::run() {
+NStatus DTopoEngine::run()
+{
     NAO_FUNCTION_BEGIN
     for (auto* element : topo_elements_) {
         status += element->fatProcessor(NFunctionType::RUN);
@@ -54,12 +55,10 @@ NStatus DTopoEngine::run() {
 }
 
 
-NStatus DTopoEngine::afterRunCheck() {
-    /**
-     * topology 纯靠顺序执行。如果有异常，会直接爆出
-     * 故，不在这里做判定了
-     */
-    NAO_EMPTY_FUNCTION
-}
+NStatus DTopoEngine::afterRunCheck(){/**
+                                      * topology 纯靠顺序执行。如果有异常，会直接爆出
+                                      * 故，不在这里做判定了
+                                      */
+                                     NAO_EMPTY_FUNCTION}
 
 NAO_NAMESPACE_END

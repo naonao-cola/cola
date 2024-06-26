@@ -6,18 +6,20 @@
  * @Version      : 0.0.1
  * @LastEditors  : naonao
  * @LastEditTime : 2024-06-26 11:45:52
-**/
+ **/
 #ifndef NAO_DTOPOENGINE_H
 #define NAO_DTOPOENGINE_H
 
-#include <vector>
 #include <set>
+#include <vector>
+
 
 #include "../DEngine.h"
 
 NAO_NAMESPACE_BEGIN
 
-class DTopoEngine : public DEngine {
+class DTopoEngine : public DEngine
+{
 protected:
     explicit DTopoEngine() = default;
 
@@ -28,7 +30,7 @@ protected:
     NStatus afterRunCheck() override;
 
 private:
-    DElementPtrArr topo_elements_ {};       // 拓扑排序后的
+    DElementPtrArr topo_elements_{};   // 拓扑排序后的
 
     friend class UAllocator;
     friend class GElementManager;
@@ -36,4 +38,4 @@ private:
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DTOPOENGINE_H
+#endif   // NAO_DTOPOENGINE_H
