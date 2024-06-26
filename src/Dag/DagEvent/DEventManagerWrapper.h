@@ -44,6 +44,7 @@ NAO_NAMESPACE_BEGIN
 
 
 
+
 #define NAO_DECLARE_DEVENT_MANAGER_WRAPPER_WITH_MEMBER \
 private:                                               \
     DEventManagerPtr event_manager_ = nullptr;         \

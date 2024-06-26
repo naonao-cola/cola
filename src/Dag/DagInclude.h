@@ -12,10 +12,10 @@
 
 #include "DagElement/DElementInclude.h"
 // #include "DagPipeline/GPipelineInclude.h"
-// #include "DagParam/GParamInclude.h"
-// #include "DagAspect/GAspectInclude.h"
-// #include "DagDaemon/GDaemonInclude.h"
-// #include "DagEvent/GEventInclude.h"
-// #include "DagMessage/GMessageInclude.h"
+#include "DagParam/DParamInclude.h"
+#include "DagAspect/DAspectInclude.h"
+#include "DagDaemon/DDaemonInclude.h"
+#include "DagEvent/DEventInclude.h"
+#include "DagMessage/DMessageInclude.h"
 
 #endif //NAO_GRAPHINCLUDE_H
