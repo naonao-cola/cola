@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:31:32
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 23:34:15
+ * @LastEditTime : 2024-06-26 10:40:00
  **/
 #ifndef NAO_DELEMENT_H
 #define NAO_DELEMENT_H
@@ -41,7 +41,7 @@ public:
      */
     template<typename TAspect, typename TParam = DAspectDefaultParam, c_enable_if_t<std::is_base_of<DAspect, TAspect>::value, int> = 0,
              c_enable_if_t<std::is_base_of<DAspectParam, TParam>::value, int> = 0>
-    DElement* addGAspect(TParam* param = nullptr);
+    DElement* addDAspect(TParam* param = nullptr);
 
     /**
      * 实现添加模板切面的逻辑
@@ -50,7 +50,7 @@ public:
      * @return
      */
     template<typename TAspect, typename... Args, c_enable_if_t<std::is_base_of<DTemplateAspect<Args...>, TAspect>::value, int> = 0>
-    DElement* addGAspect(Args... args);
+    DElement* addDAspect(Args... args);
 
     /**
      * 添加当前element内部参数
@@ -67,7 +67,7 @@ public:
      * @param elements
      * @return
      */
-    NStatus addDependGElements(const std::set<DElement*>& elements);
+    NStatus addDependDElements(const std::set<DElement*>& elements);
 
     /**
      * 设置name信息
