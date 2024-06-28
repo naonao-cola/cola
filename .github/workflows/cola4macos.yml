@@ -1,4 +1,4 @@
-﻿name: Windows
+﻿name: macOS
 
 on:
   pull_request:
@@ -16,14 +16,11 @@ on:
       - 'cola/**'
       - '.github/workflows/**'
 
-
-
 jobs:
   build:
     strategy:
       matrix:
-        os: [windows-latest]
-        arch: [x64, x86]
+        os: [macOS-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -36,5 +33,5 @@ jobs:
       - name: Tests
         run: |
           xmake clean -a
-          xmake f -m debug -a ${{ matrix.arch }}
+          xmake f -m debug
           xmake

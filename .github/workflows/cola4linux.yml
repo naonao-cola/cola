@@ -2,10 +2,19 @@
 
 on:
   pull_request:
-    branches: [main,dev]
+    branches:
+      - main
+      - 'dev'
+    paths:
+      - 'cola/**'
+      - '.github/workflows/**'
   push:
-    branches: [main,dev]
-
+    branches:
+      - main
+      - 'dev'
+    paths:
+      - 'cola/**'
+      - '.github/workflows/**'
 
 
 jobs:
