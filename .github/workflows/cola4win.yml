@@ -2,21 +2,11 @@
 
 on:
   pull_request:
-    branches:
-      - main
-      - 'dev'
-    paths:
-      - 'cola/**'
-      - 'tutorial/**'
-      - 'test/**'
+    branches: [main,dev]
   push:
-    branches:
-      - main
-      - 'dev'
-    paths:
-      - 'cola/**'
-      - 'tutorial/**'
-      - 'test/**'
+    branches: [main,dev]
+
+
 
 jobs:
   build:
@@ -29,7 +19,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: xmake-io/github-action-setup-xmake@v1.2
+      - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
 
