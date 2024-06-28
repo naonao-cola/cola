@@ -18,5 +18,5 @@ add_rules("plugin.vsxmake.autoupdate")
 set_encodings("source:utf-8")
 
 includes(
-    "test/xmake.lua"
+    "tutorial/xmake.lua"
 )

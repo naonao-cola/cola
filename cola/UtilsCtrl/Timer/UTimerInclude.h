@@ -11,6 +11,7 @@
 
 #include "UTimeCounter.h"
 #include "UTimer.h"
+#include "UTimerV2.h"
 
 
 #endif   // CGRAPH_UTIMERINCLUDE_H
