@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/ThreadPool/Queue/ULockFreeRingBufferQueue.h
+ * @FilePath     : /cola/cola/UtilsCtrl/ThreadPool/Queue/ULockFreeRingBufferQueue.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:51:51
+ * @LastEditTime : 2024-06-28 23:24:39
  **/
 #ifndef NAO_ULOCKFREERINGBUFFERQUEUE_H
 #define NAO_ULOCKFREERINGBUFFERQUEUE_H
@@ -40,7 +40,7 @@ public:
 
         while (nextTail == head_.load(std::memory_order_acquire)) {
             // 队列已满，等待其他线程出队
-            CGRAPH_YIELD();
+           NAO_YIELD();
         }
 
         ring_buffer_[curTail] = std::move(value);
