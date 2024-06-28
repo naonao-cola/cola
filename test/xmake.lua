@@ -9,10 +9,10 @@ for _, v in pairs(tutorial_list) do
     target(v)
         set_kind("binary")
         -- framework
-        add_includedirs("../src/")
-        add_headerfiles("../src/**.h")
-        add_headerfiles("../src/**.inl")
-        add_files("../src/**.cpp")
+        add_includedirs("../cola/")
+        add_headerfiles("../cola/**.h")
+        add_headerfiles("../cola/**.inl")
+        add_files("../cola/**.cpp")
         -- test-common
         add_includedirs("Common/")
         add_headerfiles("Common/*.h")

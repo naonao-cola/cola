@@ -5,9 +5,10 @@
  * @Date         : 2024-06-21 12:48:59
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-21 12:51:31
+ * @LastEditTime : 2024-06-28 14:30:34
 **/
 
-#include "../../src/NBasic/NBasicInclude.h"
-#include "../../src/UtilsCtrl/UtilsInclude.h"
+#include "../../cola/NBasic/NBasicInclude.h"
+#include "../../cola/UtilsCtrl/UtilsInclude.h"
 
+#include "../../cola/NCola.h"
