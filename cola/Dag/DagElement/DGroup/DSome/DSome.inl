@@ -48,7 +48,7 @@ NStatus DSome<TriggerNum>::run()
     NAO_FUNCTION_BEGIN
 
     left_num_   = TriggerNum;   // 还剩n个，就完成当前GSome的执行逻辑
-    cur_status_ = CStatus();
+    cur_status_ = NStatus();
 
     /**
      * 1. 并发的执行，其中的所有逻辑信息

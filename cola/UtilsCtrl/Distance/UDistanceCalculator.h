@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/Distance/UDistanceCalculator.h
+ * @FilePath     : /cola/cola/UtilsCtrl/Distance/UDistanceCalculator.h
  * @Description  : 用于距离计算的类，支持自定义扩展
  * @Author       : naonao
  * @Date         : 2024-06-21 10:54:21
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-21 11:54:09
+ * @LastEditTime : 2024-06-28 23:15:55
 **/
 #ifndef NAO_UDISTANCECALCULATOR_H
 #define NAO_UDISTANCECALCULATOR_H
@@ -92,7 +92,7 @@ public:
     NStatus normalize(TSrc* v, NSize dim, NVoidPtr ext = nullptr) {
         NAO_FUNCTION_BEGIN
         // 这里强行将一个向量copy一份传入判断，目的是为了是的 normalize 和 calculate 的判断逻辑，保持一致
-        status = needCheck ? distance_.check(v, v, dim, dim, ext) : CStatus();
+        status = needCheck ? distance_.check(v, v, dim, dim, ext) : NStatus();
         NAO_FUNCTION_CHECK_STATUS
 
         status = distance_.normalize(v, dim, ext);
