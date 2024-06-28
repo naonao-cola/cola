@@ -6,8 +6,8 @@
  * @Date         : 2024-06-26 15:25:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 17:11:41
-**/
+ * @LastEditTime : 2024-06-28 09:48:05
+ **/
 #ifndef NAO_DCLUSTER_H
 #define NAO_DCLUSTER_H
 
@@ -17,7 +17,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-class DCluster : public DGroup {
+class DCluster : public DGroup
+{
 protected:
     explicit DCluster();
 
@@ -35,4 +36,4 @@ private:
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DCLUSTER_H
+#endif   // NAO_DCLUSTER_H

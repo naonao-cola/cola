@@ -1,4 +1,3 @@
-
 /**
  * @FilePath     : /cola/src/Dag/DagElement/DGroup/DCondition/DMultiCondition.h
  * @Description  :
@@ -6,8 +5,8 @@
  * @Date         : 2024-06-26 15:25:54
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 18:20:54
-**/
+ * @LastEditTime : 2024-06-28 09:48:57
+ **/
 #ifndef NAO_DMULTICONDITION_H
 #define NAO_DMULTICONDITION_H
 
@@ -17,7 +16,8 @@
 NAO_NAMESPACE_BEGIN
 
 template<DMultiConditionType type>
-class DMultiCondition : public DCondition {
+class DMultiCondition : public DCondition
+{
 private:
     explicit DMultiCondition();
 
@@ -49,4 +49,4 @@ NAO_NAMESPACE_END
 
 #include "DMultiCondition.inl"
 
-#endif //NAO_DMULTICONDITION_H
+#endif   // NAO_DMULTICONDITION_H

@@ -5,17 +5,19 @@
  * @Date         : 2024-06-26 15:26:11
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 15:44:42
-**/
+ * @LastEditTime : 2024-06-28 09:49:56
+ **/
 #ifndef NAO_DREGION_H
 #define NAO_DREGION_H
 
-#include "../DGroup.h"
 #include "../../DElementManager.h"
+#include "../DGroup.h"
+
 
 NAO_NAMESPACE_BEGIN
 
-class DRegion : public DGroup {
+class DRegion : public DGroup
+{
 public:
     /**
      * 设置EngineType信息
@@ -39,13 +41,12 @@ private:
 
     NBool isSerializable() const final;
 
-    NStatus addManagers(DParamManagerPtr paramManager,
-                        DEventManagerPtr eventManager) final;
+    NStatus addManagers(DParamManagerPtr paramManager, DEventManagerPtr eventManager) final;
 
     NBool isSeparate(DElementCPtr a, DElementCPtr b) const final;
 
 private:
-    DElementManagerPtr manager_ = nullptr;    // region 内部通过 manager来管理其中的 element 信息
+    DElementManagerPtr manager_ = nullptr;   // region 内部通过 manager来管理其中的 element 信息
 
     NAO_NO_ALLOWED_COPY(DRegion)
 
@@ -53,8 +54,8 @@ private:
     friend class UAllocator;
 };
 
-using DRegionPtr = DRegion *;
+using DRegionPtr = DRegion*;
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DREGION_H
+#endif   // NAO_DREGION_H

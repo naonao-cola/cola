@@ -6,19 +6,21 @@
  * @Date         : 2024-06-26 15:25:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 18:21:10
-**/
+ * @LastEditTime : 2024-06-28 09:47:44
+ **/
 #include "DCluster.h"
 
 NAO_NAMESPACE_BEGIN
 
-DCluster::DCluster() {
+DCluster::DCluster()
+{
     element_type_ = DElementType::CLUSTER;
-    session_ = URandom<>::generateSession(NAO_STR_CLUSTER);
+    session_      = URandom<>::generateSession(NAO_STR_CLUSTER);
 }
 
 
-NStatus DCluster::run() {
+NStatus DCluster::run()
+{
     NAO_FUNCTION_BEGIN
     for (DElementPtr element : this->group_elements_arr_) {
         status = element->fatProcessor(NFunctionType::RUN);
@@ -29,7 +31,8 @@ NStatus DCluster::run() {
 }
 
 
-NVoid DCluster::dump(std::ostream& oss) {
+NVoid DCluster::dump(std::ostream& oss)
+{
     dumpElement(oss);
     dumpGroupLabelBegin(oss);
     oss << 'p' << this << "[shape=point height=0];\n";
@@ -55,7 +58,8 @@ NVoid DCluster::dump(std::ostream& oss) {
 }
 
 
-NBool DCluster::isSeparate(DElementCPtr a, DElementCPtr b) const {
+NBool DCluster::isSeparate(DElementCPtr a, DElementCPtr b) const
+{
     return true;
 }
 

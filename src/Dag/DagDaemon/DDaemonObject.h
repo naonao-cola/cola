@@ -5,8 +5,8 @@
  * @Date         : 2024-06-24 18:08:30
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 18:24:01
-**/
+ * @LastEditTime : 2024-06-28 09:40:02
+ **/
 #ifndef NAO_DDAEMONOBJECT_H
 #define NAO_DDAEMONOBJECT_H
 
@@ -60,7 +60,7 @@ private:
 
     NAO_NO_ALLOWED_COPY(DDaemonObject)
 
-    friend class DDaemon;
+        friend class DDaemon;
     friend class DDaemonManager;
     friend class DPipeline;
 

@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:53:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 18:18:29
+ * @LastEditTime : 2024-06-28 09:44:36
  **/
 #ifndef NAO_DPARAMMANAGERWRAPPER_H
 #define NAO_DPARAMMANAGERWRAPPER_H
@@ -120,7 +120,7 @@ private:                                                                        
                                                                                                 \
     DParamPtrSet concerned_params_; /* 记录链路上使用过GParam信息 */                  \
                                                                                                 \
-protected:                                                                                      \
+protected:
 
 
 #define NAO_DECLARE_DPARAM_MANAGER_WRAPPER_WITH_MEMBER \

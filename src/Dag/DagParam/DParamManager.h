@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:51:24
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 15:11:52
+ * @LastEditTime : 2024-06-28 09:44:24
  **/
 
 #ifndef NAO_DPARAMMANGER_H
@@ -89,7 +89,7 @@ private:
     friend class DPipeline;
     friend class UAllocator;
 };
-using DParamManagerPtr = DParamManager *;
+using DParamManagerPtr = DParamManager*;
 
 NAO_NAMESPACE_END
 

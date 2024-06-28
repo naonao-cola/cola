@@ -5,13 +5,14 @@
  * @Date         : 2024-06-24 15:14:58
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 16:21:21
-**/
+ * @LastEditTime : 2024-06-28 09:42:33
+ **/
 #include "DEventManager.h"
 
 NAO_NAMESPACE_BEGIN
 
-NStatus DEventManager::init() {
+NStatus DEventManager::init()
+{
     NAO_FUNCTION_BEGIN
     for (auto& iter : events_map_) {
         status += (iter.second)->init();
@@ -20,7 +21,8 @@ NStatus DEventManager::init() {
 }
 
 
-NStatus DEventManager::destroy() {
+NStatus DEventManager::destroy()
+{
     NAO_FUNCTION_BEGIN
     for (auto& iter : events_map_) {
         status += (iter.second)->destroy();
@@ -29,7 +31,8 @@ NStatus DEventManager::destroy() {
 }
 
 
-NStatus DEventManager::clear() {
+NStatus DEventManager::clear()
+{
     NAO_FUNCTION_BEGIN
     for (auto& iter : events_map_) {
         NAO_DELETE_PTR(iter.second)
@@ -40,7 +43,8 @@ NStatus DEventManager::clear() {
 }
 
 
-NStatus DEventManager::trigger(const std::string &key, DEventType type, DEventAsyncStrategy strategy) {
+NStatus DEventManager::trigger(const std::string& key, DEventType type, DEventAsyncStrategy strategy)
+{
     NAO_FUNCTION_BEGIN
     auto result = events_map_.find(key);
     if (events_map_.end() == result) {
@@ -54,7 +58,8 @@ NStatus DEventManager::trigger(const std::string &key, DEventType type, DEventAs
 }
 
 
-DEventObjectPtr DEventManager::setThreadPool(UThreadPoolPtr ptr) {
+DEventObjectPtr DEventManager::setThreadPool(UThreadPoolPtr ptr)
+{
     NAO_ASSERT_NOT_NULL_THROW_ERROR(ptr)
     for (auto& iter : events_map_) {
         NAO_ASSERT_NOT_NULL_THROW_ERROR(iter.second)
@@ -65,12 +70,14 @@ DEventObjectPtr DEventManager::setThreadPool(UThreadPoolPtr ptr) {
 }
 
 
-DEventManager::~DEventManager() {
+DEventManager::~DEventManager()
+{
     clear();
 }
 
 
-NStatus DEventManager::reset() {
+NStatus DEventManager::reset()
+{
     NAO_FUNCTION_BEGIN
     for (auto& iter : events_map_) {
         iter.second->asyncWait(DEventAsyncStrategy::PIPELINE_RUN_FINISH);

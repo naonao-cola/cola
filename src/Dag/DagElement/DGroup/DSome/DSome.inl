@@ -7,10 +7,11 @@
  * @LastEditors  : naonao
  * @LastEditTime : 2024-06-26 15:53:29
  */
-#include "DSome.h"
+
 #ifndef NAO_DSOME_INL
 #define NAO_DSOME_INL
 
+#include "DSome.h"
 NAO_NAMESPACE_BEGIN
 
 template<NInt TriggerNum>

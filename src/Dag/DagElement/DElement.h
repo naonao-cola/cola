@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:31:32
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 16:28:52
+ * @LastEditTime : 2024-06-28 14:15:30
  **/
 #ifndef NAO_DELEMENT_H
 #define NAO_DELEMENT_H
@@ -458,4 +458,5 @@ using DElementPtrArr = std::vector<DElementPtr>;
 using DElementPtrSet = std::set<DElementPtr>;
 NAO_NAMESPACE_END
 
+#include "DElement.inl"
 #endif   // NAO_DELEMENT_H

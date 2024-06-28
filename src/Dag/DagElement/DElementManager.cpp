@@ -5,23 +5,22 @@
  * @Date         : 2024-06-24 23:07:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 11:08:35
-**/
+ * @LastEditTime : 2024-06-28 09:41:06
+ **/
 #include "DElementManager.h"
 #include "_DOptimizer/DOptimizerInclude.h"
 
 NAO_NAMESPACE_BEGIN
 
-DElementManager::~DElementManager() {
-    /**
-     * manager中的节点，在析构的时候不需要释放。
-     * 所有的节点信息在GPipeLine类中统一申请和释放
-     */
-    NAO_DELETE_PTR(engine_)
-}
+DElementManager::~DElementManager(){/**
+                                     * manager中的节点，在析构的时候不需要释放。
+                                     * 所有的节点信息在GPipeLine类中统一申请和释放
+                                     */
+                                    NAO_DELETE_PTR(engine_)}
 
 
-NStatus DElementManager::init() {
+NStatus DElementManager::init()
+{
     NAO_FUNCTION_BEGIN
 
     /** 首先判定，注册的element全部不为空 */
@@ -42,7 +41,8 @@ NStatus DElementManager::init() {
 }
 
 
-NStatus DElementManager::destroy() {
+NStatus DElementManager::destroy()
+{
     NAO_FUNCTION_BEGIN
 
     for (DElementPtr element : manager_elements_) {
@@ -56,10 +56,11 @@ NStatus DElementManager::destroy() {
 }
 
 
-NStatus DElementManager::run() {
+NStatus DElementManager::run()
+{
     NAO_FUNCTION_BEGIN
 
-    status = engine_->run();    // 通过引擎来执行全部的逻辑
+    status = engine_->run();   // 通过引擎来执行全部的逻辑
     NAO_FUNCTION_CHECK_STATUS
 
     if (auto_check_enable_) {
@@ -70,7 +71,8 @@ NStatus DElementManager::run() {
 }
 
 
-NStatus DElementManager::add(DElementPtr element) {
+NStatus DElementManager::add(DElementPtr element)
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_NOT_NULL(element)
 
@@ -79,7 +81,8 @@ NStatus DElementManager::add(DElementPtr element) {
 }
 
 
-NBool DElementManager::find(DElementPtr element) const {
+NBool DElementManager::find(DElementPtr element) const
+{
     if (nullptr == element) {
         return false;
     }
@@ -88,7 +91,8 @@ NBool DElementManager::find(DElementPtr element) const {
 }
 
 
-NStatus DElementManager::remove(DElementPtr element) {
+NStatus DElementManager::remove(DElementPtr element)
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_NOT_NULL(element)
 
@@ -97,7 +101,8 @@ NStatus DElementManager::remove(DElementPtr element) {
 }
 
 
-NStatus DElementManager::clear() {
+NStatus DElementManager::clear()
+{
     NAO_FUNCTION_BEGIN
     for (auto* element : manager_elements_) {
         NAO_DELETE_PTR(element)
@@ -107,7 +112,8 @@ NStatus DElementManager::clear() {
 }
 
 
-DElementManagerPtr DElementManager::setScheduleStrategy(int strategy) {
+DElementManagerPtr DElementManager::setScheduleStrategy(int strategy)
+{
     NAO_ASSERT_NOT_NULL_THROW_ERROR(engine_)
     /**
      * 如果是 region中的 GElementManager，需要在init完成后，进行这一步赋值
@@ -118,45 +124,49 @@ DElementManagerPtr DElementManager::setScheduleStrategy(int strategy) {
 }
 
 
-DElementManagerPtr DElementManager::setEngineType(DEngineType engineType) {
+DElementManagerPtr DElementManager::setEngineType(DEngineType engineType)
+{
     engine_type_ = engineType;
     return this;
 }
 
 
-NStatus DElementManager::initEngine() {
+NStatus DElementManager::initEngine()
+{
     NAO_FUNCTION_BEGIN
     NAO_DELETE_PTR(engine_)
 
     switch (engine_type_) {
-        case DEngineType::DYNAMIC : engine_ = NAO_SAFE_MALLOC_NOBJECT(DDynamicEngine) break;
-        case DEngineType::TOPO: engine_ = NAO_SAFE_MALLOC_NOBJECT(DTopoEngine) break;
-        default: NAO_RETURN_ERROR_STATUS("unknown engine type")
+    case DEngineType::DYNAMIC: engine_ = NAO_SAFE_MALLOC_NOBJECT(DDynamicEngine) break;
+    case DEngineType::TOPO: engine_ = NAO_SAFE_MALLOC_NOBJECT(DTopoEngine) break;
+    default: NAO_RETURN_ERROR_STATUS("unknown engine type")
     }
 
     engine_->thread_pool_ = thread_pool_;
-    status = engine_->setup(manager_elements_);
+    status                = engine_->setup(manager_elements_);
     NAO_FUNCTION_END
 }
 
 
-DElementManagerPtr DElementManager::setThreadPool(UThreadPoolPtr ptr) {
+DElementManagerPtr DElementManager::setThreadPool(UThreadPoolPtr ptr)
+{
     NAO_ASSERT_NOT_NULL_THROW_ERROR(ptr)
     this->thread_pool_ = ptr;
     return this;
 }
 
 
-NSize DElementManager::calcMaxParaSize() {
-    NAO_THROW_EXCEPTION_BY_CONDITION(!DMaxParaOptimizer::match(manager_elements_),
-                                        "cannot calculate max parallel size within groups")
+NSize DElementManager::calcMaxParaSize()
+{
+    NAO_THROW_EXCEPTION_BY_CONDITION(!DMaxParaOptimizer::match(manager_elements_), "cannot calculate max parallel size within groups")
     return DMaxParaOptimizer::getMaxParaSize(manager_elements_);
 }
 
 
-NBool DElementManager::checkSerializable() {
+NBool DElementManager::checkSerializable()
+{
     if (engine_type_ != DEngineType::DYNAMIC) {
-        return false;    // 目前仅支持动态引擎的执行方式
+        return false;   // 目前仅支持动态引擎的执行方式
     }
 
     /**
@@ -168,10 +178,7 @@ NBool DElementManager::checkSerializable() {
      */
     int frontSize = 0, tailSize = 0;
     for (auto& cur : manager_elements_) {
-        if (!cur->isSerializable()
-            || cur->run_before_.size() > 1
-            || cur->dependence_.size() > 1
-            || cur->isAsync()) {
+        if (!cur->isSerializable() || cur->run_before_.size() > 1 || cur->dependence_.size() > 1 || cur->isAsync()) {
             return false;
         }
 
@@ -187,7 +194,8 @@ NBool DElementManager::checkSerializable() {
 }
 
 
-NStatus DElementManager::process(const DSortedDElementPtrSet& elements) {
+NStatus DElementManager::process(const DSortedDElementPtrSet& elements)
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_NOT_NULL(engine_)
 

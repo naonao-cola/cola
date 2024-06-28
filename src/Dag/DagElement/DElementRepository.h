@@ -5,17 +5,19 @@
  * @Date         : 2024-06-24 23:08:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 23:08:46
-**/
+ * @LastEditTime : 2024-06-28 09:41:39
+ **/
 #ifndef NAO_DELEMENTREPOSITORY_H
 #define NAO_DELEMENTREPOSITORY_H
 
-#include "DElementObject.h"
 #include "DElement.h"
+#include "DElementObject.h"
+
 
 NAO_NAMESPACE_BEGIN
 
-class DElementRepository : public DElementObject {
+class DElementRepository : public DElementObject
+{
 private:
     /**
      * 插入一个element
@@ -73,17 +75,17 @@ private:
     ~DElementRepository() override;
 
 private:
-    DElementPtrSet elements_ {};                                    // 用于记录所有的element信息
-    DElementState cur_state_ { DElementState::CREATE };             // 当前状态信息
-    DElementPtrSet async_elements_ {};                              // 所有异步执行的逻辑，到后来一次性统一获取执行结果信息
+    DElementPtrSet elements_{};                         // 用于记录所有的element信息
+    DElementState  cur_state_{DElementState::CREATE};   // 当前状态信息
+    DElementPtrSet async_elements_{};                   // 所有异步执行的逻辑，到后来一次性统一获取执行结果信息
 
     friend class DPipeline;
     friend class DPerf;
 };
 
-using DElementRepositoryPtr = DElementRepository *;
-using DElementRepositoryRef = DElementRepository &;
+using DElementRepositoryPtr = DElementRepository*;
+using DElementRepositoryRef = DElementRepository&;
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DELEMENTREPOSITORY_H
+#endif   // NAO_DELEMENTREPOSITORY_H

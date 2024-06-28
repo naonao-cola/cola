@@ -5,8 +5,8 @@
  * @Date         : 2024-06-26 14:23:41
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 14:23:41
-**/
+ * @LastEditTime : 2024-06-28 09:46:48
+ **/
 #ifndef NAO_DCOORDINATOR_H
 #define NAO_DCOORDINATOR_H
 
@@ -15,7 +15,8 @@
 NAO_NAMESPACE_BEGIN
 
 template<NInt SIZE>
-class DCoordinator : public DAdapter {
+class DCoordinator : public DAdapter
+{
 protected:
     explicit DCoordinator();
 
@@ -29,13 +30,13 @@ protected:
 };
 
 template<NInt SIZE>
-using DCoordinatorPtr = DCoordinator<SIZE> *;
+using DCoordinatorPtr = DCoordinator<SIZE>*;
 
 template<NInt SIZE>
-using DCoordinatorPPtr = DCoordinatorPtr<SIZE> *;
+using DCoordinatorPPtr = DCoordinatorPtr<SIZE>*;
 
 NAO_NAMESPACE_END
 
 #include "DCoordinator.inl"
 
-#endif //NAO_DCOORDINATOR_H
+#endif   // NAO_DCOORDINATOR_H

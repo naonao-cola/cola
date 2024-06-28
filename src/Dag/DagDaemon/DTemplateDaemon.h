@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 18:09:45
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 18:22:35
+ * @LastEditTime : 2024-06-28 09:40:13
  **/
 
 #ifndef NAO_DTEMPLATEDAEMON_H
@@ -15,10 +15,10 @@
 
 NAO_NAMESPACE_BEGIN
 
-template<class ...Args>
-class DTemplateDaemon : public DDaemon {
-};
+template<class... Args>
+class DTemplateDaemon : public DDaemon
+{};
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DTEMPLATEDAEMON_H
+#endif   // NAO_DTEMPLATEDAEMON_H

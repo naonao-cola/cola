@@ -5,8 +5,8 @@
  * @Date         : 2024-06-26 14:07:43
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 14:07:44
-**/
+ * @LastEditTime : 2024-06-28 09:46:24
+ **/
 #ifndef NAO_DFENCE_H
 #define NAO_DFENCE_H
 
@@ -16,7 +16,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-class DFence : public DAdapter {
+class DFence : public DAdapter
+{
 public:
     /**
      * 添加需要等待的element（必须是异步的）
@@ -54,14 +55,14 @@ protected:
     NStatus run() final;
 
 private:
-    std::set<DElementPtr> fence_elements_;                           // 用于存放需要等待的值
+    std::set<DElementPtr> fence_elements_;   // 用于存放需要等待的值
 
     friend class DPipeline;
 };
 
-using DFencePtr = DFence *;
-using DFencePPtr = DFencePtr *;
+using DFencePtr  = DFence*;
+using DFencePPtr = DFencePtr*;
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DFENCE_H
+#endif   // NAO_DFENCE_H
