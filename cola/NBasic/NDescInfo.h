@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/NBasic/NDescinfo.h
+ * @FilePath     : /cola/cola/NBasic/NDescinfo.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:48:15
+ * @LastEditTime : 2024-06-28 22:41:18
  * @Copyright    :
  **/
 #ifndef NAO_DESCINFO_H
@@ -19,7 +19,7 @@ class NDescInfo
 {
 public:
     /**
-     * 获取名称信息
+     * 获取名称信息,
      * @return
      */
     virtual const std::string& getName() const { return name_.empty() ? session_ : name_; }
