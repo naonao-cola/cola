@@ -4,13 +4,19 @@ on:
   pull_request:
     branches:
       - main
+      - 'dev'
     paths:
-      - cola/*
+      - 'cola/**'
+      - 'tutorial/**'
+      - 'test/**'
   push:
     branches:
       - main
+      - 'dev'
     paths:
-      - cola/*
+      - 'cola/**'
+      - 'tutorial/**'
+      - 'test/**'
 
 jobs:
   build:
@@ -21,8 +27,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: xmake-io/github-action-setup-xmake@v1
+      - uses: actions/checkout@v2
+      - uses: xmake-io/github-action-setup-xmake@v1.2
         with:
           xmake-version: latest
 

@@ -3,10 +3,20 @@
 on:
   pull_request:
     branches:
-      - master
+      - main
+      - 'dev'
+      paths:
+      - 'cola/**'
+      - 'tutorial/**'
+      - 'test/**'
   push:
     branches:
-      - master
+      - main
+      - 'dev'
+      paths:
+      - 'cola/**'
+      - 'tutorial/**'
+      - 'test/**'
 
 jobs:
   build:
