@@ -1,0 +1,33 @@
+﻿name: Linux
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - cola/*
+  push:
+    branches:
+      - main
+    paths:
+      - cola/*
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+
+      - name: Tests
+        run: |
+          xmake clean -a
+          xmake f -m debug
+          xmake
