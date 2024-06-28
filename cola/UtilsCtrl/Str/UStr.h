@@ -16,6 +16,7 @@ NAO_NAMESPACE_BEGIN
 
 class UStr : public UtilsObject
 {
+public:
     /**
      * @brief	sep作为分隔符，分割字符串。如果maxsplit大于-1，则最多执行maxsplit拆分。如果sep为“”，则空格是分隔符。
      * @param str

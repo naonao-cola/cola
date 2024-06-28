@@ -26,5 +26,7 @@
 #include "Hash/UHash.h"
 #include "SkipList/USkipList.h"
 #include "Arean/UArean.h"
+#include "Defer/UDefer.h"
+#include "Test/UTest.h"
 
 #endif   // NAO_UTILSINCLUDE_H
