@@ -198,7 +198,7 @@ NVoid UFile::seek(int64_t off, NInt whence)
 {
     static std::array<NInt, 3> seekfrom = {std::ios::beg, std::ios::cur, std::ios::end};
     whence                              = seekfrom[whence];
-    if (fin_.is_open()) fin_.seekg(off, whence);
+    if (fin_.is_open()) fin_.seekg(off, (std::ios_base::seekdir)whence);
 }
 
 NSize UFile::read(void* buf, NSize n)
