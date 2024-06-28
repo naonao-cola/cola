@@ -5,8 +5,8 @@
  * @Date         : 2024-06-24 23:07:22
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 23:07:22
-**/
+ * @LastEditTime : 2024-06-28 09:41:16
+ **/
 #ifndef NAO_DELEMENTMANAGER_H
 #define NAO_DELEMENTMANAGER_H
 
@@ -16,8 +16,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-class DElementManager : public DElementObject,
-                        public DagManager<DElement> {
+class DElementManager : public DElementObject, public DagManager<DElement>
+{
 protected:
     explicit DElementManager() = default;
     ~DElementManager() override;
@@ -64,7 +64,7 @@ protected:
      * 设置图引擎运行模式
      * @param engineType
      * @return
-    */
+     */
     DElementManager* setEngineType(DEngineType engineType);
 
     /**
@@ -102,10 +102,10 @@ protected:
 
 private:
     DSortedDElementPtrSet manager_elements_;                    // 保存节点信息的内容
-    DEnginePtr engine_ { nullptr };                             // 执行引擎
-    DEngineType engine_type_ { DEngineType::DYNAMIC };          // 引擎执行方式
-    UThreadPoolPtr thread_pool_ { nullptr };                    // 线程池
-    NBool auto_check_enable_ = true;                            // 是否自动实现后校验逻辑
+    DEnginePtr            engine_{nullptr};                     // 执行引擎
+    DEngineType           engine_type_{DEngineType::DYNAMIC};   // 引擎执行方式
+    UThreadPoolPtr        thread_pool_{nullptr};                // 线程池
+    NBool                 auto_check_enable_ = true;            // 是否自动实现后校验逻辑
 
     friend class DPipeline;
     friend class DRegion;
@@ -114,8 +114,8 @@ private:
     friend class UAllocator;
 };
 
-using DElementManagerPtr = DElementManager *;
+using DElementManagerPtr = DElementManager*;
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DELEMENTMANAGER_H
+#endif   // NAO_DELEMENTMANAGER_H

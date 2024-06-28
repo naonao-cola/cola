@@ -104,24 +104,25 @@ NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T t, Args... args)
     if (unlikely((ptr) != nullptr)) { \
         delete (ptr);                 \
         (ptr) = nullptr;              \
-    }
+    }                                 \
 
 #define NAO_ASSERT_INIT(isInit)                                \
     if (unlikely((isInit) != is_init_)) {                      \
         NAO_RETURN_ERROR_STATUS("init status is not suitable") \
-    }
+    }                                                          \
 
 #define NAO_ASSERT_INIT_THROW_ERROR(isInit)                             \
     if (unlikely((isInit) != is_init_)) {                               \
         NAO_THROW_EXCEPTION("[NException] init status is not suitable") \
-    }
+    }                                                                   \
 
 #define NAO_ASSERT_MUTABLE_INIT_THROW_ERROR(isInit)                             \
     if (unlikely((isInit) != is_init_) && !isMutable()) {                       \
         NAO_THROW_EXCEPTION("[NException] mutable init status is not suitable") \
-    }
+    }                                                                           \
 
-#define NAO_SLEEP_SECOND(s) std::this_thread::sleep_for(std::chrono::seconds(s));
+#define NAO_SLEEP_SECOND(s)                              \
+    std::this_thread::sleep_for(std::chrono::seconds(s));\
 
 #define NAO_SLEEP_MILLISECOND(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
@@ -133,7 +134,7 @@ NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T t, Args... args)
         NAO_LOCK_GUARD lock{internal::g_check_status_mtx};                                                                           \
         NAO_ECHO("%s, errorCode = [%d], errorInfo = [%s].", status.getLocate().c_str(), status.getCode(), status.getInfo().c_str()); \
         return status;                                                                                                               \
-    }
+    }                                                                                                                                \
 
 /**
  * 定制化输出

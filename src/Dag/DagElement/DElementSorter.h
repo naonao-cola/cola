@@ -5,8 +5,8 @@
  * @Date         : 2024-06-24 23:09:40
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 23:09:40
-**/
+ * @LastEditTime : 2024-06-28 09:41:48
+ **/
 #ifndef NAO_DELEMENTSORTER_H
 #define NAO_DELEMENTSORTER_H
 
@@ -16,7 +16,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-class DElementSorter : public NStruct {
+class DElementSorter : public NStruct
+{
 public:
     /**
      * 当level不同的时候，level值小的element优先被init和destroy
@@ -25,13 +26,11 @@ public:
      * @param b
      * @return
      */
-    NBool operator()(DElementPtr a, DElementPtr b) const {
-        return (a->level_ == b->level_) ? (a < b) : (a->level_ < b->level_);
-    }
+    NBool operator()(DElementPtr a, DElementPtr b) const { return (a->level_ == b->level_) ? (a < b) : (a->level_ < b->level_); }
 };
 
 using DSortedDElementPtrSet = std::set<DElementPtr, DElementSorter>;
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DELEMENTSORTER_H
+#endif   // NAO_DELEMENTSORTER_H

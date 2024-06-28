@@ -5,8 +5,9 @@
  * @Date         : 2024-06-26 15:26:11
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 15:46:20
+ * @LastEditTime : 2024-06-28 09:49:28
 **/
+
 #include <functional>
 
 #include "DRegion.h"
@@ -14,20 +15,20 @@
 #include "../../_DOptimizer/DOptimizerInclude.h"
 NAO_NAMESPACE_BEGIN
 
-DRegion::DRegion() : DGroup() {
+DRegion::DRegion()
+    : DGroup()
+{
     is_init_ = false;
-    manager_ = NAO_SAFE_MALLOC_NOBJECT(DElementManager)
-    element_type_ = DElementType::REGION;
-    session_ = URandom<>::generateSession(NAO_STR_REGION);
+    manager_ = NAO_SAFE_MALLOC_NOBJECT(DElementManager) element_type_ = DElementType::REGION;
+    session_                                                          = URandom<>::generateSession(NAO_STR_REGION);
 }
 
 
-DRegion::~DRegion() {
-    NAO_DELETE_PTR(manager_)
-}
+DRegion::~DRegion(){NAO_DELETE_PTR(manager_)}
 
 
-NStatus DRegion::init() {
+NStatus DRegion::init()
+{
     NAO_FUNCTION_BEGIN
     // 在这里将初始化所有的节点信息，并且实现分析，联通等功能
     NAO_ASSERT_NOT_NULL(thread_pool_, manager_)
@@ -44,7 +45,8 @@ NStatus DRegion::init() {
 }
 
 
-NStatus DRegion::destroy() {
+NStatus DRegion::destroy()
+{
     NAO_FUNCTION_BEGIN
     status = manager_->destroy();
     NAO_FUNCTION_CHECK_STATUS
@@ -54,7 +56,8 @@ NStatus DRegion::destroy() {
 }
 
 
-NStatus DRegion::run() {
+NStatus DRegion::run()
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT(true)
     NAO_ASSERT_NOT_NULL(manager_)
@@ -64,7 +67,8 @@ NStatus DRegion::run() {
 }
 
 
-NStatus DRegion::addElement(DElementPtr element) {
+NStatus DRegion::addElement(DElementPtr element)
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_NOT_NULL(element, manager_)
 
@@ -73,7 +77,8 @@ NStatus DRegion::addElement(DElementPtr element) {
 }
 
 
-DRegionPtr DRegion::setDEngineType(DEngineType type) {
+DRegionPtr DRegion::setDEngineType(DEngineType type)
+{
     NAO_ASSERT_INIT_THROW_ERROR(false)
     NAO_ASSERT_NOT_NULL_THROW_ERROR(manager_)
 
@@ -82,7 +87,8 @@ DRegionPtr DRegion::setDEngineType(DEngineType type) {
 }
 
 
-NVoid DRegion::dump(std::ostream& oss) {
+NVoid DRegion::dump(std::ostream& oss)
+{
     dumpElement(oss);
     dumpGroupLabelBegin(oss);
     oss << 'p' << this << "[shape=point height=0];\n";
@@ -100,7 +106,8 @@ NVoid DRegion::dump(std::ostream& oss) {
 }
 
 
-NBool DRegion::isSerializable() const {
+NBool DRegion::isSerializable() const
+{
     if (nullptr == manager_) {
         return false;
     }
@@ -109,8 +116,8 @@ NBool DRegion::isSerializable() const {
 }
 
 
-NStatus DRegion::addManagers(DParamManagerPtr paramManager,
-                             DEventManagerPtr eventManager) {
+NStatus DRegion::addManagers(DParamManagerPtr paramManager, DEventManagerPtr eventManager)
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT(false)
     NAO_ASSERT_NOT_NULL(paramManager, eventManager)
@@ -126,7 +133,8 @@ NStatus DRegion::addManagers(DParamManagerPtr paramManager,
 }
 
 
-NBool DRegion::isSeparate(DElementCPtr a, DElementCPtr b) const {
+NBool DRegion::isSeparate(DElementCPtr a, DElementCPtr b) const
+{
     return DSeparateOptimizer::checkSeparate(manager_->manager_elements_, a, b);
 }
 

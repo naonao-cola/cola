@@ -1,4 +1,3 @@
-
 /**
  * @FilePath     : /cola/src/Dag/DagElement/DGroup/DCondition/DCondition.h
  * @Description  : 实现在多个element中，选择一个执行的功能
@@ -6,8 +5,8 @@
  * @Date         : 2024-06-26 15:25:54
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 16:27:50
-**/
+ * @LastEditTime : 2024-06-28 09:48:27
+ **/
 #ifndef NAO_DCONDITION_H
 #define NAO_DCONDITION_H
 
@@ -15,7 +14,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-class DCondition : public DGroup {
+class DCondition : public DGroup
+{
 protected:
     explicit DCondition();
 
@@ -43,8 +43,8 @@ private:
     friend class DPipeline;
 };
 
-using DConditionPtr = DCondition *;
+using DConditionPtr = DCondition*;
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DCONDITION_H
+#endif   // NAO_DCONDITION_H

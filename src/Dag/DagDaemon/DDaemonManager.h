@@ -5,18 +5,19 @@
  * @Date         : 2024-06-24 18:07:38
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 18:07:38
-**/
+ * @LastEditTime : 2024-06-28 11:18:53
+ **/
 #ifndef NAO_DDAEMONMANAGER_H
 #define NAO_DDAEMONMANAGER_H
 
-#include "DDaemon.h"
 #include "../DagManager.h"
+#include "DDaemon.h"
+
 
 NAO_NAMESPACE_BEGIN
 
-class DDaemonManager : public DDaemonObject,
-                       public DagManager<DDaemon> {
+class DDaemonManager : public DDaemonObject, public DagManager<DDaemon>
+{
 protected:
     explicit DDaemonManager() = default;
 
@@ -34,16 +35,16 @@ protected:
 
     NSize getSize() const final;
 
-    friend class GPipeline;
+    friend class DPipeline;
     friend class UAllocator;
     NAO_NO_ALLOWED_COPY(DDaemonManager)
 
 private:
-    DDaemonSet daemons_ {};                    // daemon信息集合
+    DDaemonSet daemons_{};   // daemon信息集合
 };
 
-using DDaemonManagerPtr = DDaemonManager *;
+using DDaemonManagerPtr = DDaemonManager*;
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DDAEMONMANAGER_H
+#endif   // NAO_DDAEMONMANAGER_H

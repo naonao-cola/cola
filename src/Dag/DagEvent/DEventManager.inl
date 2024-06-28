@@ -25,8 +25,7 @@ NStatus DEventManager::createWithParam(const std::string& key, TEParam* param)
         NAO_RETURN_ERROR_STATUS("event [" + key + "] has been register")
     }
 
-    DEventPtr event = NAO_SAFE_MALLOC_NOBJECT(TEvent)
-    event->setDParamManager(this->param_manager_);
+    DEventPtr event = NAO_SAFE_MALLOC_NOBJECT(TEvent) event->setDParamManager(this->param_manager_);
 
     // 每次创建，都是重新生成参数的一个过程
     NAO_DELETE_PTR(event->param_)

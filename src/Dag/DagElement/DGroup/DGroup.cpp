@@ -5,17 +5,19 @@
  * @Date         : 2024-06-26 15:11:36
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 15:11:36
-**/
+ * @LastEditTime : 2024-06-28 09:45:42
+ **/
 #include "DGroup.h"
 
 NAO_NAMESPACE_BEGIN
 
-DGroup::DGroup() {
+DGroup::DGroup()
+{
     element_type_ = DElementType::GROUP;
 }
 
-NStatus DGroup::init() {
+NStatus DGroup::init()
+{
     NAO_FUNCTION_BEGIN
 
     for (DElementPtr element : group_elements_arr_) {
@@ -29,7 +31,8 @@ NStatus DGroup::init() {
 }
 
 
-NStatus DGroup::destroy() {
+NStatus DGroup::destroy()
+{
     NAO_FUNCTION_BEGIN
 
     for (DElementPtr element : group_elements_arr_) {
@@ -43,7 +46,8 @@ NStatus DGroup::destroy() {
 }
 
 
-NStatus DGroup::addElement(DElementPtr element) {
+NStatus DGroup::addElement(DElementPtr element)
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_NOT_NULL(element)
 
@@ -52,14 +56,16 @@ NStatus DGroup::addElement(DElementPtr element) {
 }
 
 
-NVoid DGroup::dumpGroupLabelBegin(std::ostream& oss) {
+NVoid DGroup::dumpGroupLabelBegin(std::ostream& oss)
+{
     oss << "subgraph ";
-    oss << "cluster_p" << this;    // cluster_ 是 graphviz的关键字，和CGraph中GCluster逻辑无关
+    oss << "cluster_p" << this;   // cluster_ 是 graphviz的关键字，和CGraph中GCluster逻辑无关
     oss << " {\nlabel=\"";
 
     if (name_.empty()) {
         oss << 'p' << this;
-    } else {
+    }
+    else {
         oss << name_;
     }
 
@@ -72,25 +78,24 @@ NVoid DGroup::dumpGroupLabelBegin(std::ostream& oss) {
 }
 
 
-NVoid DGroup::dumpGroupLabelEnd(std::ostream& oss) {
+NVoid DGroup::dumpGroupLabelEnd(std::ostream& oss)
+{
     oss << "}\n";
 }
 
 
-NBool DGroup::isSerializable() const {
+NBool DGroup::isSerializable() const
+{
     /**
      * 针对group的情况，应该是所有在其中的element 都是可以串行的，才认定为可串行
      * 但是在 region和 multiCondition中，有针对性的判断
      */
-    return std::all_of(group_elements_arr_.begin(), group_elements_arr_.end(),
-                       [](DElementPtr element) {
-        return element->isSerializable();
-    });
+    return std::all_of(group_elements_arr_.begin(), group_elements_arr_.end(), [](DElementPtr element) { return element->isSerializable(); });
 }
 
 
-NStatus DGroup::addManagers(DParamManagerPtr paramManager,
-                            DEventManagerPtr eventManager) {
+NStatus DGroup::addManagers(DParamManagerPtr paramManager, DEventManagerPtr eventManager)
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_NOT_NULL(paramManager, eventManager)
     NAO_ASSERT_INIT(false)
@@ -106,7 +111,8 @@ NStatus DGroup::addManagers(DParamManagerPtr paramManager,
 }
 
 
-NBool DGroup::isSeparate(DElementCPtr a, DElementCPtr b) const {
+NBool DGroup::isSeparate(DElementCPtr a, DElementCPtr b) const
+{
     return false;
 }
 

@@ -5,26 +5,29 @@
  * @Date         : 2024-06-24 23:09:13
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 23:09:13
-**/
+ * @LastEditTime : 2024-06-28 09:41:29
+ **/
 #include "DElementRepository.h"
 #include "DNode/DNodeInclude.h"
 
 NAO_NAMESPACE_BEGIN
 
-NVoid DElementRepository::insert(DElementPtr ptr) {
+NVoid DElementRepository::insert(DElementPtr ptr)
+{
     NAO_ASSERT_NOT_NULL_THROW_ERROR(ptr)
     elements_.insert(ptr);
 }
 
 
-NBool DElementRepository::find(DElementPtr ptr) const {
+NBool DElementRepository::find(DElementPtr ptr) const
+{
     NAO_ASSERT_NOT_NULL_THROW_ERROR(ptr)
     return elements_.find(ptr) != elements_.end();
 }
 
 
-DElementRepositoryPtr DElementRepository::setThreadPool(UThreadPoolPtr ptr) {
+DElementRepositoryPtr DElementRepository::setThreadPool(UThreadPoolPtr ptr)
+{
     NAO_ASSERT_NOT_NULL_THROW_ERROR(ptr)
     for (auto& cur : this->elements_) {
         cur->setThreadPool(ptr);
@@ -33,7 +36,8 @@ DElementRepositoryPtr DElementRepository::setThreadPool(UThreadPoolPtr ptr) {
 }
 
 
-NStatus DElementRepository::setup() {
+NStatus DElementRepository::setup()
+{
     NAO_FUNCTION_BEGIN
     // 一旦执行，全部设置为 normal状态
     status = pushAllState(DElementState::NORMAL);
@@ -41,7 +45,8 @@ NStatus DElementRepository::setup() {
 }
 
 
-NStatus DElementRepository::reset() {
+NStatus DElementRepository::reset()
+{
     NAO_FUNCTION_BEGIN
     for (auto& cur : async_elements_) {
         if (DElementTimeoutStrategy::HOLD_BY_PIPELINE == cur->timeout_strategy_) {
@@ -59,10 +64,11 @@ NStatus DElementRepository::reset() {
 }
 
 
-NStatus DElementRepository::pushAllState(const DElementState& state) {
+NStatus DElementRepository::pushAllState(const DElementState& state)
+{
     NAO_FUNCTION_BEGIN
     if (cur_state_ == state) {
-        return status;    // 避免重复赋值
+        return status;   // 避免重复赋值
     }
 
     for (auto& cur : elements_) {
@@ -72,12 +78,13 @@ NStatus DElementRepository::pushAllState(const DElementState& state) {
             cur->yield_cv_.notify_one();
         }
     }
-    cur_state_ = state;    // 记录当前的状态信息
+    cur_state_ = state;   // 记录当前的状态信息
     NAO_FUNCTION_END
 }
 
 
-NBool DElementRepository::isCancelState() const {
+NBool DElementRepository::isCancelState() const
+{
     /**
      * 因为每次执行的时候，都需要判断一下这个状态是否为 cancel
      * 且理论上不会出现多线程问题
@@ -87,9 +94,10 @@ NBool DElementRepository::isCancelState() const {
 }
 
 
-NStatus DElementRepository::init() {
+NStatus DElementRepository::init()
+{
     NAO_FUNCTION_BEGIN
-    async_elements_.clear();    // 每次记得清空这里。因为每次init之后，都可能不一样
+    async_elements_.clear();   // 每次记得清空这里。因为每次init之后，都可能不一样
     for (auto& element : elements_) {
         /**
          * 1. 查验element是否为空
@@ -111,7 +119,8 @@ NStatus DElementRepository::init() {
 }
 
 
-NStatus DElementRepository::destroy() {
+NStatus DElementRepository::destroy()
+{
     NAO_FUNCTION_BEGIN
     /**
      * destroy的时候，恢复create的状态，确保再次轮训的时候正常
@@ -124,12 +133,11 @@ NStatus DElementRepository::destroy() {
 }
 
 
-NStatus DElementRepository::run() {
-    NAO_NO_SUPPORT
-}
+NStatus DElementRepository::run(){NAO_NO_SUPPORT}
 
 
-DElementRepository::~DElementRepository() {
+DElementRepository::~DElementRepository()
+{
     // 删除所有内部的element信息
     for (DElementPtr element : elements_) {
         NAO_DELETE_PTR(element)

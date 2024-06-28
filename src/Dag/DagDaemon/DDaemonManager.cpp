@@ -5,20 +5,22 @@
  * @Date         : 2024-06-24 18:08:11
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 18:08:11
-**/
+ * @LastEditTime : 2024-06-28 09:39:45
+ **/
 #include "DDaemonManager.h"
 
 NAO_NAMESPACE_BEGIN
 
-DDaemonManager::~DDaemonManager() {
+DDaemonManager::~DDaemonManager()
+{
     clear();
 }
 
 
-NStatus DDaemonManager::init() {
+NStatus DDaemonManager::init()
+{
     NAO_FUNCTION_BEGIN
-    for (auto daemon: daemons_) {
+    for (auto daemon : daemons_) {
         NAO_ASSERT_NOT_NULL(daemon)
         status += daemon->init();
     }
@@ -27,9 +29,10 @@ NStatus DDaemonManager::init() {
 }
 
 
-NStatus DDaemonManager::destroy() {
+NStatus DDaemonManager::destroy()
+{
     NAO_FUNCTION_BEGIN
-    for (auto daemon: daemons_) {
+    for (auto daemon : daemons_) {
         NAO_ASSERT_NOT_NULL(daemon)
         status += daemon->destroy();
     }
@@ -38,7 +41,8 @@ NStatus DDaemonManager::destroy() {
 }
 
 
-NStatus DDaemonManager::add(DDaemonPtr daemon) {
+NStatus DDaemonManager::add(DDaemonPtr daemon)
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_NOT_NULL(daemon)
 
@@ -47,7 +51,8 @@ NStatus DDaemonManager::add(DDaemonPtr daemon) {
 }
 
 
-NStatus DDaemonManager::remove(DDaemonPtr daemon) {
+NStatus DDaemonManager::remove(DDaemonPtr daemon)
+{
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_NOT_NULL(daemon)
 
@@ -57,9 +62,10 @@ NStatus DDaemonManager::remove(DDaemonPtr daemon) {
 }
 
 
-NStatus DDaemonManager::clear() {
+NStatus DDaemonManager::clear()
+{
     NAO_FUNCTION_BEGIN
-    for (auto daemon: daemons_) {
+    for (auto daemon : daemons_) {
         NAO_DELETE_PTR(daemon)
     }
 
@@ -68,7 +74,8 @@ NStatus DDaemonManager::clear() {
 }
 
 
-NSize DDaemonManager::getSize() const {
+NSize DDaemonManager::getSize() const
+{
     return daemons_.size();
 }
 

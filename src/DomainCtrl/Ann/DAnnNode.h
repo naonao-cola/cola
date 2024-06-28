@@ -5,8 +5,8 @@
  * @Date         : 2024-06-24 22:41:16
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 22:41:16
-**/
+ * @LastEditTime : 2024-06-28 10:12:21
+ **/
 #ifndef NAO_DANNNODE_H
 #define NAO_DANNNODE_H
 
@@ -15,7 +15,8 @@
 
 NAO_NAMESPACE_BEGIN
 
-class DAnnNode : public DAnnObject, public DNode {
+class DAnnNode : public DAnnObject, public DNode
+{
 protected:
     /**
      * 预处理参数信息，并且返回需要执行的函数信息
@@ -91,10 +92,10 @@ protected:
     NStatus run() override;
 
 private:
-    typedef	NStatus (DAnnNode::*DAnnNodeFuncPtr)();
-    DAnnNodeFuncPtr ann_func_arr_[static_cast<NUint>(DAnnFuncType::ANN_MAX_SIZE)]{};    // ann函数映射关系
+    typedef NStatus (DAnnNode::*DAnnNodeFuncPtr)();
+    DAnnNodeFuncPtr ann_func_arr_[static_cast<NUint>(DAnnFuncType::ANN_MAX_SIZE)]{};   // ann函数映射关系
 };
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DANNNODE_H
+#endif   // NAO_DANNNODE_H

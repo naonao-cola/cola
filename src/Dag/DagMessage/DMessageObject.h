@@ -5,8 +5,8 @@
  * @Date         : 2024-06-24 16:58:12
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 17:04:47
-**/
+ * @LastEditTime : 2024-06-28 09:43:36
+ **/
 #ifndef NAO_DMESSAGEOBJECT_H
 #define NAO_DMESSAGEOBJECT_H
 
@@ -15,13 +15,12 @@
 
 NAO_NAMESPACE_BEGIN
 
-class DMessageObject : public DagObject {
+class DMessageObject : public DagObject
+{
 public:
-    NStatus run() final {
-        NAO_NO_SUPPORT
-    }
+    NStatus run() final { NAO_NO_SUPPORT }
 };
 
 NAO_NAMESPACE_END
 
-#endif //NAO_DMESSAGEOBJECT_H
+#endif   // NAO_DMESSAGEOBJECT_H

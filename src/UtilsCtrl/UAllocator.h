@@ -92,9 +92,11 @@ private:
 };
 
 
-#define NAO_SAFE_MALLOC_NOBJECT(Type) UAllocator::safeMallocNObject<Type>();
+#define NAO_SAFE_MALLOC_NOBJECT(Type)           \
+        UAllocator::safeMallocNObject<Type>();  \
 
-#define NAO_MAKE_UNIQUE_NOBJECT(Type) UAllocator::makeUniqueNObject<Type>();
+#define NAO_MAKE_UNIQUE_NOBJECT(Type)           \
+        UAllocator::makeUniqueNObject<Type>();  \
 
 NAO_NAMESPACE_END
 
