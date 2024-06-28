@@ -1,12 +1,13 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/Str/UStrDefine.cpp
+ * @FilePath     : /cola/cola/UtilsCtrl/Str/UStrDefine.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 09:54:03
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 09:58:57
+ * @LastEditTime : 2024-06-28 23:08:38
  **/
+  #include <cstring>
 #include "UStrDefine.h"
 NAO_NAMESPACE_BEGIN
 
@@ -77,7 +78,7 @@ int _string_tailmatch(const std::string& self, const std::string& substr, Py_ssi
         if (end - start < slen || start > len) return 0;
         if (end - slen > start) start = end - slen;
     }
-    if (end - start >= slen) return (!std::memcmp(str + start, sub, slen));
+    if (end - start >= slen) return (!memcmp(str + start, sub, slen));
     return 0;
 }
 }   // namespace match

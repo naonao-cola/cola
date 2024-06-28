@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/FileSystem/UFs.cpp
+ * @FilePath     : /cola/cola/UtilsCtrl/FileSystem/UFs.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-21 18:15:37
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 10:35:30
+ * @LastEditTime : 2024-06-28 23:12:03
  **/
 #include <array>
 #include <filesystem>
@@ -98,7 +98,7 @@ std::vector<std::string> UFs::getAllFiles(const std::string& path, const std::ve
 std::vector<std::string> UFs::getAllFormatFiles(const std::string& path, const std::string& format, const std::vector<std::string>& filter_directory)
 {
     std::vector<std::string> files = getAllFiles(path, filter_directory);
-    std::regex               Img(format, std::regex_constants::syntax_option_type::icase);
+    std::regex               Img(format, std::regex_constants::icase);
     std::vector<std::string> files_path;
     for (const auto& file : files) {
         if (std::regex_match(file, Img)) {

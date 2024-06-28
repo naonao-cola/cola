@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/Distance/Common/UCosineDistance.h
+ * @FilePath     : /cola/cola/UtilsCtrl/Distance/Common/UCosineDistance.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-21 10:55:05
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-21 12:06:11
+ * @LastEditTime : 2024-06-28 23:16:40
 **/
 #ifndef NAO_UCOSINEDISTANCE_H
 #define NAO_UCOSINEDISTANCE_H
@@ -23,7 +23,7 @@ public:
         result = 0;     // 先清空
         TSrc val1 = 0;    // 用于记录vec1的长度
         TSrc val2 = 0;
-        for (CSize i = 0; i < dim1; i++) {
+        for (NSize i = 0; i < dim1; i++) {
             result += (v1[i] * v2[i]);
             val1 += (v1[i] * v1[i]);
             val2 += (v2[i] * v2[i]);
