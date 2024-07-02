@@ -1,7 +1,7 @@
 ﻿set_project("Cola")
 
 set_version("0.0.1")
-set_languages("c++17")
+set_languages("c++20")
 add_rules("mode.debug", "mode.release","mode.releasedbg")
 
 -- set features on different platform
