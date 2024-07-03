@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/UtilsInclude.h
+ * @FilePath     : /cola/cola/UtilsCtrl/UtilsInclude.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-22 12:36:46
+ * @LastEditTime : 2024-07-03 15:04:21
  **/
 #ifndef NAO_UTILSINCLUDE_H
 #define NAO_UTILSINCLUDE_H
@@ -15,8 +15,7 @@
 #include "Lru/ULru.h"
 #include "Singleton/USingleton.h"
 #include "Timer/UTimerInclude.h"
-#include "Trie/UTrie.h"
-#include "Trie/UTrieV2.h"
+#include "Trie/UTrieInclude.h"
 #include "Distance/UDistanceInclude.h"
 #include "Random/URandom.h"
 #include "Random/URandomV2.h"
