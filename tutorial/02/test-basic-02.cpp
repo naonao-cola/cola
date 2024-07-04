@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/test/02/test-basic-02.cpp
+ * @FilePath     : /cola/tutorial/02/test-basic-02.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-21 14:52:37
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 10:26:47
+ * @LastEditTime : 2024-07-04 18:36:07
  **/
 #include <cassert>
 
@@ -189,6 +189,10 @@ void test_skpilist()
 
 void test_fs()
 {
+    UFinally fin = []{
+        std::cout<<" finally end"<<std::endl;
+    };
+    std::cout<<" finally start"<<std::endl;
     std::vector<std::string> files;
     files = UFs::getAllFormatFiles(R"(E:\demo\test\nao\str\1.0.0.2)");
 }
@@ -200,8 +204,8 @@ int main()
     // test_hash();
     // printf("----------------- arean -----------------\n");
     // test_arean();
-    printf("----------------- skpilist -----------------\n");
-    test_skpilist();
+    //printf("----------------- skpilist -----------------\n");
+    //test_skpilist();
 
     printf("----------------- fs -----------------\n");
     test_fs();
