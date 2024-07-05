@@ -27,5 +27,6 @@
 #include "Arean/UArean.h"
 #include "Finally/UFinally.h"
 #include "Test/UTest.h"
+#include "Perf/UPerf.h"
 
 #endif   // NAO_UTILSINCLUDE_H
