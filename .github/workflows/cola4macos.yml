@@ -30,10 +30,10 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
       - name: Install Clang 18
         run: |
-          echo 'export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH"' >> /Users/runner/.bash_profile
+          echo 'export PATH="/opt/homebrew/opt/llvm/bin:$PATH"' >> /Users/runner/.bash_profile
+          export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+          export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
           source ~/.bash_profile
-          export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib"
-          export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include"
           brew install llvm@18
           llvm-config --version
           clang --version
@@ -44,10 +44,12 @@ jobs:
 
       - name: Tests
         run: |
-          brew link --force llvm@18
-          echo 'export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH"' >> /Users/runner/.bash_profile
+          brew link --force llvm
+          echo 'export PATH="/opt/homebrew/opt/llvm/bin:$PATH"' >> /Users/runner/.bash_profile
+          export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+          export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
           source ~/.bash_profile
           xmake clean -a
-          xmake f -m debug  --toolchain=clang --cc=/opt/homebrew/opt/llvm@18/bin/clang --cxx=/opt/homebrew/opt/llvm@18/bin/clang++
+          xmake f -m debug  --toolchain=clang --cc=/opt/homebrew/opt/llvm/bin/clang --cxx=/opt/homebrew/opt/llvm/bin/clang++ --ldflags="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
           xmake -rvD
           xmake run -a
