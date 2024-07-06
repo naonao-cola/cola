@@ -5,7 +5,7 @@
  * @Date         : 2024-07-05 21:56:22
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-06 11:40:35
+ * @LastEditTime : 2024-07-06 12:14:41
  **/
 
 #ifndef NAO_UPERF_H
@@ -18,19 +18,23 @@
 #include <set>
 
 #if __cplusplus >= 202002L
-#    if __has_include(<source_location>)
+#    if __has_include(<source_location>) && __has_include(<format>)
 #        include <source_location>
-#    endif
-#    if __has_include(<format>)
 #        include <format>
+#        define HAS_FORMAT 1
+#    else
+#        define HAS_FORMAT 0
 #    endif
+#else
+#    define HAS_FORMAT 0
 #endif
+
 NAO_NAMESPACE_BEGIN
 
 
 struct UPerf : public UtilsObject
 {
-#if __cplusplus >= 202002L
+#if HAS_FORMAT
 private:
     char const*                           file;
     std::uint_least32_t                   line;
