@@ -36,6 +36,7 @@ jobs:
           export CPPFLAGS="-I/opt/homebrew/opt/llvm@16/include"
           brew install llvm@16
           llvm-config --version
+          clang --version
 
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
@@ -43,6 +44,8 @@ jobs:
 
       - name: Tests
         run: |
+          echo 'export PATH="/opt/homebrew/opt/llvm@16/bin:$PATH"' >> /Users/runner/.bash_profile
+          source ~/.bash_profile
           xmake clean -a
           xmake f -m debug
           xmake -rvD
