@@ -45,5 +45,5 @@ jobs:
         run: |
           xmake clean -a
           xmake f -m debug
-          xmake -rv
+          xmake -rvD
           xmake run -a
