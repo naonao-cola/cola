@@ -30,6 +30,9 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
       - name: Install Clang 16
         run: |
+          echo 'export PATH="/opt/homebrew/opt/llvm@16/bin:$PATH"' >> /Users/runner/.bash_profile
+          export LDFLAGS="-L/opt/homebrew/opt/llvm@16/lib"
+          export CPPFLAGS="-I/opt/homebrew/opt/llvm@16/include"
           brew install llvm@16
           llvm-config --version
 
