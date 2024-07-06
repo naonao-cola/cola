@@ -5,7 +5,7 @@
  * @Date         : 2024-07-05 21:56:22
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-06 13:13:31
+ * @LastEditTime : 2024-07-06 14:02:53
  **/
 
 #ifndef NAO_UPERF_H
@@ -32,6 +32,7 @@
 NAO_NAMESPACE_BEGIN
 
 #if HAS_FORMAT
+#    pragma message("HAS_FORMAT is defined")
 struct UPerf : public UtilsObject
 {
 
@@ -144,7 +145,6 @@ private:
             }
             std::string o;
             auto        oit = std::back_inserter(o);
-
             std::format_to(oit, "{:>{}}:{:<4} {:^6} {:^6} {:^6} {:^6} {:^{}}\n", "file", w, "line", "min", "avg", "max", "sum", "nr", nw + 1);
             for (auto const& [loc, e] : sorted) {
                 std::format_to(oit,
@@ -203,8 +203,13 @@ public:
     }
 };
 #else
+#    pragma message("HAS_FORMAT is not defined")
 struct UPerf : public UtilsObject
-{};
+{
+     ~UPerf() override
+    {
+    }
+};
 #endif
 
 NAO_NAMESPACE_END

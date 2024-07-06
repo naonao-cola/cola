@@ -5,7 +5,7 @@
  * @Date         : 2024-06-21 14:52:37
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-04 18:36:07
+ * @LastEditTime : 2024-07-06 13:37:08
  **/
 #include <cassert>
 
@@ -188,7 +188,7 @@ void test_skpilist()
 }
 
 void test_fs()
-{
+{   UPerf perf;
     UFinally fin = []{
         std::cout<<" finally end"<<std::endl;
     };
