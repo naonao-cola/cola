@@ -27,6 +27,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Add Ubuntu Toolchain PPA
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt update
+          sudo apt install gcc-13 g++-13
+          g++ --version
+
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
