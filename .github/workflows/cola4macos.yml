@@ -28,13 +28,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
-      - name: Install Clang 16
+      - name: Install Clang 18
         run: |
-          echo 'export PATH="/opt/homebrew/opt/llvm@16/bin:$PATH"' >> /Users/runner/.bash_profile
+          echo 'export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH"' >> /Users/runner/.bash_profile
           source ~/.bash_profile
-          export LDFLAGS="-L/opt/homebrew/opt/llvm@16/lib"
-          export CPPFLAGS="-I/opt/homebrew/opt/llvm@16/include"
-          brew install llvm@16
+          export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib"
+          export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include"
+          brew install llvm@18
           llvm-config --version
           clang --version
 
@@ -44,7 +44,8 @@ jobs:
 
       - name: Tests
         run: |
-          echo 'export PATH="/opt/homebrew/opt/llvm@16/bin:$PATH"' >> /Users/runner/.bash_profile
+          brew link --force llvm@18
+          echo 'export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH"' >> /Users/runner/.bash_profile
           source ~/.bash_profile
           xmake clean -a
           xmake f -m debug
