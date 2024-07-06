@@ -5,14 +5,14 @@
  * @Date         : 2024-06-21 18:15:37
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 23:12:03
+ * @LastEditTime : 2024-07-06 10:48:25
  **/
 #include <array>
 #include <filesystem>
 #include <iostream>
 #include <regex>
 #include <utility>
-
+#include <cstring>
 #include "UFs.h"
 
 NAO_NAMESPACE_BEGIN

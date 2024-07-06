@@ -14,7 +14,7 @@ end
 
 --自动更新vs解决方案结构
 add_rules("plugin.vsxmake.autoupdate")
---set_policy("build.cuda.devlink", true)
+set_policy("build.cuda.devlink", true)
 set_encodings("source:utf-8")
 
 includes(
