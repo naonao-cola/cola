@@ -26,6 +26,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@v2
+      - name: Install Clang 16
+        run: |
+          brew install llvm@16
+          llvm-config --version
+
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
