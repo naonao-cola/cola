@@ -5,7 +5,7 @@
  * @Date         : 2024-07-05 21:56:22
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-06 12:14:41
+ * @LastEditTime : 2024-07-06 13:13:31
  **/
 
 #ifndef NAO_UPERF_H
@@ -19,8 +19,8 @@
 
 #if __cplusplus >= 202002L
 #    if __has_include(<source_location>) && __has_include(<format>)
-#        include <source_location>
 #        include <format>
+#        include <source_location>
 #        define HAS_FORMAT 1
 #    else
 #        define HAS_FORMAT 0
@@ -31,10 +31,10 @@
 
 NAO_NAMESPACE_BEGIN
 
-
+#if HAS_FORMAT
 struct UPerf : public UtilsObject
 {
-#if HAS_FORMAT
+
 private:
     char const*                           file;
     std::uint_least32_t                   line;
@@ -45,6 +45,18 @@ private:
         std::uint64_t duration;
         char const*   file;
         int           line;
+        PerfTableEntry()
+        {
+            duration = 0;
+            file     = NULL;
+            line     = 0;
+        }
+        PerfTableEntry(std::uint64_t _duration, char const* _file, int _line)
+            : duration(_duration)
+            , file(_file)
+            , line(_line)
+        {
+        }
     };
 
     struct PerfThreadLocal
@@ -58,11 +70,6 @@ private:
 
     struct PerfGather
     {
-        /* PerfGather() { */
-        /*     signal( */
-        /*         SIGINT, +[](int signo) { std::exit(130); }); */
-        /* } */
-
         PerfGather& operator=(PerfGather&&) = delete;
 
         void dump() const
@@ -100,6 +107,7 @@ private:
             for (auto const& e : table) {
                 m[{e.file, e.line}] += e.duration;
             }
+
             auto t = [](std::uint64_t d) -> std::string {
                 if (d < 10000) {
                     return std::format("{}ns", d);
@@ -117,6 +125,7 @@ private:
                     return std::format("{}h", d / 3'600'000'000'000);
                 }
             };
+
             auto p = [](std::string_view s) -> std::string {
                 auto p = s.rfind('/');
                 if (p == std::string_view::npos) {
@@ -135,6 +144,7 @@ private:
             }
             std::string o;
             auto        oit = std::back_inserter(o);
+
             std::format_to(oit, "{:>{}}:{:<4} {:^6} {:^6} {:^6} {:^6} {:^{}}\n", "file", w, "line", "min", "avg", "max", "sum", "nr", nw + 1);
             for (auto const& [loc, e] : sorted) {
                 std::format_to(oit,
@@ -189,10 +199,13 @@ public:
     {
         auto t1       = std::chrono::steady_clock::now();
         auto duration = (t1 - t0).count();
-        perthread.table.emplace_back(duration, file, line);
+        perthread.table.emplace_back(PerfTableEntry(duration, file, line));
     }
-#endif
 };
+#else
+struct UPerf : public UtilsObject
+{};
+#endif
 
 NAO_NAMESPACE_END
 #endif   // NAO_UPERF_H
