@@ -5,7 +5,7 @@
  * @Date         : 2024-07-05 21:56:22
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-05 23:47:02
+ * @LastEditTime : 2024-07-06 11:40:35
  **/
 
 #ifndef NAO_UPERF_H
@@ -16,14 +16,21 @@
 #include <deque>
 #include <map>
 #include <set>
-#include <source_location>
-#include <format>
 
+#if __cplusplus >= 202002L
+#    if __has_include(<source_location>)
+#        include <source_location>
+#    endif
+#    if __has_include(<format>)
+#        include <format>
+#    endif
+#endif
 NAO_NAMESPACE_BEGIN
 
 
 struct UPerf : public UtilsObject
 {
+#if __cplusplus >= 202002L
 private:
     char const*                           file;
     std::uint_least32_t                   line;
@@ -180,6 +187,7 @@ public:
         auto duration = (t1 - t0).count();
         perthread.table.emplace_back(duration, file, line);
     }
+#endif
 };
 
 NAO_NAMESPACE_END
