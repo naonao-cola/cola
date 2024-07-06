@@ -48,6 +48,6 @@ jobs:
           echo 'export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH"' >> /Users/runner/.bash_profile
           source ~/.bash_profile
           xmake clean -a
-          xmake f -m debug
+          xmake f -m debug  --toolchain=clang --cc=/opt/homebrew/opt/llvm@18/bin/clang --cxx=/opt/homebrew/opt/llvm@18/bin/clang++
           xmake -rvD
           xmake run -a
