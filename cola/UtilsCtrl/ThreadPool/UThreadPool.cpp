@@ -58,7 +58,7 @@ NStatus UThreadPool::init()
 
     if (config_.monitor_enable_) {
         // 默认不开启监控线程
-        monitor_thread_ = std::move(std::thread(&UThreadPool::monitor, this));
+        monitor_thread_ = std::thread(&UThreadPool::monitor, this);
     }
     thread_record_map_.clear();
     thread_record_map_[(NSize)std::hash<std::thread::id>{}(std::this_thread::get_id())] =

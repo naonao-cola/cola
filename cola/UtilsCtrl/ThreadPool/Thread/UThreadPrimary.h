@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/ThreadPool/Thread/UThreadPrimary.h
+ * @FilePath     : /cola/cola/UtilsCtrl/ThreadPool/Thread/UThreadPrimary.h
  * @Description  : 核心线程，处理任务中
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:54:09
+ * @LastEditTime : 2024-07-08 14:04:33
  **/
 #ifndef NAO_UTHREADPRIMARY_H
 #define NAO_UTHREADPRIMARY_H
@@ -37,7 +37,7 @@ protected:
         is_init_ = true;
         metrics_.reset();
         buildStealTargets();
-        thread_ = std::move(std::thread(&UThreadPrimary::run, this));
+        thread_ = std::thread(&UThreadPrimary::run, this);
         setSchedParam();
         setAffinity(index_);
         NAO_FUNCTION_END
@@ -51,9 +51,7 @@ protected:
      * @param poolThreads
      * @param config
      */
-    NStatus setThreadPoolInfo(int index, UAtomicQueue<UTask>* poolTaskQueue,
-                              std::vector<UThreadPrimary*>* poolThreads,
-                              UThreadPoolConfigPtr          config)
+    NStatus setThreadPoolInfo(int index, UAtomicQueue<UTask>* poolTaskQueue, std::vector<UThreadPrimary*>* poolThreads, UThreadPoolConfigPtr config)
     {
         NAO_FUNCTION_BEGIN
         NAO_ASSERT_INIT(false)   // 初始化之前，设置参数
@@ -82,9 +80,7 @@ protected:
          * 防止线程初始化失败的情况，导致的崩溃
          * 理论不会走到这个判断逻辑里面
          */
-        if (std::any_of(pool_threads_->begin(), pool_threads_->end(), [](UThreadPrimary* thd) {
-                return nullptr == thd;
-            })) {
+        if (std::any_of(pool_threads_->begin(), pool_threads_->end(), [](UThreadPrimary* thd) { return nullptr == thd; })) {
             NAO_RETURN_ERROR_STATUS("primary thread is null")
         }
 
@@ -143,8 +139,7 @@ protected:
      */
     NVoid pushTask(UTask&& task)
     {
-        while (!(primary_queue_.tryPush(std::move(task)) ||
-                 secondary_queue_.tryPush(std::move(task)))) {
+        while (!(primary_queue_.tryPush(std::move(task)) || secondary_queue_.tryPush(std::move(task)))) {
             metrics_.local_push_yield_times_++;
             NAO_YIELD();
         }
@@ -163,8 +158,7 @@ protected:
      */
     NVoid pushTask(UTask&& task, NBool enable, NBool lockable)
     {
-        secondary_queue_.push(std::move(task),
-                              enable,
+        secondary_queue_.push(std::move(task), enable,
                               lockable);   // 通过 second 写入，主要是方便其他的thread 进行steal操作
         if (enable && !lockable) {
             cur_empty_epoch_ = 0;
@@ -233,8 +227,7 @@ protected:
              * steal 的时候，先从第二个队列里偷，从而降低触碰锁的概率
              */
             if (likely((*pool_threads_)[target]) &&
-                    (((*pool_threads_)[target])->secondary_queue_.trySteal(task)) ||
-                ((*pool_threads_)[target])->primary_queue_.trySteal(task)) {
+                (((*pool_threads_)[target])->secondary_queue_.trySteal(task) || ((*pool_threads_)[target])->primary_queue_.trySteal(task))) {
                 result = true;
                 break;
             }
@@ -259,8 +252,7 @@ protected:
         NBool result = false;
         for (auto& target : steal_targets_) {
             if (likely((*pool_threads_)[target])) {
-                result = ((*pool_threads_)[target])
-                             ->secondary_queue_.trySteal(tasks, config_->max_steal_batch_size_);
+                result        = ((*pool_threads_)[target])->secondary_queue_.trySteal(tasks, config_->max_steal_batch_size_);
                 auto leftSize = config_->max_steal_batch_size_ - tasks.size();
                 if (leftSize > 0) {
                     result |= ((*pool_threads_)[target])->primary_queue_.trySteal(tasks, leftSize);
@@ -308,12 +300,12 @@ protected:
     }
 
 private:
-    int                       index_;                 // 线程index
-    int                       cur_empty_epoch_ = 0;   // 当前空转的轮数信息
-    UWorkStealingQueue<UTask> primary_queue_;         // 内部队列信息
-    UWorkStealingQueue<UTask> secondary_queue_;   // 第二个队列，用于减少触锁概率，提升性能
-    std::vector<UThreadPrimary*>* pool_threads_;    // 用于存放线程池中的线程信息
-    std::vector<int>              steal_targets_;   // 被偷的目标信息
+    int                           index_;                 // 线程index
+    int                           cur_empty_epoch_ = 0;   // 当前空转的轮数信息
+    UWorkStealingQueue<UTask>     primary_queue_;         // 内部队列信息
+    UWorkStealingQueue<UTask>     secondary_queue_;       // 第二个队列，用于减少触锁概率，提升性能
+    std::vector<UThreadPrimary*>* pool_threads_;          // 用于存放线程池中的线程信息
+    std::vector<int>              steal_targets_;         // 被偷的目标信息
 
     friend class UThreadPool;
     friend class UAllocator;
