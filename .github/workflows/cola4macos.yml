@@ -49,7 +49,8 @@ jobs:
           export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
           export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
           source ~/.bash_profile
+          sudo xrepo install -y "opencv 4.8.0"
           xmake clean -a
           xmake f -m debug  --toolchain=clang --cc=/opt/homebrew/opt/llvm/bin/clang --cxx=/opt/homebrew/opt/llvm/bin/clang++ --ldflags="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
-           xmake build --root -r -v -D -y
+          xmake build --root -r -v -D -y
           xmake run -a
