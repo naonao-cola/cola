@@ -37,5 +37,5 @@ jobs:
         run: |
           xmake clean -a
           xmake f -m debug -a ${{ matrix.arch }}
-          xmake -rvDy
+           xmake build --root -r -v -D -y
           xmake run -a
