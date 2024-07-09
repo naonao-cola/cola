@@ -95,7 +95,7 @@ VXmlr::~VXmlr()
 void VXmlr::readString(const std::string& key, std::string& content)
 {
     cv::FileStorage fs(file_name_, cv::FileStorage::READ);
-    content = fs[key];
+    fs[key] >> content;
     fs.release();
 }
 
