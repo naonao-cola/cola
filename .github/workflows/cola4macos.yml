@@ -51,5 +51,5 @@ jobs:
           source ~/.bash_profile
           xmake clean -a
           xmake f -m debug  --toolchain=clang --cc=/opt/homebrew/opt/llvm/bin/clang --cxx=/opt/homebrew/opt/llvm/bin/clang++ --ldflags="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
-          xmake -rvDy
+           xmake build --root -r -v -D -y
           xmake run -a
