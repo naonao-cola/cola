@@ -51,13 +51,13 @@ AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: true
 
 # 允许短的函数放在同一行: None, InlineOnly(定义在类中), Empty(空函数), Inline(定义在类中，空函数), All
-AllowShortFunctionsOnASingleLine: Inline
+AllowShortFunctionsOnASingleLine: InlineOnly
 
 # 允许短的if语句保持在同一行
-AllowShortIfStatementsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: false
 
 # 允许短的循环保持在同一行
-AllowShortLoopsOnASingleLine: true
+AllowShortLoopsOnASingleLine: false
 
 # 总是在定义返回类型后换行(deprecated)
 AlwaysBreakAfterDefinitionReturnType: None
@@ -93,7 +93,7 @@ BraceWrapping:
   # 函数定义后面
   AfterFunction: true
   # 命名空间定义后面
-  AfterNamespace: false
+  AfterNamespace: true
   # ObjC定义后面
   AfterObjCDeclaration: false
   # struct定义后面
@@ -136,7 +136,7 @@ BreakConstructorInitializersBeforeComma: false
 BreakConstructorInitializers: BeforeComma
 
 # 每行字符的限制，0表示没有限制
-ColumnLimit: 150
+ColumnLimit: 200
 
 # 描述具有特殊意义的注释的正则表达式，它不应该被分割为多行或以其它方式改变
 # CommentPragmas: ''

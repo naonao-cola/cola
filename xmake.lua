@@ -3,6 +3,7 @@
 set_version("0.0.1")
 set_languages("c++20")
 add_rules("mode.debug", "mode.release","mode.releasedbg")
+add_requires("opencv 4.8.x",{system = false})
 
 -- set features on different platform
 if is_plat("macosx") then

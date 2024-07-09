@@ -7,3 +7,8 @@
  * @LastEditors  : naonao
  * @LastEditTime : 2024-06-28 15:42:28
 **/
+#ifndef NAO_VISIONINCLUDE_H
+#define NAO_VISIONINCLUDE_H
+#include "Xml/VXml.h"
+
+#endif // NAO_VISIONINCLUDE_H

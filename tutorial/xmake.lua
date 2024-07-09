@@ -10,6 +10,8 @@
 for _, v in pairs(tutorial_list) do
     target(v)
         set_kind("binary")
+        --3rdparty
+        add_packages("opencv")
         -- framework
         add_includedirs("../cola/")
         add_headerfiles("../cola/**.h")
