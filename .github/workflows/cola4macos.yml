@@ -70,7 +70,6 @@ jobs:
         run: xmake config --arch=${{ matrix.arch }} --cxx_version=${{ matrix.cxx }} --mode=${{ matrix.mode }}   --yes -v --policies=build.ccache:y -c
 
       - name: Tests
-      if: success() || failure()
         run: |
           xmake -y -v
           xmake run -a
