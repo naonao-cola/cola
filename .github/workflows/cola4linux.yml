@@ -22,13 +22,18 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
+        arch: [x86_64]
+        mode: [debug, releasedbg]
 
     runs-on: ${{ matrix.os }}
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Add Ubuntu Toolchain PPA
+      - name: Install system dependencies
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
           sudo apt update
@@ -37,14 +42,30 @@ jobs:
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 13
           g++ --version
 
-      - uses: xmake-io/github-action-setup-xmake@v1
+      - name: Set xmake env
+        run: echo "XMAKE_GLOBALDIR=${{ runner.workspace }}/xmake-global" >> $GITHUB_ENV
+
+      - name: Setup xmake
+        uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
+          # actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
 
-      - name: Tests
+      # Update xmake repository (in order to have the file that will be cached)
+      - name: Update xmake repository
+        run: xmake repo --update
+
+      # Fetch xmake dephash
+      - name: Retrieve dependencies hash
+        id: dep_hash
+        run: echo "hash=$(xmake l utils.ci.packageskey)" >> $GITHUB_OUTPUT
+
+      - name: Configure xmake and install dependencies
+        run: xmake config --arch=${{ matrix.arch }} --mode=${{matrix.mode }}   --require=yes --yes
+
+
+      - name: Build the task
         run: |
-          sudo xrepo install -y "opencv 4.8.0"
           xmake clean -a
-          xmake f -m debug
-          xmake build --root -r -v -D -y
+          xmake --yes
           xmake run -a

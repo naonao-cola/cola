@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/NBasic/NStatus.h
+ * @FilePath     : /cola/cola/NBasic/NStatus.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-21 09:50:45
+ * @LastEditTime : 2024-07-10 17:09:59
  * @Copyright    :
  **/
 #ifndef NAO_STATUS_H
@@ -40,7 +40,7 @@ public:
         this->error_locate_ = locateInfo;
     }
 
-    explicit NSTATUS(int errorCode, const std::string& errorInfo,const std::string& locateInfo = NAO_EMPTY)
+    explicit NSTATUS(int errorCode, const std::string& errorInfo, const std::string& locateInfo = NAO_EMPTY)
     {
         this->error_code_   = errorCode;
         this->error_info_   = errorInfo;

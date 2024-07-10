@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/NBasic/NStdEx.h
+ * @FilePath     : /cola/cola/NBasic/NStdEx.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:49:08
+ * @LastEditTime : 2024-07-10 17:10:10
  * @Copyright    :
  **/
 #ifndef NAO_STDEX_H
@@ -184,10 +184,9 @@ is_byte<char>::value == true
 is_byte<int>::value == false
 !*/
 template<class Byte>
-using is_byte = std::integral_constant < bool,
-      std::is_same<Byte, char>::value || std::is_same<Byte, int8_t>::value || std::is_same<Byte, uint8_t>::value
+using is_byte = std::integral_constant<bool, std::is_same<Byte, char>::value || std::is_same<Byte, int8_t>::value || std::is_same<Byte, uint8_t>::value
 #ifdef __cpp_lib_byte
-          || std::is_same<Byte, std::byte>::value
+                                                 || std::is_same<Byte, std::byte>::value
 #endif
                                        >;
 
@@ -198,8 +197,8 @@ qualifiers and gives you back the basic underlying type.  So for example:
 
 remove_cvref_t<const int&> == int
 !*/
-    template<typename T>
-    using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
+template<typename T>
+using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
 /*!A basic_type
 

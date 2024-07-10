@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/NBasic/NBasicDefine.h
+ * @FilePath     : /cola/cola/NBasic/NBasicDefine.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-22 11:39:31
+ * @LastEditTime : 2024-07-10 17:09:35
  * @Copyright    :
  **/
 #ifndef NAO_BASICDEFINE_H
@@ -12,13 +12,17 @@
 
 #include <cstddef>
 
-#define NAO_NAMESPACE_BEGIN namespace nao {
+#define NAO_NAMESPACE_BEGIN \
+    namespace nao           \
+    {
 /* end of namespace nao */
 #define NAO_NAMESPACE_END }
 
 NAO_NAMESPACE_BEGIN
 
-#define NAO_INTERNAL_NAMESPACE_BEGIN namespace internal {
+#define NAO_INTERNAL_NAMESPACE_BEGIN \
+    namespace internal               \
+    {
 /* end of namespace internal */
 #define NAO_INTERNAL_NAMESPACE_END }
 
