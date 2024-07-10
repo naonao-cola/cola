@@ -48,7 +48,7 @@ jobs:
       - name: Setup xmake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: branch@dev
+          xmake-version: latest
           # actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
 
       # Update xmake repository (in order to have the file that will be cached)
@@ -61,7 +61,7 @@ jobs:
         run: echo "hash=$(xmake l utils.ci.packageskey)" >> $GITHUB_OUTPUT
 
       - name: Configure xmake and install dependencies
-        run: xmake config --arch=${{ matrix.arch }} --mode=${{matrix.mode }}   --opencv=y --yes
+        run: xmake config --arch=${{ matrix.arch }} --mode=${{matrix.mode }}   --require=yes --yes
 
 
       - name: Build the task
