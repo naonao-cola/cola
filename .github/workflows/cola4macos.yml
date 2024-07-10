@@ -21,11 +21,16 @@ jobs:
     strategy:
       matrix:
         os: [macOS-latest]
+        arch: [x86_64,arm64]
+        mode: [debug, releasedbg]
 
     runs-on: ${{ matrix.os }}
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
       - name: Install Clang 18
@@ -38,9 +43,28 @@ jobs:
           llvm-config --version
           clang --version
 
-      - uses: xmake-io/github-action-setup-xmake@v1
+      # Force xmake to a specific folder (for cache)
+      - name: Set xmake env
+        run: echo "XMAKE_GLOBALDIR=${{ runner.workspace }}/xmake-global" >> $GITHUB_ENV
+
+      - name: Setup xmake
+        uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
+          # actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
+
+       # Update xmake repository (in order to have the file that will be cached)
+      - name: Update xmake repository
+        run: xmake repo --update
+
+      # Fetch xmake dephash
+      - name: Retrieve dependencies hash
+        id: dep_hash
+        run: echo "hash=$(xmake l utils.ci.packageskey)" >> $GITHUB_OUTPUT
+
+       # Setup compilation mode and install project dependencies
+      - name: Configure xmake and install dependencies
+        run: xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.mode }}   --require=yes  --yes
 
       - name: Tests
         run: |
@@ -49,8 +73,7 @@ jobs:
           export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
           export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
           source ~/.bash_profile
-          sudo xrepo install -y "opencv 4.8.0"
           xmake clean -a
-          xmake f -m debug  --toolchain=clang --cc=/opt/homebrew/opt/llvm/bin/clang --cxx=/opt/homebrew/opt/llvm/bin/clang++ --ldflags="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
-          xmake build --root -r -v -D -y
+          xmake f  --toolchain=clang --cc=/opt/homebrew/opt/llvm/bin/clang --cxx=/opt/homebrew/opt/llvm/bin/clang++ --ldflags="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
+          xmake --yes
           xmake run -a
