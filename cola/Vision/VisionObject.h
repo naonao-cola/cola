@@ -5,7 +5,7 @@
  * @Date         : 2024-07-08 14:45:34
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-08 14:50:11
+ * @LastEditTime : 2024-07-10 17:06:20
  **/
 
 #ifndef NAO_VISIONOBJECT_H
@@ -20,7 +20,7 @@ NAO_VISION_NAMESPACE_BEGIN
 class VisionObject : public NObject
 {
 protected:
-    NStatus run() override{NAO_NO_SUPPORT};
+    NStatus run() override { NAO_NO_SUPPORT };
 };
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

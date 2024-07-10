@@ -5,7 +5,7 @@
  * @Date         : 2024-07-08 15:02:17
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-08 15:12:13
+ * @LastEditTime : 2024-07-10 17:06:34
  **/
 #ifndef NAO_VXML_H
 #define NAO_VXML_H
@@ -29,7 +29,7 @@ public:
     typedef std::map<std::string, int>::iterator mapsiit;
     explicit VXmlw(const int& type_w, const std::string& file_name);
 
-    VXmlw() =default;
+    VXmlw() = default;
     ~VXmlw() override;
 
     /**

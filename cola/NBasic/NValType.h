@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/NBasic/NValType.h
+ * @FilePath     : /cola/cola/NBasic/NValType.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-22 11:51:06
+ * @LastEditTime : 2024-07-10 17:10:23
  * @Copyright    :
  **/
 #ifndef NAO_VALTYPE_H
@@ -25,7 +25,7 @@ using NInt       = nao::internal::NINT;
 using NLong      = nao::internal::NLONG;
 using NULong     = nao::internal::NULONG;
 using NBool      = nao::internal::NBOOL;
-using NIndex     = nao::internal::NINT;      // 表示标识信息，可以为负数
+using NIndex     = nao::internal::NINT;   // 表示标识信息，可以为负数
 using NFloat     = nao::internal::NFLOAT;
 using NDouble    = nao::internal::NDOUBLE;
 using NConStr    = nao::internal::NCONSTR;   // 表示 const char*
