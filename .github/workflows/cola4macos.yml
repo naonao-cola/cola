@@ -64,7 +64,7 @@ jobs:
 
        # Setup compilation mode and install project dependencies
       - name: Configure xmake and install dependencies
-        run: xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.mode }}   --require=yes  --yes
+        run: xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.mode }}   --toolchain=clang --cc=/opt/homebrew/opt/llvm/bin/clang --cxx=/opt/homebrew/opt/llvm/bin/clang++ --ldflags="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++" --require=yes  --yes
 
       - name: Tests
         run: |
@@ -74,6 +74,5 @@ jobs:
           export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
           source ~/.bash_profile
           xmake clean -a
-          xmake f  --toolchain=clang --cc=/opt/homebrew/opt/llvm/bin/clang --cxx=/opt/homebrew/opt/llvm/bin/clang++ --ldflags="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
           xmake --yes
           xmake run -a
