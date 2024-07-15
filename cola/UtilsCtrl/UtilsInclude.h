@@ -22,6 +22,7 @@
 #include "SerialUniqueArray/USerialUniqueArray.h"
 #include "FileSystem/UFs.h"
 #include "Str/UStr.h"
+#include "Str/UStrCvt.h"
 #include "Hash/UHash.h"
 #include "SkipList/USkipList.h"
 #include "Arean/UArean.h"

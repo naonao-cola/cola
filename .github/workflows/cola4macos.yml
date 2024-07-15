@@ -22,7 +22,6 @@ jobs:
       matrix:
         os: [macOS-latest]
         arch: [x86_64,arm64]
-        cxx: [ cxx20 ]
         mode: [debug, releasedbg]
 
     runs-on: ${{ matrix.os }}
@@ -44,8 +43,8 @@ jobs:
       - name: Install xmake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
-          # xmake-version: latest
-          xmake-version: branch@dev # FIXME. switch to dev branch to fix ci temporary
+          xmake-version: latest
+          #xmake-version: branch@dev # FIXME. switch to dev branch to fix ci temporary
           actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
 
       # Update xmake repository (in order to have the file that will be cached)
@@ -62,15 +61,15 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
-          key: macOS-${{ matrix.arch }}-${{ matrix.mode }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}-15
+          key: macOS-${{ matrix.arch }}-${{ matrix.os }}-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
 
 
       # Setup compilation mode and install project dependencies
       - name: Configure xmake and install dependencies
-        run: xmake config --arch=${{ matrix.arch }} --cxx_version=${{ matrix.cxx }} --mode=${{ matrix.mode }}   --yes -v --policies=build.ccache:y -c
+        run: xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.mode }}   --yes -v --ccache=n
 
-      - name: Tests
-      if: success() || failure()
+      - name: Build the task
         run: |
-          xmake -y -v
+          xmake clean -a
+          xmake -y -vD
           xmake run -a
