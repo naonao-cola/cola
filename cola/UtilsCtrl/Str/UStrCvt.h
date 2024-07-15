@@ -50,7 +50,7 @@ public:
     static char*       Utf8ToAnsi(const char* lpszStr);
     static std::string AnsiToUtf8(const std::string& strAnsi);
     static std::string Utf8ToAnsi(const std::string& strUtf8);
-}
+};
 #endif
 
 NAO_NAMESPACE_END
