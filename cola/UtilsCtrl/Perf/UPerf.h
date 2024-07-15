@@ -5,7 +5,7 @@
  * @Date         : 2024-07-05 21:56:22
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-06 14:02:53
+ * @LastEditTime : 2024-07-15 15:25:23
  **/
 
 #ifndef NAO_UPERF_H
@@ -17,15 +17,20 @@
 #include <map>
 #include <set>
 
-#if __cplusplus >= 202002L
-#    if __has_include(<source_location>) && __has_include(<format>)
-#        include <format>
-#        include <source_location>
-#        define HAS_FORMAT 1
+// macos llvm 对c++20 支持不稳定，编译opencv三方库有问题
+#if defined(_WIN32) || defined(__linux__)
+#    if __cplusplus >= 202002L
+#        if __has_include(<source_location>) && __has_include(<format>)
+#            include <format>
+#            include <source_location>
+#            define HAS_FORMAT 1
+#        else
+#            define HAS_FORMAT 0
+#        endif
 #    else
 #        define HAS_FORMAT 0
 #    endif
-#else
+#elif defined(__APPLE__)
 #    define HAS_FORMAT 0
 #endif
 
@@ -81,10 +86,7 @@ private:
 
             struct PairLess
             {
-                bool operator()(std::pair<std::string_view, int> const& a, std::pair<std::string_view, int> const& b) const
-                {
-                    return std::tie(a.first, a.second) < std::tie(b.first, b.second);
-                }
+                bool operator()(std::pair<std::string_view, int> const& a, std::pair<std::string_view, int> const& b) const { return std::tie(a.first, a.second) < std::tie(b.first, b.second); }
             };
 
             struct Entry
@@ -147,17 +149,7 @@ private:
             auto        oit = std::back_inserter(o);
             std::format_to(oit, "{:>{}}:{:<4} {:^6} {:^6} {:^6} {:^6} {:^{}}\n", "file", w, "line", "min", "avg", "max", "sum", "nr", nw + 1);
             for (auto const& [loc, e] : sorted) {
-                std::format_to(oit,
-                               "{:>{}}:{:<4} {:>6} {:>6} {:>6} {:>6} {:>{}}x\n",
-                               p(loc.first),
-                               w,
-                               loc.second,
-                               t(e.min),
-                               t(e.sum / e.nr),
-                               t(e.max),
-                               t(e.sum),
-                               e.nr,
-                               nw);
+                std::format_to(oit, "{:>{}}:{:<4} {:>6} {:>6} {:>6} {:>6} {:>{}}x\n", p(loc.first), w, loc.second, t(e.min), t(e.sum / e.nr), t(e.max), t(e.sum), e.nr, nw);
             }
             fprintf(stderr, "%s", o.c_str());
         }
@@ -206,9 +198,7 @@ public:
 #    pragma message("HAS_FORMAT is not defined")
 struct UPerf : public UtilsObject
 {
-     ~UPerf() override
-    {
-    }
+    ~UPerf() override {}
 };
 #endif
 
