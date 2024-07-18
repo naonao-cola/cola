@@ -11,7 +11,7 @@ for _, v in pairs(tutorial_list) do
     local target_name = string.format("tutorial-%s", v)
     target(target_name)
         set_kind("binary")
-         set_basename(v)
+        set_basename(v)
         --3rdparty
         add_packages("opencv")
         -- framework

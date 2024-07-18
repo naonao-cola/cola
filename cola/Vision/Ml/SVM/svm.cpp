@@ -7,7 +7,7 @@
  * @Date         : 2024-07-18 19:10:35
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-18 19:10:53
+ * @LastEditTime : 2024-07-18 20:27:49
 **/
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -2664,7 +2664,8 @@ int svm_save_model(const char* model_file_name, const svm_model* model)
 
 	char* old_locale = setlocale(LC_ALL, NULL);
 	if (old_locale) {
-		old_locale = _strdup(old_locale);
+		//old_locale = _strdup(old_locale);
+		old_locale = strdup(old_locale);
 	}
 	setlocale(LC_ALL, "C");
 
@@ -2903,7 +2904,8 @@ svm_model* svm_load_model(const char* model_file_name)
 
 	char* old_locale = setlocale(LC_ALL, NULL);
 	if (old_locale) {
-		old_locale = _strdup(old_locale);
+		//old_locale = _strdup(old_locale);
+		old_locale = strdup(old_locale);
 	}
 	setlocale(LC_ALL, "C");
 
