@@ -1,17 +1,14 @@
 ﻿tutorial_list = {
         "01",
-        "02",
-        "03",
-        "04",
-        "05",
 }
 
 -- add tutorial target one by one
 for _, v in pairs(tutorial_list) do
-    local target_name = string.format("tutorial-%s", v)
+    local target_name = string.format("test-%s", v)
     target(target_name)
         set_kind("binary")
         set_basename(v)
+        set_prefixname("test")
         --3rdparty
         add_packages("opencv")
         -- framework
