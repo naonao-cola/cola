@@ -18,10 +18,10 @@ https://blog.csdn.net/chishuideyu/article/details/78081643
 https://blog.csdn.net/ivandark/article/details/29562201       //理论参考部分
 --------------------------------------------------------------------------------------------------*/
 
-#include <float.h>
-#include <limits.h>
-#include <math.h>
-#include <stdlib.h>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdlib>
 
 
 #include "../../VisionObject.h"

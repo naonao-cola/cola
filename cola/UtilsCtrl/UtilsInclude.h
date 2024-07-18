@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-04 18:37:22
+ * @LastEditTime : 2024-07-16 09:38:56
  **/
 #ifndef NAO_UTILSINCLUDE_H
 #define NAO_UTILSINCLUDE_H
@@ -29,5 +29,6 @@
 #include "Finally/UFinally.h"
 #include "Test/UTest.h"
 #include "Perf/UPerf.h"
+#include "Config/UConfig.h"
 
 #endif   // NAO_UTILSINCLUDE_H
