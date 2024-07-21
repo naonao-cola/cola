@@ -10,17 +10,16 @@
 #ifndef NAONAO_VGEMM_H
 #define NAONAO_VGEMM_H
 
+/*
+https://blog.csdn.net/m0_37772527/article/details/105712693
+https://blog.csdn.net/qq_37059483/article/details/78292869
+*/
 
 #include "../../VisionObject.h"
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
-/*
-https://blog.csdn.net/m0_37772527/article/details/105712693
-https://blog.csdn.net/qq_37059483/article/details/78292869
-
-*/
 struct GGCMFeatures;
 
 class VGemm : public VisionObject
@@ -57,7 +56,6 @@ public:
      */
     void getGGCMFeatures(VecGGCM& vecGGCM, GGCMFeatures& features);
 };
-
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

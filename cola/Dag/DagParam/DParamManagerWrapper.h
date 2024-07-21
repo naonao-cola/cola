@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagParam/DParamManagerWrapper.h
+ * @FilePath     : /cola/cola/Dag/DagParam/DParamManagerWrapper.h
  * @Description  : 本类的子类型，有获取GParam的功能
  * @Author       : naonao
  * @Date         : 2024-06-24 11:53:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:44:36
+ * @LastEditTime : 2024-07-19 09:59:11
  **/
 #ifndef NAO_DPARAMMANAGERWRAPPER_H
 #define NAO_DPARAMMANAGERWRAPPER_H
@@ -82,8 +82,7 @@ NAO_NAMESPACE_BEGIN
     }                                                                                           \
                                                                                                 \
     /**                                                                                         \
-     * 获取所有的keys信息                                                                \
-     * @param keys                                                                              \
+     * 获取所有的keys信息                                                                        \                                                                            \
      * @return                                                                                  \
      */                                                                                         \
     std::vector<std::string> getDParamKeys()                                                    \
@@ -93,8 +92,8 @@ NAO_NAMESPACE_BEGIN
     }                                                                                           \
                                                                                                 \
     /**                                                                                         \
-     * 获取所有的keys信息                                                                \
-     * @param keys                                                                              \
+     * 获取所有被使用的keys信息                                                                   \
+     *                                                                                          \
      * @return                                                                                  \
      */                                                                                         \
     std::vector<std::string> getConcernedDParamKeys() const                                     \

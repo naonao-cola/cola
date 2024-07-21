@@ -10,8 +10,6 @@
 #ifndef NAONAO_VHOG_H
 #define NAONAO_VHOG_H
 
-
-
 #include "../../VisionObject.h"
 
 NAO_NAMESPACE_BEGIN
@@ -57,4 +55,5 @@ private:
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
-#endif
+
+#endif //NAONAO_VHOG_H

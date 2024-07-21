@@ -9,9 +9,9 @@
  **/
 #include "VLsd.h"
 #include "VLsdDefine.h"
+
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
-
 
 /*----------------------------------------------------------------------------*/
 /*----------------------------- Gaussian filter ------------------------------*/
@@ -136,8 +136,6 @@ static image_double gaussian_sampler(image_double input, double scale, double si
     free_image_double(aux);
     return out;
 }
-
-
 
 /*--------------------------------- Gradient  梯度---------------------------------*/
 /*--------------------------------------------------------------------------------------------------
@@ -557,7 +555,6 @@ static double nfa(int n, int k, double p, double logNT)
     return -log10(bin_tail) - logNT;
 }
 
-
 /*--------------------------- Rectangle structure ----------------------------*/
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
@@ -570,8 +567,6 @@ static double nfa(int n, int k, double p, double logNT)
 * @Returns:
 * @Others:
 --------------------------------------------------------------------------------------------------*/
-
-
 struct rect
 {
     double x1, y1, x2, y2; /* first and second point of the line segment */
@@ -582,7 +577,6 @@ struct rect
     double prec;           /* tolerance angle  公差角*/
     double p;              // 角度在“精确”范围内的点的概率
 };
-
 
 /*---------------------------- 复制线段 ------------------------------------------------*/
 static void rect_copy(struct rect* input, struct rect* out)
@@ -702,7 +696,6 @@ static double inter_low(double x, double x1, double y1, double x2, double y2)
     return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
 }
 
-
 /*----------------------------------------------------------------------------*/
 /** Interpolate y value corresponding to 'x' value given, in
 the line 'x1,y1' to 'x2,y2'; if 'x1=x2' return the larger
@@ -727,7 +720,6 @@ static double inter_hi(double x, double x1, double y1, double x2, double y2)
     return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
 }
 
-
 /*----------------------------------------------------------------------------*/
 /** Free memory used by a rectangle iterator.
  */
@@ -740,7 +732,6 @@ static void ri_del(rect_iter* iter)
 
 /*----------------------------------------------------------------------------*/
 /** Check if the iterator finished the full iteration.
-
 See details in \ref rect_iter
 */
 static int ri_end(rect_iter* i)
@@ -757,7 +748,6 @@ static int ri_end(rect_iter* i)
 
 /*----------------------------------------------------------------------------*/
 /** Increment a rectangle iterator.
-
 See details in \ref rect_iter
 */
 static void ri_inc(rect_iter* i)
@@ -829,7 +819,6 @@ static void ri_inc(rect_iter* i)
 
 /*----------------------------------------------------------------------------*/
 /** Create and initialize a rectangle iterator.
-
 See details in \ref rect_iter
 */
 static rect_iter* ri_ini(struct rect* r)
@@ -904,7 +893,6 @@ static rect_iter* ri_ini(struct rect* r)
 
     return i;
 }
-
 
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
@@ -1050,7 +1038,6 @@ static double get_theta(struct point* reg, int reg_size, double x, double y, ima
     return theta;
 }
 
-
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
 * @Author:    闹闹
@@ -1157,9 +1144,6 @@ static void region2rect(struct point* reg, int reg_size, image_double modgrad, d
         rec->width = 1.0;
 }
 
-
-
-
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
 * @Author:    闹闹
@@ -1218,7 +1202,6 @@ static void region_grow(int x, int y, image_double angles, struct point* reg, in
                     *reg_angle = atan2(sumdy, sumdx);
                 }
 }
-
 
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
@@ -1331,8 +1314,6 @@ static double rect_improve(struct rect* rec, image_double angles, double logNT, 
 
     return log_nfa;
 }
-
-
 
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
@@ -1507,8 +1488,6 @@ static int refine(struct point* reg, int* reg_size, image_double modgrad, double
     /* if this point is reached, the density criterion is satisfied */
     return TRUE;
 }
-
-
 
 /*-------------------------- Line Segment Detector ---------------------------*/
 /*--------------------------------------------------------------------------------------------------
@@ -1753,5 +1732,6 @@ double* VLsd::lsd(int* n_out, double* img, int X, int Y)
     double scale = 0.8;   // 高斯核缩放因子
     return lsd_scale(n_out, img, X, Y, scale);
 }
+
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

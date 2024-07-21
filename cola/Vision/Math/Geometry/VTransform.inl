@@ -5,7 +5,7 @@
  * @Date         : 2024-07-16 09:47:07
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-16 09:47:33
+ * @LastEditTime : 2024-07-20 12:17:51
  */
 #ifndef NAONAO_VTRANSFORM_INL
 #define NAONAO_VTRANSFORM_INL
@@ -58,56 +58,60 @@ std::vector<T> VTransform::order_pts(const std::vector<T> src_pt)
 }
 
 template<typename T>
-void VTransform::perspective(const std::vector<T> src_points, const std::vector<T> dst_points, cv::Mat& wrap_mat)
+cv::Mat VTransform::get_perspective(const std::vector<T> src_points, const std::vector<T> dst_points)
 {
-    if (src_points.size() != 4 || dst_points.size() != 4)
-        return;
+    if (src_points.size() != 4 || dst_points.size() != 4) {
+        return cv::Mat();
+    }
     // 排序赋值
     std::vector<T> src_tmp = order_pts(src_points);
     std::vector<T> dst_tmp = order_pts(dst_points);
-    T              src[4], dst[4];
-    for (int i = 0; i < src_tmp.size(); i++)
+    T              src[4];
+    T              dst[4];
+    for (int i = 0; i < src_tmp.size(); i++) {
         src[i] = T(src_tmp[i].x, src_tmp[i].y);
-    for (int i = 0; i < dst_tmp.size(); i++)
+    }
+    for (int i = 0; i < dst_tmp.size(); i++) {
         dst[i] = T(dst_tmp[i].x, dst_tmp[i].y);
-    wrap_mat = cv::getPerspectiveTransform(src, dst).clone();
+    }
+    return cv::getPerspectiveTransform(src, dst).clone();
 }
 
 
 template<typename T>
-void VTransform::perspective(const std::vector<T> pts, cv::Mat& wrap_mat)
+cv::Mat VTransform::get_perspective(const std::vector<T> pts)
 {
-    if (pts.size() != 4)
-        return;
+    if (pts.size() != 4) {
+        return cv::Mat();
+    }
     // 排序
     std::vector<T> tmp_pt = order_pts(pts);
     T              src_pts[4], dst_pts[4];
     // 赋值
     for (int i = 0; i < tmp_pt.size(); i++)
         src_pts[i] = T(tmp_pt[i].x, tmp_pt[i].y);
-    dst_pts[0]  = T(tmp_pt[0].x, tmp_pt[0].y);
-    dst_pts[1]  = T(tmp_pt[2].x, tmp_pt[0].y);
-    dst_pts[2]  = T(tmp_pt[2].x, tmp_pt[2].y);
-    dst_pts[3]  = T(tmp_pt[0].x, tmp_pt[2].y);
-    cv::Mat ret = cv::getPerspectiveTransform(src_pts, dst_pts);
-    wrap_mat    = ret.clone();
+    dst_pts[0] = T(tmp_pt[0].x, tmp_pt[0].y);
+    dst_pts[1] = T(tmp_pt[2].x, tmp_pt[0].y);
+    dst_pts[2] = T(tmp_pt[2].x, tmp_pt[2].y);
+    dst_pts[3] = T(tmp_pt[0].x, tmp_pt[2].y);
+    return cv::getPerspectiveTransform(src_pts, dst_pts);
+
     // 透视变换函数 cv::warpPerspective(,);
 }
 
 template<typename T>
-cv::Mat VTransform::perspective(const std::vector<T> src_points, const std::vector<T> dst_points)
+cv::Mat VTransform::get_perspective_homo(const std::vector<T> src_points, const std::vector<T> dst_points)
 {
     if (src_points.size() != dst_points.size()) {
         return cv::Mat();
     }
-    cv::Mat ret = cv::findHomography(src_points, dst_points, 0);
-    return ret;
+    return cv::findHomography(src_points, dst_points, 0);
+
     // 透视变换函数 cv::warpPerspective(,);
 }
 
-
 template<typename T>
-void VTransform::point_transform(const T src_point, const cv::Mat wrap_mat, T& dst_point)
+T VTransform::perspective_point(const T src_point, const cv::Mat wrap_mat)
 {
     cv::Mat_<double> pt(3, 1);
     pt(0, 0)    = src_point.x;
@@ -117,12 +121,14 @@ void VTransform::point_transform(const T src_point, const cv::Mat wrap_mat, T& d
     double  a1  = ret.at<double>(0, 0);
     double  a2  = ret.at<double>(1, 0);
     double  a3  = ret.at<double>(2, 0);
+    T       dst_point;
     dst_point.x = static_cast<double>(a1 / a3);
     dst_point.y = static_cast<double>(a2 / a3);
+    return dst_point;
 }
 
 template<typename T>
-void VTransform::point_inv_transform(const T& src_point, const cv::Mat& wrap_mat, T& dst_point)
+T VTransform::perspective_inv_point(const T& src_point, const cv::Mat& wrap_mat)
 {
     cv::Mat M_inv;
     cv::invert(wrap_mat, M_inv, cv::DECOMP_SVD);
@@ -134,23 +140,25 @@ void VTransform::point_inv_transform(const T& src_point, const cv::Mat& wrap_mat
     double  a1  = ret.at<double>(0, 0);
     double  a2  = ret.at<double>(1, 0);
     double  a3  = ret.at<double>(2, 0);
+    T       dst_point;
     dst_point.x = static_cast<double>(a1 / a3);
     dst_point.y = static_cast<double>(a2 / a3);
+    return dst_point;
 }
 
 
 template<typename T>
-void VTransform::rotate(const cv::Mat src, cv::Mat& dst, double angle, T center, double scale)
+cv::Mat VTransform::affine_img_rotate(const cv::Mat src, double angle, T center, double scale)
 {
     cv::Mat ret;
     cv::Mat m = cv::getRotationMatrix2D(center, angle, scale);
     cv::warpAffine(src, ret, m, src.size(), cv::INTER_LINEAR + cv::WARP_FILL_OUTLIERS);
-    dst = ret.clone();
+    return ret;
 }
 
 
 template<typename T>
-void VTransform::move(const cv::Mat src, cv::Mat& dst, double xoffset, double yoffset)
+cv::Mat VTransform::affine_img_move(const cv::Mat src, double xoffset, double yoffset)
 {
     T pt1[3], pt2[3];
     // 平移前的位置
@@ -165,18 +173,19 @@ void VTransform::move(const cv::Mat src, cv::Mat& dst, double xoffset, double yo
     cv::Mat m, ret;
     m = cv::getAffineTransform(pt1, pt2);
     cv::warpAffine(src, ret, m, cv::Size(src.cols + xoffset, src.rows + yoffset));
-    dst = ret.clone();
+    return ret;
 }
 
 template<typename T>
-void VTransform::affine(const cv::Mat src, cv::Mat& dst, const T src_points[], const T dst_points[])
+cv::Mat VTransform::affine_img_affine(const cv::Mat src, const T src_points[], const T dst_points[])
 {
     cv::Mat m = cv::getAffineTransform(src_points, dst_points);
     cv::Mat ret;
     cv::warpAffine(src, ret, m, src.size());
-    dst = ret.clone();
+    return ret;
 }
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
+
 #endif

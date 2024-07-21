@@ -5,14 +5,13 @@
  * @Date         : 2024-07-18 16:45:41
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-18 17:02:42
+ * @LastEditTime : 2024-07-20 12:16:24
  **/
 
 #include "VGemm.h"
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
-
 
 struct GGCMFeatures
 {
@@ -56,9 +55,7 @@ VGemm::VGemm()
     : grayLevel_(16)
 {
 }
-VGemm::~VGemm()
-= default;
-
+VGemm::~VGemm() = default;
 void VGemm::initGGCM(VecGGCM& vecGGCM, int size)
 {
     assert(size == grayLevel_);
@@ -270,5 +267,6 @@ void VGemm::getGGCMFeatures(VecGGCM& vecGGCM, GGCMFeatures& features)
     }
     features.corelation = features.corelation / (features.gray_variance * features.grads_variance);
 }
+
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

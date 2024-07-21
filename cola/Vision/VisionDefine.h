@@ -5,18 +5,21 @@
  * @Date         : 2024-06-28 15:43:42
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-08 15:26:26
+ * @LastEditTime : 2024-07-20 12:13:37
  **/
 
 #ifndef NAO_VISIONDEFINE_H
 #define NAO_VISIONDEFINE_H
 
-#include "opencv2/opencv.hpp"
 #include "../NBasic/NBasicInclude.h"
-#include  "../UtilsCtrl/UtilsInclude.h"
+#include "../UtilsCtrl/UtilsInclude.h"
+#include "opencv2/opencv.hpp"
+
 NAO_NAMESPACE_BEGIN
 
-#define NAO_VISION_NAMESPACE_BEGIN namespace vision {
+#define NAO_VISION_NAMESPACE_BEGIN \
+    namespace vision               \
+    {
 /* end of namespace vision */
 #define NAO_VISION_NAMESPACE_END }
 
@@ -37,4 +40,4 @@ NAO_VISION_NAMESPACE_BEGIN
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
-#endif // NAO_VISIONDEFINE_H
+#endif   // NAO_VISIONDEFINE_H

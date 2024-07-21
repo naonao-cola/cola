@@ -112,7 +112,7 @@ cv::Mat getRegionLBPH(const cv::Mat& src, const int& minValue, const int& maxVal
     cv::calcHist(&src, 1, 0, cv::Mat(), result, 1, &histSize, &ranges, true, false);
     // 归一化
     if (normed) {
-        result /= (int)src.total();
+        result /= static_cast<int>(src.total());
     }
     // 结果表示成只有1行的矩阵
     return result.reshape(1, 1);

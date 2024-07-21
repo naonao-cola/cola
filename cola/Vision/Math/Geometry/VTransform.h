@@ -5,14 +5,17 @@
  * @Date         : 2024-07-15 15:01:10
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-16 10:00:53
+ * @LastEditTime : 2024-07-20 12:17:26
  **/
 #ifndef NAO_VTRANSFORM_H
 #define NAO_VTRANSFORM_H
+
 #include "../../VisionObject.h"
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
+
+struct TRigidTrans3D;
 
 class VTransform : public VisionObject
 {
@@ -32,7 +35,7 @@ public:
      * @param wrap_mat   得到的透视矩阵
      */
     template<typename T>
-    void perspective(const std::vector<T> src_points, const std::vector<T> dst_points, cv::Mat& wrap_mat);
+    cv::Mat get_perspective(const std::vector<T> src_points, const std::vector<T> dst_points);
 
     /**
      * @brief    4点透视变换，不需要提供目标点，原点必须是矩形的4个角点，从实际图像变换到正视图
@@ -40,7 +43,7 @@ public:
      * @param wrap_mat 透视矩阵
      */
     template<typename T>
-    void perspective(const std::vector<T> pts, cv::Mat& wrap_mat);
+    cv::Mat get_perspective(const std::vector<T> pts);
     /**
      * @brief   最小二乘法透视矩阵，不限制点的个数，要求一一对应。
      * @tparam T
@@ -49,7 +52,7 @@ public:
      * @return
      */
     template<typename T>
-    cv::Mat perspective(const std::vector<T> src_points, const std::vector<T> dst_points);
+    cv::Mat get_perspective_homo(const std::vector<T> src_points, const std::vector<T> dst_points);
 
     /**
      * @brief 点变换，将实际图像上的点通过透视矩阵，求得到正视图上对应的点
@@ -59,7 +62,7 @@ public:
      * @refer https://www.cnblogs.com/yanghailin/p/12510318.html
      */
     template<typename T>
-    void point_transform(const T src_point, const cv::Mat wrap_mat, T& dst_point);
+    T perspective_point(const T src_point, const cv::Mat wrap_mat);
 
     /**
      * @brief 点反变换，根据透视矩阵反变换，将目标图的点反变换到原图
@@ -69,7 +72,7 @@ public:
      * @param dst_point
      */
     template<typename T>
-    void point_inv_transform(const T& src_point, const cv::Mat& wrap_mat, T& dst_point);
+    T perspective_inv_point(const T& src_point, const cv::Mat& wrap_mat);
 
 
     /*------------------------------------------仿射变换--------------------------------------------------------*/
@@ -79,7 +82,7 @@ public:
      * @param dst  目标图
      * @param flip_type 翻转类型，0，表示上下翻转。1，表示左右翻转。-1表示对角线翻转。
      */
-    void flip(const cv::Mat src, cv::Mat& dst, int flip_type);
+    cv::Mat affine_img_flip(const cv::Mat src, int flip_type);
     /**
      * @brief  图像旋转
      * @param src   原图
@@ -89,7 +92,7 @@ public:
      * @param scale  缩放比例
      */
     template<typename T>
-    void rotate(const cv::Mat src, cv::Mat& dst, double angle, T center = T(0, 0), double scale = 1.0);
+    cv::Mat affine_img_rotate(const cv::Mat src, double angle, T center = T(0, 0), double scale = 1.0);
 
     /**
      * @brief 平移变换
@@ -105,7 +108,7 @@ public:
      * 三点透视变换
      */
     template<typename T>
-    void move(const cv::Mat src, cv::Mat& dst, double xoffset, double yoffset);
+    cv::Mat affine_img_move(const cv::Mat src, double xoffset, double yoffset);
 
     /**
      * @brief 最原始的仿射变换函数,用此函数进行错切变换
@@ -116,20 +119,36 @@ public:
      * @refer https://zhuanlan.zhihu.com/p/387408410
      */
     template<typename T>
-    void affine(const cv::Mat src, cv::Mat& dst, const T src_points[], const T dst_points[]);
+    cv::Mat affine_img_affine(const cv::Mat src, const T src_points[], const T dst_points[]);
 
-    cv::Mat cvMat6_to_cvMat9(const cv::Mat& mtx6);
-    cv::Mat d6_to_cvMat(double d0, double d1, double d2, double d3, double d4, double d5);
+
     /*
     向量的旋转平移变化
     */
     cv::Mat     vector_angle_to_M(double x1, double y1, double d1, double x2, double y2, double d2);
     cv::Point2f TransPoint(const cv::Mat& M, const cv::Point2f& point);
-};
 
+
+    /*------------------------------------------刚体三维变换--------------------------------------------------------*/
+
+    /**
+     * @brief:
+     * @return
+     * @note :
+     * @other:
+     //旋转矩阵关系  https://blog.csdn.net/changbaolong/article/details/8307052
+     //刚体三维旋转变换求解
+     //公式推导与python代码 https://blog.csdn.net/u012836279/article/details/80203170
+     //c++ 代码  https://blog.csdn.net/kewei9/article/details/74157236
+    **/
+    cv::Mat get_affine_3d_matrix(const std::vector<cv::Point3f>& src_point_vec, const std::vector<cv::Point3f>& dst_point_vec);
+
+    TRigidTrans3D get_affine_3d_matrix(const std::vector<cv::Point3f>& src_point_vec, const std::vector<cv::Point3f>& dst_point_vec, int pointsNum);
+};
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
 
 #include "VTransform.inl"
+
 #endif   // NAO_VTRANSFORM_H

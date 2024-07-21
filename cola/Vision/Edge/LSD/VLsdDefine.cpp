@@ -9,9 +9,7 @@
  **/
 
 #include "VLsdDefine.h"
-
 #include <cstdio>
-
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
@@ -104,7 +102,6 @@ void enlarge_ntuple_list(ntuple_list n_tuple)
     }
 }
 
-
 void add_7tuple(ntuple_list out, double v1, double v2, double v3, double v4, double v5, double v6, double v7)
 {
     /* check parameters */
@@ -183,7 +180,6 @@ image_char new_image_char_ini(unsigned int xsize, unsigned int ysize, unsigned c
 
     return image;
 }
-
 
 image_int new_image_int(unsigned int xsize, unsigned int ysize)
 {

@@ -22,7 +22,6 @@ VXmlw::VXmlw(const int& type_w, const std::string& file_name)
     case 1:
         fs_ = cv::FileStorage(file_name_, cv::FileStorage::WRITE);
         fs_ << "WIRTE_TIME" << asctime(localtime(&raw_time));
-
         break;
     case 2: fs_ = cv::FileStorage(file_name_, cv::FileStorage::APPEND); fs_ << "WRITE_TIME" << asctime(localtime(&raw_time));
     default: break;
@@ -35,10 +34,12 @@ VXmlw::VXmlw(const int& type_w, const std::string& file_name)
 VXmlw::~VXmlw()
 {
     fs_.release();
-    if (type_w_ == 1)
+    if (type_w_ == 1) {
         std::cout << "xml rewrite finish" << std::endl;
-    else
+    }
+    else {
         std::cout << "xml append finish" << std::endl;
+    }
 }
 
 cv::FileStorage VXmlw::get_xml_write_object()

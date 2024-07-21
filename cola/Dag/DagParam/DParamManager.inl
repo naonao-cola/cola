@@ -27,8 +27,9 @@ NStatus DParamManager::create(const std::string& key, NBool backtrace)
         return (typeid(*param).name() == typeid(T).name()) ? NStatus() : NErrStatus("create [" + key + "] param duplicate");
     }
 
-    T* ptr = NAO_SAFE_MALLOC_NOBJECT(T)((DParamPtr)ptr)->backtrace_enable_ = backtrace;
-    ((DParamPtr)ptr)->key_                                                 = key;
+    T* ptr = NAO_SAFE_MALLOC_NOBJECT(T)
+    ((DParamPtr)ptr)->key_              = key;
+    ((DParamPtr)ptr)->backtrace_enable_ = backtrace;
     params_map_.insert(std::pair<std::string, T*>(key, ptr));
     NAO_FUNCTION_END
 }

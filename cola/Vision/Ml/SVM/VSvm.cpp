@@ -5,14 +5,11 @@
  * @Date         : 2024-07-18 19:11:03
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-18 19:47:25
- **/
+ * @LastEditTime : 2024-07-20 12:19:35
+**/
 #include "VSvm.h"
-
 #include "../../../UtilsCtrl/FileSystem/UFs.h"
 #include <utility>
-
-
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
@@ -38,6 +35,12 @@ void setDefaultParam()
 VSvm::VSvm(cv::Size train_size)
     : svm_(nullptr)
     , train_size_(train_size)
+{
+    setDefaultParam();
+}
+
+VSvm::VSvm()
+    : svm_(nullptr)
 {
     setDefaultParam();
 }
@@ -286,5 +289,6 @@ void VSvm::test()
     std::cout << "错误率为：" << errorPercentage << std::endl;
     std::cout << "正确率为：" << 1 - errorPercentage << std::endl;
 }
+
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
