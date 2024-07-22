@@ -131,6 +131,9 @@ NVoid DDynamicEngine::analysisDagType(const DSortedDElementPtrSet& elements)
     else if (total_element_arr_.size() == total_end_size_ && front_element_arr_.size() == total_end_size_) {
         dag_type_ = internal::DEngineDagType::ALL_PARALLEL;
     }
+    else {
+        dag_type_ = internal::DEngineDagType::COMMON;
+    }
 }
 
 
@@ -255,8 +258,7 @@ NVoid DDynamicEngine::parallelRunAll()
     std::vector<std::future<NStatus>> futures;
     futures.reserve(total_end_size_);
     for (int i = 0; i < total_end_size_; i++) {
-        futures.emplace_back(
-            thread_pool_->commit([this, i] { return total_element_arr_[i]->fatProcessor(NFunctionType::RUN); }, calcIndex(total_element_arr_[i])));
+        futures.emplace_back(thread_pool_->commit([this, i] { return total_element_arr_[i]->fatProcessor(NFunctionType::RUN); }, calcIndex(total_element_arr_[i])));
     }
 
     for (auto& fut : futures) {

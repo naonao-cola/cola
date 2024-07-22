@@ -1,5 +1,6 @@
 ﻿tutorial_list = {
         "01",
+        "02",
 }
 
 -- add tutorial target one by one
@@ -11,6 +12,7 @@ for _, v in pairs(tutorial_list) do
         set_prefixname("test")
         --3rdparty
         add_packages("opencv")
+        add_packages("eigen")
         -- framework
         add_includedirs("../cola/")
         add_headerfiles("../cola/**.h")

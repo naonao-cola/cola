@@ -5,10 +5,11 @@
  * @Date         : 2024-07-15 15:02:06
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-15 16:29:59
+ * @LastEditTime : 2024-07-20 12:17:05
  **/
 #ifndef NAO_VCALCULATER_H
 #define NAO_VCALCULATER_H
+
 #include "../../VisionObject.h"
 
 NAO_NAMESPACE_BEGIN
@@ -85,6 +86,15 @@ public:
     static cv::Point2d cross_2d_p2l(cv::Point line_pt1, cv::Point line_pt2, cv::Point src_pt);
 
     /**
+     * @brief: 求三角形的面积
+     * @param p1
+     * @param p2
+     * @param p3
+     * @return
+     * @note :
+     **/
+    static double area_triangle(cv::Point2d p1, cv::Point2d p2, cv::Point2d p3);
+    /**
      * @brief:  将线段转化为极坐标
      * @param p
      * @return
@@ -92,6 +102,8 @@ public:
      **/
     static cv::Vec2d get_polar_line(cv::Vec4d p);
 };
+
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
+
 #endif   // NAO_VCALCULATER_H

@@ -18,13 +18,11 @@ https://blog.csdn.net/chishuideyu/article/details/78081643
 https://blog.csdn.net/ivandark/article/details/29562201       //理论参考部分
 --------------------------------------------------------------------------------------------------*/
 
+#include "../../VisionObject.h"
 #include <cfloat>
 #include <climits>
 #include <cmath>
 #include <cstdlib>
-
-
-#include "../../VisionObject.h"
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
@@ -74,6 +72,8 @@ public:
     --------------------------------------------------------------------------------------------------*/
     double* lsd(int* n_out, double* img, int X, int Y);
 };
+
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
-#endif
+
+#endif   // NAONAO_VLSD_H

@@ -233,11 +233,11 @@ private:
      */
     NVoid beforeRun();
 
-    /**
-     * run方法执行之后的执行函数
-     * @return
-     */
-    NVoid afterRun();
+    // /**
+    //  * run方法执行之后的执行函数
+    //  * @return
+    //  */
+    // NVoid afterRun();
 
     /**
      * 判定node是否可以和前面节点一起执行

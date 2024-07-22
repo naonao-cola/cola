@@ -10,14 +10,11 @@
 #ifndef NAO_VXML_H
 #define NAO_VXML_H
 
-
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <time.h>
-
 #include "../VisionObject.h"
-
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
@@ -103,7 +100,6 @@ private:
     mapsi           parent_node_;
 };
 
-
 class VXmlr : public VisionObject
 {
 public:
@@ -187,4 +183,5 @@ NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
 
 #include "VXml.inl"
+
 #endif   // NAO_VXML_H

@@ -10,18 +10,15 @@
 #ifndef NAONAO_VLSDDEFINE_H
 #define NAONAO_VLSDDEFINE_H
 
-
 #include "../../VisionObject.h"
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
-
 #include <float.h>
 #include <limits.h>
 #include <math.h>
 #include <stdlib.h>
-
 
 /** ln(10) */
 #ifndef M_LN10
@@ -106,7 +103,6 @@ void error(const char* msg);
 #    define RELATIVE_ERROR_FACTOR 100.0
 #endif
 
-
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
 * @Author:    闹闹
@@ -132,7 +128,6 @@ int double_equal(double a, double b);
 * @Others:
 --------------------------------------------------------------------------------------------------*/
 double dist(double x1, double y1, double x2, double y2);
-
 
 /*----------------------- 'list of n-tuple' data type ------------------------*/
 /*--------------------------------------------------------------------------------------------------
@@ -180,7 +175,6 @@ void enlarge_ntuple_list(ntuple_list n_tuple);
 /*------------------------------------------- 增加7个数字到链表中 -------------------------------------------*/
 // 此时链表的维度是7维
 void add_7tuple(ntuple_list out, double v1, double v2, double v3, double v4, double v5, double v6, double v7);
-
 
 /*----------------------------- Image Data Types -----------------------------*/
 /*--------------------------------------------------------------------------------------------------
@@ -244,7 +238,6 @@ image_int new_image_int(unsigned int xsize, unsigned int ysize);
 // initialized to the value 'fill_value'. 用fill_value的值 初始化图像
 image_int new_image_int_ini(unsigned int xsize, unsigned int ysize, int fill_value);
 
-
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
 * @Author:    闹闹
@@ -272,8 +265,6 @@ image_double new_image_double(unsigned int xsize, unsigned int ysize);
 /*--------------------------------------------初始化图像数据--------------------------------------------*/
 // initialized to the value 'data'. 用data的值 初始化图像
 image_double new_image_double_ptr(unsigned int xsize, unsigned int ysize, double* data);
-
-
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

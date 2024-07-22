@@ -14,6 +14,7 @@ for _, v in pairs(tutorial_list) do
         set_basename(v)
         --3rdparty
         add_packages("opencv")
+        add_packages("eigen")
         -- framework
         add_includedirs("../cola/")
         add_headerfiles("../cola/**.h")

@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/DElement.cpp
+ * @FilePath     : /cola/cola/Dag/DagElement/DElement.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 11:32:29
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:40:21
+ * @LastEditTime : 2024-07-19 10:03:48
  **/
 #include <algorithm>
 
@@ -32,13 +32,13 @@ NVoid DElement::beforeRun()
 }
 
 
-NVoid DElement::afterRun()
-{
-    for (auto& element : this->run_before_) {
-        element->left_depend_--;
-    }
-    this->done_ = true;
-}
+// NVoid DElement::afterRun()
+// {
+//     for (auto& element : this->run_before_) {
+//         element->left_depend_--;
+//     }
+//     this->done_ = true;
+// }
 
 
 DElementPtr DElement::setName(const std::string& name)

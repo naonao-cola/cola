@@ -5,7 +5,7 @@
  * @Date         : 2024-07-15 17:32:06
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-15 18:41:03
+ * @LastEditTime : 2024-07-20 12:15:57
  **/
 
 #include "VThreshold.h"
@@ -122,7 +122,7 @@ int VThreshold::exec_threshold(cv::Mat& src, THRESHOLD_TYPE type, int doIblack, 
     }
     else if (type == THRESHOLD_TYPE::SAUVOLA) {
         cv::Mat dst;
-        sauvola(src,dst);
+        sauvola(src, dst);
         return -1;
     }
     threshold += minbin;
@@ -280,7 +280,6 @@ int VThreshold::huang(std::vector<int> data)
     return threshold;
 }
 
-
 int VThreshold::huang2(std::vector<int> data)
 {
     int first;
@@ -354,7 +353,6 @@ bool bimodalTest(std::vector<double> y)
     }
     return b;
 }
-
 
 int VThreshold::intermodes(std::vector<int> data)
 {
@@ -842,7 +840,8 @@ int VThreshold::renyi_entropy(std::vector<int> data)
     int threshold;
     int opt_threshold;
 
-    int    ih, it;
+    int    ih;
+    int    it;
     int    first_bin;
     int    last_bin;
     int    tmp_var;

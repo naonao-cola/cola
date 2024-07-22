@@ -5,7 +5,7 @@
  * @Date         : 2024-07-15 17:27:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-15 17:30:23
+ * @LastEditTime : 2024-07-20 12:16:07
  **/
 #ifndef NAONAO_VTHRESHOLD_H
 #define NAONAO_VTHRESHOLD_H
@@ -37,6 +37,7 @@ enum class THRESHOLD_TYPE
     JUBU          = 17,
     SAUVOLA       = 18
 };
+
 enum class METHOD
 {
     MEAN,
@@ -217,7 +218,7 @@ public:
      * @note
      * https://blog.csdn.net/wfh2015/article/details/80418336?spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-3-80418336-blog-86595319.pc_relevant_multi_platform_whitelistv1_exp2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-3-80418336-blog-86595319.pc_relevant_multi_platform_whitelistv1_exp2&utm_relevant_index=6
      */
-    int sauvola(const cv::Mat& src, cv::Mat& dst, const double& k =0.1, const int& wnd_size =7);
+    int sauvola(const cv::Mat& src, cv::Mat& dst, const double& k = 0.1, const int& wnd_size = 7);
 
     /**
      * @brief 执行阈值化
@@ -247,8 +248,6 @@ public:
         return x;
     }
 };
-
-
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

@@ -10,9 +10,7 @@
 #ifndef NAONAO_VLBP_H
 #define NAONAO_VLBP_H
 
-
 #include <utility>
-
 #include "../../VisionObject.h"
 
 NAO_NAMESPACE_BEGIN

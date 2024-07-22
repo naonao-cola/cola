@@ -5,25 +5,26 @@
  * @Date         : 2024-07-18 19:10:54
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-18 19:27:50
+ * @LastEditTime : 2024-07-20 12:18:40
  **/
 #ifndef NAONAO_VSVM_H
 #define NAONAO_VSVM_H
 
 #include "../../VisionObject.h"
+NAO_NAMESPACE_BEGIN
+NAO_VISION_NAMESPACE_BEGIN
+
 extern "C" {
 #include "svm.h"   // From the VLFeat C library
 }
-NAO_NAMESPACE_BEGIN
-NAO_VISION_NAMESPACE_BEGIN
 
 static svm_parameter default_param_;
 
 class VSvm : public VisionObject
 {
 public:
-
     explicit VSvm(cv::Size train_size);
+    VSvm();
     ~VSvm(void) override;
 
     /**
@@ -127,4 +128,5 @@ private:
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
+
 #endif   // NAONAO_VSVM_H

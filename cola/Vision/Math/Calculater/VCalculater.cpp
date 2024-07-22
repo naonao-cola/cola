@@ -90,6 +90,7 @@ cv::Point2d VCalculater::cross_2d_l2l(cv::Point lineOnePt1, cv::Point lineOnePt2
     result.y = y0;
     return result;
 }
+
 cv::Point2d VCalculater::cross_2d_p2l(cv::Point line_pt1, cv::Point line_pt2, cv::Point src_pt)
 {
     cv::Point2f root_pt(0, 0);
@@ -113,6 +114,35 @@ cv::Point2d VCalculater::cross_2d_p2l(cv::Point line_pt1, cv::Point line_pt2, cv
         root_pt.y = (a1 * a1 * src_pt.y - a1 * b1 * src_pt.x - b1 * c1) / (a1 * a1 + b1 * b1);
     }
     return root_pt;
+}
+
+/*
+行列式求解
+std::vector<cv::Point2d> pts;
+pts.emplace_back(0   ,4079);
+pts.emplace_back(351 , 4079);
+pts.emplace_back(0 , 3125);
+pts.emplace_back(306.509827, 4028.913330);
+
+
+area(pts[0], pts[1],pts[2]);
+area(pts[0], pts[1], pts[3]);
+area(pts[0], pts[2], pts[3]);
+area(pts[3], pts[1], pts[2]);
+
+cv::Mat m1 = (cv::Mat_<double>(3, 3) << 0.000000, 4079.000000,1, 351.000000, 4079.000000, 1,0.000000, 3125.000000,1);
+cv::Mat m2 = (cv::Mat_<double>(3, 3) << 0.000000, 4079.000000, 1,351.000000, 4079.000000, 1,306.509827, 4028.913330,1);
+cv::Mat m3 = (cv::Mat_<double>(3, 3) << 0.000000, 4079.000000,1, 0.000000, 3125.000000,  1, 306.509827, 4028.913330,1);
+cv::Mat m4 = (cv::Mat_<double>(3, 3) << 351.000000, 4079.000000,1, 0.000000, 3125.000000,1, 306.509827, 4028.913330,1);
+
+double s1 = 0.5 * std::abs(cv::determinant(m1));
+double s2 = 0.5 * std::abs(cv::determinant(m2));
+double s3 = 0.5 * std::abs(cv::determinant(m3));
+double s4 = 0.5 * std::abs(cv::determinant(m4));
+*/
+double VCalculater::area_triangle(cv::Point2d p1, cv::Point2d p2, cv::Point2d p3)
+{
+    return std::abs((p1.x * p2.y + p2.x * p3.y + p3.x * p1.y - p1.x * p3.y - p2.x * p1.y - p3.x * p2.y) / 2);
 }
 
 cv::Vec2d VCalculater::get_polar_line(cv::Vec4d p)

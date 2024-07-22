@@ -8,8 +8,9 @@
  * @LastEditTime : 2024-07-10 17:06:46
  */
 #ifndef NAO_VXML_INL
+#define NAO_VXML_INL
 
-#    include "VXml.h"
+#include "VXml.h"
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
@@ -57,7 +58,6 @@ void VXmlw::writeChildNode(const std::string& childNodeName, T& data)
 {
     fs_ << childNodeName << data;
 }
-
 
 template<typename T>
 void VXmlr::readValue(const std::string& key, T& value)
