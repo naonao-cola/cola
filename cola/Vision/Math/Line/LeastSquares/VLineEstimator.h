@@ -16,10 +16,10 @@ https://zhuanlan.zhihu.com/p/268884807
 */
 
 #include "../../../VisionObject.h"
-#include <Eigen\Core>
-#include <Eigen\Dense>
-#include <Eigen\Eigenvalues>
-#include <Eigen\Geometry>
+#include <Eigen/Core>
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
+#include <Eigen/Geometry>
 #include <vector>
 
 
@@ -92,7 +92,7 @@ public:
     --------------------------------------------------------------------------------------------------*/
     double mean(std::vector<T> Y);
 
-public:
+private:
     Eigen::VectorXd mat_;
     int             order_;
     double          error_;   // 错误阈值
