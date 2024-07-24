@@ -319,6 +319,62 @@ cv::Mat VFilter::cascade_filter(const cv::Mat& src, int K, int ksize)
     return bilateral_dst;
 }
 
+cv::Mat VFilter::guided_filter(cv::Mat& I, cv::Mat& p, int r, double eps)
+{
+    int wsize = 2 * r + 1;
+    // 数据类型转换
+    I.convertTo(I, CV_64F, 1.0 / 255.0);
+    p.convertTo(p, CV_64F, 1.0 / 255.0);
+
+    // meanI=fmean(I)
+    cv::Mat mean_I;
+    cv::boxFilter(I, mean_I, -1, cv::Size(wsize, wsize), cv::Point(-1, -1), true, cv::BORDER_REFLECT);   // 盒子滤波
+
+    // meanP=fmean(P)
+    cv::Mat mean_p;
+    cv::boxFilter(p, mean_p, -1, cv::Size(wsize, wsize), cv::Point(-1, -1), true, cv::BORDER_REFLECT);   // 盒子滤波
+
+    // corrI=fmean(I.*I)
+    cv::Mat mean_II;
+    mean_II = I.mul(I);
+    cv::boxFilter(mean_II, mean_II, -1, cv::Size(wsize, wsize), cv::Point(-1, -1), true, cv::BORDER_REFLECT);   // 盒子滤波
+
+    // corrIp=fmean(I.*p)
+    cv::Mat mean_Ip;
+    mean_Ip = I.mul(p);
+    cv::boxFilter(mean_Ip, mean_Ip, -1, cv::Size(wsize, wsize), cv::Point(-1, -1), true, cv::BORDER_REFLECT);   // 盒子滤波
+
+    // varI=corrI-meanI.*meanI
+    cv::Mat var_I, mean_mul_I;
+    mean_mul_I = mean_I.mul(mean_I);
+    cv::subtract(mean_II, mean_mul_I, var_I);
+
+    // covIp=corrIp-meanI.*meanp
+    cv::Mat cov_Ip;
+    cv::subtract(mean_Ip, mean_I.mul(mean_p), cov_Ip);
+
+    // a=conIp./(varI+eps)
+    // b=meanp-a.*meanI
+    cv::Mat a, b;
+    cv::divide(cov_Ip, (var_I + eps), a);
+    cv::subtract(mean_p, a.mul(mean_I), b);
+
+    // meana=fmean(a)
+    // meanb=fmean(b)
+    cv::Mat mean_a, mean_b;
+    cv::boxFilter(a, mean_a, -1, cv::Size(wsize, wsize), cv::Point(-1, -1), true, cv::BORDER_REFLECT);   // 盒子滤波
+    cv::boxFilter(b, mean_b, -1, cv::Size(wsize, wsize), cv::Point(-1, -1), true, cv::BORDER_REFLECT);   // 盒子滤波
+
+    // q=meana.*I+meanb
+    cv::Mat q;
+    q = mean_a.mul(I) + mean_b;
+
+    // 数据类型转换
+    I.convertTo(I, CV_8U, 255);
+    p.convertTo(p, CV_8U, 255);
+    q.convertTo(q, CV_8U, 255);
+    return q;
+}
 double VFilter::compute_PSNR(const cv::Mat& Mat1, const cv::Mat& Mat2)
 {
     cv::Mat M1 = Mat1.clone();
