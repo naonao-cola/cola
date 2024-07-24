@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/Distance/Common/UEuclideanDistance.h
+ * @FilePath     : /cola/cola/UtilsCtrl/Distance/Common/UEuclideanDistance.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-21 10:55:12
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-21 12:09:43
+ * @LastEditTime : 2024-07-22 14:22:24
 **/
 #ifndef NAO_UEUCLIDEANDISTANCE_H
 #define NAO_UEUCLIDEANDISTANCE_H

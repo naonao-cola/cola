@@ -78,7 +78,7 @@ private:
     private:
         int length_;
     public:
-        SubSetIndexComparator(int arrayLength)
+        explicit SubSetIndexComparator(int arrayLength)
             : length_(arrayLength)
         {
         }

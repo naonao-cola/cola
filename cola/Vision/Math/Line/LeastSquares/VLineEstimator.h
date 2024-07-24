@@ -5,7 +5,7 @@
  * @Date         : 2024-07-20 23:50:57
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-21 00:09:18
+ * @LastEditTime : 2024-07-22 15:31:56
  **/
 #ifndef NAONAO_VLINEESTIMATOR_H
 #define NAONAO_VLINEESTIMATOR_H
@@ -38,7 +38,7 @@ public:
         , sse_(0)
         , ssr_(0)
         , rmse_(0){};
-    ~VLineParamEstimator() = default;
+    ~VLineParamEstimator() override = default;
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:

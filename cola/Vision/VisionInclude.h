@@ -14,5 +14,7 @@
 #include "Math/VMathInclude.h"
 #include "Ml/VMlInclude.h"
 #include "Xml/VXml.h"
+#include "Filter/VFilter.h"
+
 
 #endif   // NAO_VISIONINCLUDE_H
