@@ -87,6 +87,17 @@ public:
     static cv::Mat cascade_filter(const cv::Mat& src, int K, int ksize = 3);
 
     /**
+     * @brief: O(1) time implementation of guided filter
+     * @param I I(should be a gray - scale / single channel image)
+     * @param p p(should be a gray - scale / single channel image)
+     * @param r local window radius
+     * @param eps regularization parameter
+     * @return
+     * @note : https://blog.csdn.net/weixin_40647819/article/details/89763505
+    **/
+    static cv::Mat guided_filter(cv::Mat& I, cv::Mat& p, int r =9, double eps=0.1*0.1);
+
+    /**
      * @brief			计算信噪比，用于图像质量评价
      * @param Mat1
      * @param Mat2
