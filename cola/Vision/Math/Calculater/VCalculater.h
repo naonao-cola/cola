@@ -101,6 +101,36 @@ public:
      * @note : cv::Vec2d polarline = getPolarLine(cv::Vec4d(x1 - width / 2.0, height / 2.0 - y1, x2 - width / 2.0, height / 2.0 - y2));
      **/
     static cv::Vec2d get_polar_line(cv::Vec4d p);
+
+    /**
+     * @brief:
+     * @param p1
+     * @param p2
+     * @param p3
+     * @param p4
+     * @return
+     * @note :
+     **/
+    static double angle_2d_l2l(cv::Point p1, cv::Point p2, cv::Point p3, cv::Point p4);
+
+    /**
+     * @brief 判断p3是否在 p1,p2所组成的线上。
+     * @param p1
+     * @param p2
+     * @param p3
+     * @return 在线上返回1，在线外返回0
+     */
+    int on_line(const cv::Point p1, const cv::Point p2, const cv::Point p3);
+
+    /**
+     * @brief: 判断点是否在多边形内外
+     * @param pointCoint 点个数
+     * @param ptVec 点集，顺序的点集
+     * @param p 需要测试的点
+     * @return 返回0 是外部，1 是内部或者在多边形上
+     * @note :  https://www.cnblogs.com/anningwang/p/7581545.html
+     **/
+    int in_polygon(int pointCoint, std::vector<cv::Point> ptVec, const cv::Point p);
 };
 
 NAO_VISION_NAMESPACE_END

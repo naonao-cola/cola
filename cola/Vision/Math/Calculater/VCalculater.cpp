@@ -5,7 +5,7 @@
  * @Date         : 2024-07-15 15:02:27
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-15 16:14:36
+ * @LastEditTime : 2024-07-24 10:31:37
  **/
 #include "VCalculater.h"
 
@@ -176,5 +176,71 @@ cv::Vec2d VCalculater::get_polar_line(cv::Vec4d p)
     return cv::Vec2d(r, theta);
 }
 
+double VCalculater::angle_2d_l2l(cv::Point p1, cv::Point p2, cv::Point p3, cv::Point p4)
+{
+    double dx1           = p1.x - p2.x;
+    double dy1           = p1.y - p2.y;
+    double dx2           = p3.x - p4.x;
+    double dy2           = p3.y - p4.y;
+    double m1            = dy1 / dx1;
+    double m2            = dy2 / dx2;
+    double in_side_angle = std::atan(std::abs((m2 - m1) / (1 + (m1 * m2))));
+    double angle         = in_side_angle / CV_PI * 180;
+    if (angle > -370 and angle < 370) {
+        angle = int(angle);
+    }
+    return angle;
+}
+
+/**
+ * @brief 判断p3是否在 p1,p2所组成的线上。
+ * @param p1
+ * @param p2
+ * @param p3
+ * @return 在线上返回1，在线外返回0
+ */
+int VCalculater::on_line(const cv::Point p1, const cv::Point p2, const cv::Point p3)
+{
+    if ((p3.x - p1.x) * (p2.y - p1.y) == (p2.y - p1.x) * (p3.y - p1.y) && std::min(p1.x, p2.x) <= p3.x && p3.x <= std::max(p1.x, p2.x) && std::min(p1.y, p2.y) <= p3.y &&
+        p3.y <= std::max(p1.y, p2.y)) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+int VCalculater::in_polygon(int pointCoint, std::vector<cv::Point> ptVec, const cv::Point p)
+{
+
+    // 首先判断是否在多边形外部，左上，左下，右上，右下
+    std::vector<double> x_value, y_value;
+    for (int i = 0; i < ptVec.size(); i++) {
+        x_value.emplace_back(ptVec[i].x);
+        y_value.emplace_back(ptVec[i].y);
+    }
+    auto   pair_x = std::minmax_element(x_value.begin(), x_value.end());
+    auto   pair_y = std::minmax_element(y_value.begin(), y_value.end());
+    double min_x  = *pair_x.first;
+    double max_x  = *pair_x.second;
+    double min_y  = *pair_y.first;
+    double max_y  = *pair_y.second;
+    if (p.x < min_x || p.x > max_x || p.y > max_y || p.y < min_y) {
+        return 0;
+    }
+    //
+    int i;
+    int j;
+    int c = 0;
+    for (int i = 0, j = pointCoint - 1; i < pointCoint; j = i++) {
+        // 判断是否在线段上
+        if (on_line(ptVec[i], ptVec[j], p))
+            return 1;
+        if (((ptVec[i].y > p.y) != (ptVec[j].y > p.y)) && (p.x < (ptVec[j].x - ptVec[i].x) * (p.y - ptVec[i].y) / (ptVec[j].y - ptVec[i].y + ptVec[i].x))) {
+            c = !c;
+        }
+    }
+    return c;
+}
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
