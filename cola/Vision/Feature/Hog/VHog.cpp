@@ -29,6 +29,7 @@ cv::Mat VHog::operator()(/*int training_index = 0 */)
         cv::Mat roi_img;
         gray_img.convertTo(roi_img, CV_32FC1);
         VlHog* hog = vl_hog_new(VlHogVariant::VlHogVariantUoctti, num_bins_, VL_FALSE);
+        vl_hog_set_use_bilinear_orientation_assignments(hog, VL_TRUE);
         vl_hog_put_image(hog, reinterpret_cast<float*>(roi_img.data), roi_img.cols, roi_img.rows, 1, cell_size_);
         int     ww = static_cast<int>(vl_hog_get_width(hog));   // assert ww == hh == numCells
         int     hh = static_cast<int>(vl_hog_get_height(hog));
