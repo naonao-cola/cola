@@ -14,6 +14,7 @@
 #include "Gemm/VGemm.h"
 #include "Hog/VHog.h"
 #include "LBP/VLbp.h"
+#include "Blob/VBlob.h"
 
 
 #endif   // NAONAO_VFEATUREINCLUDE_H
