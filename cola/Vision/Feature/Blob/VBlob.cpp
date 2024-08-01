@@ -5,12 +5,11 @@
  * @Date         : 2024-07-31 14:02:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-31 16:20:53
+ * @LastEditTime : 2024-07-31 18:47:15
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "VBlob.h"
-
-#include <math.h>
+#include <cmath>
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
@@ -73,7 +72,6 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Mat GrayBuffer, int nMa
     }
 
     if (nTotalLabel < 0) {
-        // 禁用内存
         if (bGrayEmpty) {
             GrayBuffer.release();
         }
@@ -182,12 +180,9 @@ bool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& m
                 if (*ptrLabel == idx) {
                     nSum_in += *ptrGray;
                     nCount_in++;
-
                     // 在标签向量中存储像素坐标
                     BlobResult_.at(nBlobNum).ptIndexs.emplace_back(nSX + x, nSY + y);
-
                     *ptrTemp = static_cast<uchar>(255);
-
                     BlobResult_.at(nBlobNum).nHist[*ptrGray]++;
                 }
                 // 其他情况下背景
@@ -299,7 +294,6 @@ bool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& m
             BlobResult_.at(nBlobNum).fMinorAxis = BoundingBox.size.height;
             BlobResult_.at(nBlobNum).fMajorAxis = BoundingBox.size.width;
         }
-
         // Feret’s area
         BlobResult_.at(nBlobNum).fMinBoxArea = BlobResult_.at(nBlobNum).fMinorAxis * BlobResult_.at(nBlobNum).fMajorAxis;
 
@@ -310,7 +304,6 @@ bool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& m
         else {
             BlobResult_.at(nBlobNum).fAxisRatio = 0.F;
         }
-
         // Min Bounding Box面积比/对象面积(区域孔隙率)
         BlobResult_.at(nBlobNum).fMinBoxRatio = BlobResult_.at(nBlobNum).fMinBoxArea / static_cast<float>(BlobResult_.at(nBlobNum).nArea);
         // choikwangil
@@ -337,8 +330,7 @@ bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
 #    pragma omp parallel for
 #endif
     for (int idx = 1; idx <= nTotalLabel; idx++) {
-        int nBlobNum = idx - 1;
-
+        int nBlobNum                            = idx - 1;
         BlobResult_.at(nBlobNum).rectBox.x      = matStats.at<int>(idx, cv::CC_STAT_LEFT);
         BlobResult_.at(nBlobNum).rectBox.y      = matStats.at<int>(idx, cv::CC_STAT_TOP);
         BlobResult_.at(nBlobNum).rectBox.width  = matStats.at<int>(idx, cv::CC_STAT_WIDTH);
@@ -346,11 +338,10 @@ bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
 
         // 对象周围(用于背景GV)
         int nOffSet = 20;
-
-        int nSX = BlobResult_.at(nBlobNum).rectBox.x - nOffSet;
-        int nSY = BlobResult_.at(nBlobNum).rectBox.y - nOffSet;
-        int nEX = BlobResult_.at(nBlobNum).rectBox.x + BlobResult_.at(nBlobNum).rectBox.width + nOffSet + nOffSet;
-        int nEY = BlobResult_.at(nBlobNum).rectBox.y + BlobResult_.at(nBlobNum).rectBox.height + nOffSet + nOffSet;
+        int nSX     = BlobResult_.at(nBlobNum).rectBox.x - nOffSet;
+        int nSY     = BlobResult_.at(nBlobNum).rectBox.y - nOffSet;
+        int nEX     = BlobResult_.at(nBlobNum).rectBox.x + BlobResult_.at(nBlobNum).rectBox.width + nOffSet + nOffSet;
+        int nEY     = BlobResult_.at(nBlobNum).rectBox.y + BlobResult_.at(nBlobNum).rectBox.height + nOffSet + nOffSet;
 
         if (nSX < 0) {
             nSX = 0;
@@ -380,7 +371,6 @@ bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
             int*    ptrLabel = reinterpret_cast<int*>(matTmp_label.ptr(y));
             ushort* ptrGray  = reinterpret_cast<ushort*>(matTmp_src.ptr(y));
             uchar*  ptrTemp  = matTemp.ptr(y);
-
             for (int x = 0; x < rectTemp.width; x++, ptrLabel++, ptrGray++, ptrTemp++) {
                 // 对象
                 if (*ptrLabel == idx) {
@@ -534,15 +524,12 @@ bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
 bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat GrayBuffer, int nMaxDefectCount)
 {
     Release();
-    // 如果没有画面,则返回
     if (ThresholdBuffer.empty()) {
         return false;
     }
-    // 如果不是1频道
     if (ThresholdBuffer.channels() != 1) {
         return false;
     }
-    // 如果Gray画面不存在X&1频道
     bool bGrayEmpty = false;
     if (GrayBuffer.empty() || GrayBuffer.channels() != 1) {
         GrayBuffer = ThresholdBuffer.clone();
@@ -566,7 +553,6 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat G
     }
     // 异常处理
     if (nTotalLabel < 0) {
-        // 禁用内存
         if (bGrayEmpty) {
             GrayBuffer.release();
         }
@@ -594,7 +580,7 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat G
     }
 
     CoordApply(rectROI, nTotalLabel);
-    // 禁用内存
+
     if (bGrayEmpty) {
         GrayBuffer.release();
     }
@@ -607,7 +593,6 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat G
     if (!matCentroid.empty()) {
         matCentroid.release();
     }
-    // Blob完成
     bComplete_ = true;
     return true;
 }
@@ -629,6 +614,227 @@ void VBlob::CoordApply(cv::Rect rectROI, int nTotalLabel)
             BlobResult_.at(nBlobNum).ptContours[idx].y += rectROI.tl().y;
         }
     }
+}
+std::vector<tBLOB_FEATURE> VBlob::DoDefectBlobSingleJudgment(const std::vector<STRU_DEFECT_ITEM>& EngineerBlockDefectJudge)
+{
+    std::vector<tBLOB_FEATURE> dst_blob;
+    for (int nFork = 0; nFork < EngineerBlockDefectJudge.size(); nFork++) {
+        if (EngineerBlockDefectJudge[nFork].strItemName.empty()) {
+            continue;
+        }
+        for (int i = 0; i < BlobResult_.size(); i++) {
+            bool bFilter = true;
+            bool bInit   = false;
+            for (int nForj = 0; nForj < EngineerBlockDefectJudge[nFork].Judgment.size(); nForj++) {
+                // 特征未使用，或者过滤特征大于特征总数
+                if (!EngineerBlockDefectJudge[nFork].Judgment[nForj].bUse || EngineerBlockDefectJudge[nFork].Judgment[nForj].feature_index > E_FEATURE_COUNT) {
+                    continue;
+                }
+                bInit = true;
+                if (!DoFiltering(BlobResult_[i],                                                  // Blob结果
+                                 EngineerBlockDefectJudge[nFork].Judgment[nForj].feature_index,   // 比较Feature
+                                 EngineerBlockDefectJudge[nFork].Judgment[nForj].nSign,           // 运算符（<，>，==，<=，>=）
+                                 EngineerBlockDefectJudge[nFork].Judgment[nForj].dValue))         // 值
+                {
+                    bFilter = false;
+                    break;
+                }
+            }
+            // 满足所有设置的条件
+            if (bInit && bFilter) {
+                BlobResult_[i].bFiltering = true;
+                dst_blob.push_back(BlobResult_[i]);
+            }
+        }
+    }
+    return dst_blob;
+}
+
+bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, double dValue)
+{
+    // 如果已过滤，则排除
+    if (tBlobResult.bFiltering) {
+        return false;
+    }
+    bool bRes = false;
+    switch (nBlobFilter) {
+    case E_FEATURE_AREA:
+        bRes = Compare(static_cast<double>(tBlobResult.nArea), nSign, dValue);
+        break;
+    case E_FEATURE_BOX_AREA:
+        bRes = Compare(static_cast<double>(tBlobResult.nBoxArea), nSign, dValue);
+        break;
+    case E_FEATURE_BOX_RATIO:
+        bRes = Compare(static_cast<double>(tBlobResult.fBoxRatio), nSign, dValue);
+        break;
+    case E_FEATURE_BOX_X:
+        bRes = Compare(static_cast<double>(tBlobResult.rectBox.width), nSign, dValue);
+        break;
+    case E_FEATURE_BOX_Y:
+        bRes = Compare(static_cast<double>(tBlobResult.rectBox.height), nSign, dValue);
+        break;
+    case E_FEATURE_SUM_GV:
+        bRes = Compare(static_cast<double>(tBlobResult.nSumGV), nSign, dValue);
+        break;
+    case E_FEATURE_MIN_GV:
+        bRes = Compare(static_cast<double>(tBlobResult.nMinGV), nSign, dValue);
+        break;
+    case E_FEATURE_MAX_GV:
+        bRes = Compare(static_cast<double>(tBlobResult.nMaxGV), nSign, dValue);
+        break;
+    case E_FEATURE_MEAN_GV:
+        bRes = Compare(static_cast<double>(tBlobResult.fMeanGV), nSign, dValue);
+        break;
+    case E_FEATURE_DIFF_GV:
+        bRes = Compare(static_cast<double>(tBlobResult.fDiffGV), nSign, dValue);
+        break;
+    case E_FEATURE_BK_GV:
+        bRes = Compare(static_cast<double>(tBlobResult.fBKGV), nSign, dValue);
+        break;
+    case E_FEATURE_STD_DEV:
+        bRes = Compare(static_cast<double>(tBlobResult.fStdDev), nSign, dValue);
+        break;
+    case E_FEATURE_SEMU:
+        bRes = Compare(static_cast<double>(tBlobResult.fSEMU), nSign, dValue);
+        break;
+    case E_FEATURE_COMPACTNESS:
+        bRes = Compare(static_cast<double>(tBlobResult.fCompactness), nSign, dValue);
+        break;
+    case E_FEATURE_MIN_GV_RATIO:
+        bRes = Compare(static_cast<double>(tBlobResult.nMinGVRatio), nSign, dValue);
+        break;
+    case E_FEATURE_MAX_GV_RATIO:
+        bRes = Compare(static_cast<double>(tBlobResult.nMaxGVRatio), nSign, dValue);
+        break;
+    case E_FEATURE_DIFF_GV_RATIO:
+        bRes = Compare(static_cast<double>(tBlobResult.fDiffGVRatio), nSign, dValue);
+        break;
+    case E_FEATURE_PERIMETER:
+        bRes = Compare(static_cast<double>(tBlobResult.fPerimeter), nSign, dValue);
+        break;
+    case E_FEATURE_ROUNDNESS:
+        bRes = Compare(static_cast<double>(tBlobResult.fRoundness), nSign, dValue);
+        break;
+    case E_FEATURE_ELONGATION:
+        bRes = Compare(static_cast<double>(tBlobResult.fElongation), nSign, dValue);
+        break;
+    case E_FEATURE_MIN_BOX_AREA:
+        bRes = Compare(static_cast<double>(tBlobResult.fMinBoxArea), nSign, dValue);
+        break;
+    case E_FEATURE_MINOR_AXIS:
+        bRes = Compare(static_cast<double>(tBlobResult.fMinorAxis), nSign, dValue);
+        break;
+    case E_FEATURE_MAJOR_AXIS:
+        bRes = Compare(static_cast<double>(tBlobResult.fMajorAxis), nSign, dValue);
+        break;
+    case E_FEATURE_AXIS_RATIO:
+        bRes = Compare(static_cast<double>(tBlobResult.fAxisRatio), nSign, dValue);
+        break;
+    case E_FEATURE_MIN_BOX_RATIO:
+        bRes = Compare(static_cast<double>(tBlobResult.fMinBoxRatio), nSign, dValue);
+        break;
+    case E_FEATURE_GV_UP_COUNT_0:
+    case E_FEATURE_GV_UP_COUNT_1:
+    case E_FEATURE_GV_UP_COUNT_2:
+    {
+        int nCount = static_cast<int>(dValue) / 10000;
+        int nGV    = static_cast<int>(dValue) % 10000;
+
+        if (nGV < 0) {
+            nGV = 0;
+        }
+        if (nGV > IMAGE_MAX_GV) {
+            nGV = IMAGE_MAX_GV - 1;
+        }
+
+        __int64 nHist = 0;
+        for (int m = nGV; m < IMAGE_MAX_GV; m++) {
+            nHist += tBlobResult.nHist[m];
+        }
+
+        bRes = Compare(static_cast<double>(nHist), nSign, static_cast<double>(nCount));
+    }; break;
+
+    case E_FEATURE_GV_DOWN_COUNT_0:
+    case E_FEATURE_GV_DOWN_COUNT_1:
+    case E_FEATURE_GV_DOWN_COUNT_2:
+    {
+        int nCount = static_cast<int>(dValue) / 10000;
+        int nGV    = static_cast<int>(dValue) % 10000;
+
+        if (nGV < 0) {
+            nGV = 0;
+        }
+        if (nGV > IMAGE_MAX_GV) {
+            nGV = IMAGE_MAX_GV - 1;
+        }
+        __int64 nHist = 0;
+        for (int m = 0; m <= nGV; m++) {
+            nHist += tBlobResult.nHist[m];
+        }
+        bRes = Compare(static_cast<double>(nHist), nSign, static_cast<double>(nCount));
+    }; break;
+
+    case E_FEATURE_MEANAREA_RATIO:   // choikwangil
+        bRes = Compare(static_cast<double>(tBlobResult.fMeanAreaRatio), nSign, dValue);
+        break;
+
+    case E_FEATURE_GVAREA_RATIO_TEST:   // 04.20 choi
+    {
+
+        int    nTmp    = static_cast<int>(dValue) % 10000;
+        double nPer    = (dValue - static_cast<double>(nTmp)) / 10000.0;
+        double nRatio  = nTmp / 1000;
+        double Mean_GV = tBlobResult.fBKGV * nRatio;
+        if (Mean_GV < 0) {
+            Mean_GV = 0;
+        }
+        if (Mean_GV > IMAGE_MAX_GV) {
+            Mean_GV = IMAGE_MAX_GV - 1;
+        }
+        __int64 nHist = 0;
+        for (int m = Mean_GV; m <= 255; m++) {
+            nHist += tBlobResult.nHist[m];
+        }
+        double Area_per = nHist / tBlobResult.nBoxArea;
+        Area_per *= 100;
+        bRes = Compare(Area_per, nSign, nPer);
+    }; break;
+    default:
+        bRes = false;
+        break;
+    }
+    return bRes;
+}
+
+// 运算符(<,>,==,<=,>=)
+bool VBlob::Compare(double dFeatureValue, int nSign, double dValue)
+{
+    bool bRes = false;
+    switch (nSign) {
+    case E_SIGN_EQUAL:
+        bRes = dFeatureValue == dValue;   // x == judgment value
+        break;
+    case E_SIGN_NOT_EQUAL:
+        bRes = dFeatureValue != dValue;   // x != judgment value
+        break;
+    case E_SIGN_GREATER:
+        bRes = dFeatureValue > dValue;   // x >  judgment value
+        break;
+    case E_SIGN_LESS:
+        bRes = dFeatureValue < dValue;   // x <  judgment value
+        break;
+    case E_SIGN_GREATER_OR_EQUAL:
+        bRes = dFeatureValue >= dValue;   // x >= judgment value
+        break;
+    case E_SIGN_LESS_OR_EQUAL:
+        bRes = dFeatureValue <= dValue;   // x <= judgment value
+        break;
+    default:
+        bRes = false;
+        break;
+    }
+    return bRes;
 }
 
 NAO_VISION_NAMESPACE_END

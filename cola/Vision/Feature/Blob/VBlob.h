@@ -5,7 +5,7 @@
  * @Date         : 2024-07-31 11:24:32
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-31 14:07:56
+ * @LastEditTime : 2024-07-31 17:23:28
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VBLOB_H
@@ -31,6 +31,10 @@ public:
     void CoordApply(cv::Rect rectROI, int nTotalLabel);
     bool DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, int nTotalLabel);
     bool DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, int nTotalLabel);
+
+    std::vector<tBLOB_FEATURE> DoDefectBlobSingleJudgment(const std::vector<STRU_DEFECT_ITEM>& EngineerBlockDefectJudge);
+    bool                       DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, double dValue);
+    bool                       Compare(double dFeatureValue, int nSign, double dValue);
 
 protected:
     bool                       bComplete_;    // 确认Blob是否已完成。

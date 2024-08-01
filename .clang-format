@@ -48,7 +48,7 @@ AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: Empty
 
 # 允许短的case标签放在同一行
-AllowShortCaseLabelsOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: false
 
 # 允许短的函数放在同一行: None, InlineOnly(定义在类中), Empty(空函数), Inline(定义在类中，空函数), All
 AllowShortFunctionsOnASingleLine: InlineOnly
@@ -111,7 +111,7 @@ BraceWrapping:
   # 空函数的大括号是否可以在一行
   SplitEmptyFunction: true
   # 空记录体(struct/class/union)的大括号是否可以在一行
-  SplitEmptyRecord: false
+  SplitEmptyRecord: true
   # 空名字空间的大括号是否可以在一行
   SplitEmptyNamespace: false
 

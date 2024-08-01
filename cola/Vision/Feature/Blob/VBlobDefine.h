@@ -5,7 +5,7 @@
  * @Date         : 2024-07-31 10:52:14
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-31 10:52:14
+ * @LastEditTime : 2024-07-31 17:30:38
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VBLOBDEFINE_H
@@ -27,49 +27,43 @@ NAO_VISION_NAMESPACE_BEGIN
 // 不良
 enum ENUM_BOLB_FEATURE
 {
-    E_FEATURE_AREA = 0,        // 客体面积
-    E_FEATURE_BOX_AREA,        // bounding box面积
-    E_FEATURE_BOX_RATIO,       // 客体面积 / Bounding Box面积比例
-    E_FEATURE_SUM_GV,          // 亮度累积
-    E_FEATURE_MIN_GV,          // 最小亮度
-    E_FEATURE_MAX_GV,          // 最大亮度
-    E_FEATURE_MEAN_GV,         // 平均亮度
-    E_FEATURE_DIFF_GV,         // (背景-对象)亮度差异
-    E_FEATURE_BK_GV,           // 背景亮度
-    E_FEATURE_STD_DEV,         // 标准偏差
-    E_FEATURE_SEMU,            // SEMU
-    E_FEATURE_COMPACTNESS,     // 客体有多接近圆的形状?
-    E_FEATURE_MIN_GV_RATIO,    // 对象最小亮度/背景亮度
-    E_FEATURE_MAX_GV_RATIO,    // 对象最大亮度/背景亮度
-    E_FEATURE_DIFF_GV_RATIO,   // 对象的平均亮度/背景亮度
-    E_FEATURE_PERIMETER,       // 外环线的长度
-    E_FEATURE_ROUNDNESS,       //
-    E_FEATURE_ELONGATION,      // Box 横向/纵向
-    E_FEATURE_BOX_X,           // Bounding Box横向长度
-    E_FEATURE_BOX_Y,           // Bounding Box纵向长度
-
-    E_FEATURE_MIN_BOX_AREA,    // Feret’s area
-    E_FEATURE_MINOR_AXIS,      // 长轴
-    E_FEATURE_MAJOR_AXIS,      // 短轴
-    E_FEATURE_AXIS_RATIO,      // 长/短轴
-    E_FEATURE_MIN_BOX_RATIO,   // 对象面积/ Min Bounding Box面积比例(Area porosity)
-
-    E_FEATURE_GV_UP_COUNT_0,     // 亮度数量
-    E_FEATURE_GV_UP_COUNT_1,     // 亮度数量
-    E_FEATURE_GV_UP_COUNT_2,     // 亮度数量
-    E_FEATURE_GV_DOWN_COUNT_0,   // 亮度数量
-    E_FEATURE_GV_DOWN_COUNT_1,   // 亮度数量
-    E_FEATURE_GV_DOWN_COUNT_2,   // 亮度数量
-
-    E_FEATURE_MEANAREA_RATIO,   // MeanAreaRatio choikwangil
-
+    E_FEATURE_AREA = 0,            // 客体面积
+    E_FEATURE_BOX_AREA,            // bounding box面积
+    E_FEATURE_BOX_RATIO,           // 客体面积 / Bounding Box面积比例
+    E_FEATURE_SUM_GV,              // 亮度累积
+    E_FEATURE_MIN_GV,              // 最小亮度
+    E_FEATURE_MAX_GV,              // 最大亮度
+    E_FEATURE_MEAN_GV,             // 平均亮度
+    E_FEATURE_DIFF_GV,             // (背景-对象)亮度差异
+    E_FEATURE_BK_GV,               // 背景亮度
+    E_FEATURE_STD_DEV,             // 标准偏差
+    E_FEATURE_SEMU,                // SEMU
+    E_FEATURE_COMPACTNESS,         // 客体有多接近圆的形状?
+    E_FEATURE_MIN_GV_RATIO,        // 对象最小亮度/背景亮度
+    E_FEATURE_MAX_GV_RATIO,        // 对象最大亮度/背景亮度
+    E_FEATURE_DIFF_GV_RATIO,       // 对象的平均亮度/背景亮度
+    E_FEATURE_PERIMETER,           // 外环线的长度
+    E_FEATURE_ROUNDNESS,           //
+    E_FEATURE_ELONGATION,          // Box 横向/纵向
+    E_FEATURE_BOX_X,               // Bounding Box横向长度
+    E_FEATURE_BOX_Y,               // Bounding Box纵向长度
+    E_FEATURE_MIN_BOX_AREA,        // Feret’s area
+    E_FEATURE_MINOR_AXIS,          // 长轴
+    E_FEATURE_MAJOR_AXIS,          // 短轴
+    E_FEATURE_AXIS_RATIO,          // 长/短轴
+    E_FEATURE_MIN_BOX_RATIO,       // 对象面积/ Min Bounding Box面积比例(Area porosity)
+    E_FEATURE_GV_UP_COUNT_0,       // 亮度数量
+    E_FEATURE_GV_UP_COUNT_1,       // 亮度数量
+    E_FEATURE_GV_UP_COUNT_2,       // 亮度数量
+    E_FEATURE_GV_DOWN_COUNT_0,     // 亮度数量
+    E_FEATURE_GV_DOWN_COUNT_1,     // 亮度数量
+    E_FEATURE_GV_DOWN_COUNT_2,     // 亮度数量
+    E_FEATURE_MEANAREA_RATIO,      // MeanAreaRatio choikwangil
     E_FEATURE_GVAREA_RATIO_TEST,   // 04.17 choikwangil
-
-    E_FEATURE_IS_EDGE_C,        // 看他在不在外围
-    E_FEATURE_IS_EDGE_V,        // 位于郊区的垂直位置
-    E_FEATURE_IS_EDGE_H,        // 它位于郊区吗？
-    E_FEATURE_IS_EDGE_CENTER,   // 不在外围的位置
-
+    E_FEATURE_IS_EDGE_C,           // 看他在不在外围
+    E_FEATURE_IS_EDGE_V,           // 位于郊区的垂直位置
+    E_FEATURE_IS_EDGE_H,           // 它位于郊区吗？
+    E_FEATURE_IS_EDGE_CENTER,      // 不在外围的位置
     E_FEATURE_COUNT
 };
 
@@ -123,8 +117,7 @@ struct tBLOB_FEATURE
     tBLOB_FEATURE()
         : nArea(0)
     {
-        bFiltering = false;
-
+        bFiltering     = false;
         rectBox        = cv::Rect(0, 0, 0, 0);
         nArea          = 0;
         nBoxArea       = 0;
@@ -162,6 +155,38 @@ struct tBLOB_FEATURE
         std::vector<cv::Point>().swap(ptContours);
     }
 };
+
+const int MAX_MEM_SIZE_E_DEFECT_JUDGMENT_COUNT = 70;
+const int MAX_MEM_SIZE_E_DEFECT_NAME_COUNT     = 150;
+
+// 不等号运算符(<,>,==,<=,>=)
+enum ENUM_SIGN_OF_INEQUALITY
+{
+    E_SIGN_EQUAL = 0,          // x == judgment value
+    E_SIGN_NOT_EQUAL,          // x != judgment value
+    E_SIGN_GREATER,            // x >  judgment value
+    E_SIGN_LESS,               // x <  judgment value
+    E_SIGN_GREATER_OR_EQUAL,   // x >= judgment value
+    E_SIGN_LESS_OR_EQUAL       // x <= judgment value
+};
+
+struct STRU_JUDGEMENT
+{
+    bool   bUse{};          // 是否选择判定项目
+    int    nSign{};         // 运算符(<,>,==,<=,>=)
+    double dValue{};        // 价钱
+    int    feature_index;   // 特征的序号，与特征枚举值相关联
+    // 初始化结构体
+    STRU_JUDGEMENT() { memset(this, 0, sizeof(STRU_JUDGEMENT)); }
+};
+
+struct STRU_DEFECT_ITEM
+{
+    bool                        bDefectItemUse{};   // 是否使用算法
+    std::string                 strItemName;
+    std::vector<STRU_JUDGEMENT> Judgment;   // 每个Defect判定项目2个范围
+};
+
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

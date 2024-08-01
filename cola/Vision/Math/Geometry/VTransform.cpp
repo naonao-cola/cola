@@ -95,8 +95,12 @@ cv::Mat VTransform::get_affine_3d_matrix(const std::vector<cv::Point3f>& src_poi
 
 TRigidTrans3D VTransform::get_affine_3d_matrix(const std::vector<cv::Point3f>& src_point_vec, const std::vector<cv::Point3f>& dst_point_vec, int pointsNum)
 {
-
-    cv::Mat       src_avg, dst_avg, src_rep, dst_rep, srcMat, dstMat;
+    cv::Mat       src_avg;
+    cv::Mat       dst_avg;
+    cv::Mat       src_rep;
+    cv::Mat       dst_rep;
+    cv::Mat       srcMat;
+    cv::Mat       dstMat;
     TRigidTrans3D transform;
     cv::Mat       src_mat = cv::Mat(src_point_vec, true).reshape(1, pointsNum);
     cv::Mat       dst_mat = cv::Mat(dst_point_vec, true).reshape(1, pointsNum);
@@ -108,7 +112,9 @@ TRigidTrans3D VTransform::get_affine_3d_matrix(const std::vector<cv::Point3f>& s
     dstMat = (dst_mat - dst_rep).t();
 
     cv::Mat matS = srcMat * dstMat.t();
-    cv::Mat matU, matW, matV;
+    cv::Mat matU;
+    cv::Mat matW;
+    cv::Mat matV;
     cv::SVDecomp(matS, matW, matU, matV);
 
     cv::Mat matTemp = matU * matV;
