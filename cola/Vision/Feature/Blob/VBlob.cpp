@@ -60,7 +60,7 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Mat GrayBuffer, int nMa
     cv::Mat matCentroid;
     matLabel = cv::Mat(ThresholdBuffer.size(), CV_32SC1);
 
-    __int64 nTotalLabel = 0;
+    NLLong nTotalLabel = 0;
     if (ThresholdBuffer.type() == CV_8U) {
         nTotalLabel = cv::connectedComponentsWithStats(ThresholdBuffer, matLabel, matStats, matCentroid, 8, CV_32S, cv::CCL_GRANA) - 1;
     }
@@ -163,10 +163,10 @@ bool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& m
 
         cv::Rect rectTemp(nSX, nSY, nEX - nSX + 1, nEY - nSY + 1);
 
-        __int64 nCount_in  = 0;
-        __int64 nCount_out = 0;
-        __int64 nSum_in    = 0;   // defect区域
-        __int64 nSum_out   = 0;   // defect排除区域
+        NLLong nCount_in  = 0;
+        NLLong nCount_out = 0;
+        NLLong nSum_in    = 0;   // defect区域
+        NLLong nSum_out   = 0;   // defect排除区域
 
         cv::Mat matTmp_src   = GrayBuffer(rectTemp);   // 原始ROI
         cv::Mat matTmp_label = matLabel(rectTemp);     // Label的ROI
@@ -358,10 +358,10 @@ bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
 
         cv::Rect rectTemp(nSX, nSY, nEX - nSX + 1, nEY - nSY + 1);
 
-        __int64 nCount_in  = 0;
-        __int64 nCount_out = 0;
-        __int64 nSum_in    = 0;   // defect区域
-        __int64 nSum_out   = 0;   // defect排除区域
+        NLLong nCount_in  = 0;
+        NLLong nCount_out = 0;
+        NLLong nSum_in    = 0;   // defect区域
+        NLLong nSum_out   = 0;   // defect排除区域
 
         cv::Mat matTmp_src   = GrayBuffer(rectTemp);   // 原始ROI
         cv::Mat matTmp_label = matLabel(rectTemp);     // Label的ROI
@@ -540,7 +540,7 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat G
     cv::Mat matStats;
     cv::Mat matCentroid;
     matLabel            = cv::Mat(ThresholdBuffer.size(), CV_32SC1, false);
-    __int64 nTotalLabel = 0;
+    NLLong nTotalLabel = 0;
 
     if (ThresholdBuffer.type() == CV_8U) {
         nTotalLabel = cv::connectedComponentsWithStats(ThresholdBuffer, matLabel, matStats, matCentroid, 8, CV_32S, cv::CCL_GRANA) - 1;
@@ -747,7 +747,7 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
             nGV = IMAGE_MAX_GV - 1;
         }
 
-        __int64 nHist = 0;
+        NLLong nHist = 0;
         for (int m = nGV; m < IMAGE_MAX_GV; m++) {
             nHist += tBlobResult.nHist[m];
         }
@@ -768,7 +768,7 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
         if (nGV > IMAGE_MAX_GV) {
             nGV = IMAGE_MAX_GV - 1;
         }
-        __int64 nHist = 0;
+        NLLong nHist = 0;
         for (int m = 0; m <= nGV; m++) {
             nHist += tBlobResult.nHist[m];
         }
@@ -792,7 +792,7 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
         if (Mean_GV > IMAGE_MAX_GV) {
             Mean_GV = IMAGE_MAX_GV - 1;
         }
-        __int64 nHist = 0;
+        NLLong nHist = 0;
         for (int m = Mean_GV; m <= 255; m++) {
             nHist += tBlobResult.nHist[m];
         }

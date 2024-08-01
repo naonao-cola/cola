@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-10 17:10:23
+ * @LastEditTime : 2024-08-01 12:20:10
  * @Copyright    :
  **/
 #ifndef NAO_VALTYPE_H
@@ -36,5 +36,6 @@ using NMSec      = nao::internal::NLONG;     // 表示毫秒信息, for millisec
 using NFMSec     = nao::internal::NDOUBLE;   // 表示毫秒信息，包含小数点信息
 using NStatus    = nao::internal::NSTATUS;
 using NException = nao::internal::NEXCEPTION;
+using NLLong     = nao::internal::NLLONG;
 
 #endif   // NAO_VALTYPE_H

@@ -5,7 +5,7 @@
  * @Date         : 2024-07-31 10:52:14
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-31 17:30:38
+ * @LastEditTime : 2024-08-01 12:21:44
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VBLOBDEFINE_H
@@ -103,7 +103,7 @@ struct tBLOB_FEATURE
     long  nJudge_GV;   // choikwangil 04.20
     long  nIn_Count;   // choikwangil 04.20
 
-    __int64 nHist[IMAGE_MAX_GV];   // 客体直方图
+    NLLong nHist[IMAGE_MAX_GV];   // 客体直方图
 
     cv::Size2f BoxSize;   // Box width and length
 
@@ -147,7 +147,7 @@ struct tBLOB_FEATURE
         fAreaPer       = 0.0f;   // choikwangil 04.20
         nJudge_GV      = 0;      // choikwangil 04.20
         nIn_Count      = 0;      // choikwangil 04.20
-        memset(nHist, 0, sizeof(__int64) * IMAGE_MAX_GV);
+        memset(nHist, 0, sizeof(NLLong) * IMAGE_MAX_GV);
         ptCenter = cv::Point2f(0, 0);
         BoxSize  = cv::Size2f(0, 0);
         // 矢量初始化
