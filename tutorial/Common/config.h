@@ -5,10 +5,10 @@
 #define CONFIG_VERSION_MAJOR 0
 #define CONFIG_VERSION_MINOR 0
 #define CONFIG_VERSION_ALTER 1
-#define GIT_COMMIT      "a6d0b79"
-#define GIT_COMMIT_LONG "a6d0b7935df648e079d40acbbadcfdc7a203b14e"
-#define GIT_COMMIT_DATE "20240807110501"
+#define GIT_COMMIT      "7e71170"
+#define GIT_COMMIT_LONG "7e7117016ab075c14699e0ec35bf7c6d842f278c"
+#define GIT_COMMIT_DATE "20240807151400"
 #define GIT_BRANCH      "naonao_dev"
 #define GIT_TAG         "none"
 #define GIT_TAG_LONG    "none"
-#define GIT_CUSTOM      "none-a6d0b79"
+#define GIT_CUSTOM      "none-7e71170"
