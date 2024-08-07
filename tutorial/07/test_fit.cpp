@@ -94,7 +94,9 @@ void test_spline()
 }
 int main()
 {
+    printf("----------------- lineestimator -----------------\n");
     test_lineestimator();
+    printf("----------------- spline -----------------\n");
     test_spline();
     return 0;
 }

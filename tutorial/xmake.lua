@@ -4,6 +4,8 @@
         "03",
         "04",
         "05",
+        "06",
+        "07",
 }
 
 -- add tutorial target one by one
@@ -12,6 +14,14 @@ for _, v in pairs(tutorial_list) do
     target(target_name)
         set_kind("binary")
         set_basename(v)
+        --set_prefixname("test")
+        --config
+        add_configfiles("Common/config.h.in",{
+                variables = {
+                    CURRENT_PATH = os.projectdir():gsub("\\", "/"),
+                }
+            })
+        set_configdir("Common")
         --3rdparty
         add_packages("opencv")
         add_packages("eigen")
@@ -36,5 +46,4 @@ for _, v in pairs(tutorial_list) do
                 add_files(filedir)
             end
         end
-
 end

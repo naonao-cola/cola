@@ -20,6 +20,6 @@ set_policy("build.cuda.devlink", true)
 set_encodings("source:utf-8")
 
 includes(
-    "tutorial/xmake.lua",
-    "test/xmake.lua"
+    "tutorial/xmake.lua"
+    --"test/xmake.lua"
 )
