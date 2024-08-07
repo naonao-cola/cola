@@ -10,6 +10,13 @@ for _, v in pairs(tutorial_list) do
         set_kind("binary")
         set_basename(v)
         set_prefixname("test")
+        --config
+        add_configfiles("Common/config.h.in",{
+                variables = {
+                    CURRENT_PATH = os.projectdir():gsub("\\", "/"),
+                }
+            })
+        set_configdir("Common")
         --3rdparty
         add_packages("opencv")
         add_packages("eigen")
@@ -24,8 +31,6 @@ for _, v in pairs(tutorial_list) do
         add_files("Common/**.cpp")
         -- test-file
         for index, filedir in ipairs(os.filedirs(string.format("%s/**", v))) do
-            -- print(index)
-            -- print(filedir)
             local s = filedir
             if s:endswith(".cuh") or s:endswith(".h") then
                  add_headerfiles(filedir)
@@ -34,5 +39,4 @@ for _, v in pairs(tutorial_list) do
                 add_files(filedir)
             end
         end
-
 end

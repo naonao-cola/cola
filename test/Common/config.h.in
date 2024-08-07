@@ -1,0 +1,14 @@
+﻿#pragma once
+
+#define CURRENT_PATH   "${CURRENT_PATH}"
+#define CONFIG_VERSION "${VERSION}"
+#define CONFIG_VERSION_MAJOR ${VERSION_MAJOR}
+#define CONFIG_VERSION_MINOR ${VERSION_MINOR}
+#define CONFIG_VERSION_ALTER ${VERSION_ALTER}
+#define GIT_COMMIT      "${GIT_COMMIT}"
+#define GIT_COMMIT_LONG "${GIT_COMMIT_LONG}"
+#define GIT_COMMIT_DATE "${GIT_COMMIT_DATE}"
+#define GIT_BRANCH      "${GIT_BRANCH}"
+#define GIT_TAG         "${GIT_TAG}"
+#define GIT_TAG_LONG    "${GIT_TAG_LONG}"
+#define GIT_CUSTOM      "${GIT_TAG}-${GIT_COMMIT}"
