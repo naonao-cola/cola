@@ -40,6 +40,7 @@ using NFLOAT   = float;
 using NDOUBLE  = double;
 using NCONSTR  = const char*;
 using NSIZE    = size_t;
+using NLLONG   = long long;
 
 
 

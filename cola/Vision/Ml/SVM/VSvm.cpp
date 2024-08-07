@@ -5,8 +5,8 @@
  * @Date         : 2024-07-18 19:11:03
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-20 12:19:35
-**/
+ * @LastEditTime : 2024-08-01 19:18:34
+ **/
 #include "VSvm.h"
 #include "../../../UtilsCtrl/FileSystem/UFs.h"
 #include <utility>
@@ -160,6 +160,72 @@ void VSvm::trainLibSVM(svm_parameter& param /*= _default_param*/, const int& use
     svm_free_model_content(svm_model);
 }
 
+void VSvm::write(std::string file)
+{
+    int           sample_size    = data_mat_.rows;
+    int           feature_length = data_mat_.cols;
+    std::ofstream fout;
+    fout.open(file, std::ios::binary);
+    for (int i = 0; i < sample_size; i++) {
+        std::string line = std::to_string(static_cast<int>(*label_mat_.ptr<float>(i)));
+        float*      ptr  = data_mat_.ptr<float>(i);
+        for (int j = 0; j < feature_length; j++) {
+            line = line + " " + std::to_string(j + 1) + ":";
+            line = line + std::to_string(ptr[j]);
+        }
+        fout << line << std::endl;
+    }
+    fout.close();
+}
+
+void VSvm::train_cross()
+{
+    svm_problem   svm_prob;
+    svm_parameter param          = default_param_;
+    int           sample_size    = data_mat_.rows;
+    int           feature_length = data_mat_.cols;
+    svm_prob.l                   = sample_size;
+    svm_prob.y                   = new double[sample_size];
+
+    for (int i = 0; i < sample_size; i++) {
+        float* ptr    = label_mat_.ptr<float>(i);
+        svm_prob.y[i] = ptr[0];
+    }
+
+    svm_prob.x = new svm_node*[sample_size];
+    for (int i = 0; i < sample_size; i++) {
+        svm_node* x_sapce = new svm_node[feature_length];
+        float*    ptr     = data_mat_.ptr<float>(i);
+        for (int j = 0; j < feature_length; j++) {
+            x_sapce[j].index = j;
+            x_sapce[j].value = ptr[j];
+        }
+        x_sapce[feature_length].index = -1;
+        svm_prob.x[i]                 = x_sapce;
+    }
+
+    double* target = new double[sample_size];
+    svm_cross_validation(&svm_prob, &param, 5, target);
+
+    int total_correct = 0;
+    for (int i = 0; i < svm_prob.l; i++) {
+        if (target[i] == svm_prob.y[i]) {
+            ++total_correct;
+        }
+    }
+    printf("Cross Validation Accuracy = %g%%\n", 100.0 * total_correct / svm_prob.l);
+
+    svm_model*  svm_model = svm_train(&svm_prob, &param);
+    std::string path      = base_path_ + "\\" + model_name_;
+    svm_save_model(path.c_str(), svm_model);
+    for (int i = 0; i < svm_prob.l; i++) {
+        delete[] svm_prob.x[i];
+    }
+    delete[] svm_prob.x;
+    delete[] svm_prob.y;
+    delete[] target;
+    svm_free_model_content(svm_model);
+}
 double VSvm::testLibSVM(const cv::Mat& src, const cv::HOGDescriptor& hog, double prob_estimates[])
 {
     if (src.empty()) {

@@ -5,7 +5,7 @@
  * @Date         : 2024-07-27 22:57:37
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-27 22:57:37
+ * @LastEditTime : 2024-08-01 11:51:12
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VFULIY_H
@@ -23,7 +23,7 @@ NAO_VISION_NAMESPACE_BEGIN
 class VFuliy : public VisionObject
 {
 public:
-    void FuLiY(const cv::Mat src, cv::Mat& dst)
+    cv::Mat FuLiY(const cv::Mat src)
     {
         int     w = cv::getOptimalDFTSize(src.cols);
         int     h = cv::getOptimalDFTSize(src.rows);
@@ -60,7 +60,8 @@ public:
         temp.copyTo(q2);
 
         cv::normalize(magnitudeImage, magnitudeImage, 0, 1, cv::NORM_MINMAX);
-        dst = magnitudeImage.clone();
+        return magnitudeImage;
+        //dst = magnitudeImage.clone();
     }
 };
 

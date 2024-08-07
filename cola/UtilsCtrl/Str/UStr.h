@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/Str/UStr.h
+ * @FilePath     : /cola/cola/UtilsCtrl/Str/UStr.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-21 18:16:21
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-23 00:13:18
+ * @LastEditTime : 2024-08-07 11:00:41
  **/
 #ifndef NAO_USTR_H
 #define NAO_USTR_H
@@ -17,6 +17,7 @@ NAO_NAMESPACE_BEGIN
 class UStr : public UtilsObject
 {
 public:
+    NAO_NO_ALLOWED_COPY(UStr)
     /**
      * @brief	sep作为分隔符，分割字符串。如果maxsplit大于-1，则最多执行maxsplit拆分。如果sep为“”，则空格是分隔符。
      * @param str

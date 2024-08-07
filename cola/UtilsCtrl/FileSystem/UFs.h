@@ -19,9 +19,9 @@ NAO_NAMESPACE_BEGIN
 class UFs : public UtilsObject
 {
 public:
-    UFs();
+    UFs()=default;
     ~UFs() override = default;
-
+    NAO_NO_ALLOWED_COPY(UFs)
     /**
      * @brief: 目录是否存在
      * @param filePath

@@ -5,10 +5,15 @@
  * @Date         : 2024-07-18 19:10:54
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-20 12:18:40
+ * @LastEditTime : 2024-08-01 19:02:05
  **/
 #ifndef NAONAO_VSVM_H
 #define NAONAO_VSVM_H
+
+/*
+https://www.cnblogs.com/jiahuiyu/p/5415936.html
+使用官方的grid.py 进行网格搜索，得到最优参数
+*/
 
 #include "../../VisionObject.h"
 NAO_NAMESPACE_BEGIN
@@ -107,6 +112,10 @@ public:
      * @brief 用其他的特征提取进行的svm检测，对样本正确率判别
      */
     void test();
+
+    void train_cross();
+
+    void write(std::string file);
 
 private:
     // the list of train images  //the lable of train image
