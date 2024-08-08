@@ -53,7 +53,9 @@ void test_svm()
     svm_obj.addFeatureLabel(ng_feature, ng_label);
     svm_obj.copyFeatureLabel();
     svm_obj.test_cross();
+    nao::NAO_ECHO("test_cross done");
     svm_obj.trainLibSVM();
+    nao::NAO_ECHO("trainLibSVM done");
     svm_obj.test();
     nao::NAO_ECHO("svm done");
 }

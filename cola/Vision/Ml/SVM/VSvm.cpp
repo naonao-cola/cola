@@ -180,7 +180,6 @@ void VSvm::write(std::string file)
 
 void VSvm::test_cross()
 {
-    nao::NAO_ECHO("enter test_cross start");
     svm_problem   svm_prob;
     svm_parameter param          = default_param_;
     int           sample_size    = data_mat_.rows;
@@ -202,10 +201,8 @@ void VSvm::test_cross()
         x_sapce[feature_length].index = -1;
         svm_prob.x[i]                 = x_sapce;
     }
-    nao::NAO_ECHO("test_cross start");
     double* target = new double[sample_size];
     svm_cross_validation(&svm_prob, &param, 9, target);
-    nao::NAO_ECHO("test_cross end");
     int    total_correct = 0;
     double total_error   = 0;
     double sumv          = 0;
@@ -235,7 +232,6 @@ void VSvm::test_cross()
             }
         printf("Cross Validation Accuracy = %g%%\n", 100.0 * total_correct / svm_prob.l);
     }
-    nao::NAO_ECHO("test_cross Validation end");
     for (int i = 0; i < svm_prob.l; i++) {
         delete[] svm_prob.x[i];
     }
