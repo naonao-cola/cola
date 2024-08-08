@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/test/01/test_svm.cpp
+ * @FilePath     : /cola/tutorial/06/test_svm.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-07-18 19:51:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-07 14:51:20
+ * @LastEditTime : 2024-08-08 16:18:51
  **/
 #include "../Common/common.h"
 #include "../Common/config.h"
@@ -91,8 +91,8 @@ void test_pca_read()
 
 int main()
 {
-    //printf("----------------- svm -----------------\n");
-    //test_svm();
+    printf("----------------- svm -----------------\n");
+    test_svm();
     printf("----------------- pca -----------------\n");
     test_pca();
     printf("----------------- pca_read -----------------\n");
