@@ -25,11 +25,19 @@ void test_svm()
     std::vector<cv::Mat> ng_img_vec;
     for (const auto& item : ok_file) {
         cv::Mat tmp = cv::imread(item);
-        ok_img_vec.push_back(cv::imread(item));
+        if(tmp.empty()){
+            std::cout << "test_svm ok img is empty: " << item << std::endl;
+            continue;
+        }
+        ok_img_vec.push_back(tmp);
     }
     for (const auto& item : ng_file) {
         cv::Mat tmp = cv::imread(item);
-        ng_img_vec.push_back(cv::imread(item));
+        if(tmp.empty()){
+            std::cout << "test_svm ng img is empty: " << item << std::endl;
+            continue;
+        }
+        ng_img_vec.push_back(tmp);
     }
 
     VHog             ok_hog_transform(ok_img_vec, 11, 8, 4, cv::Size(88, 34), 1);
