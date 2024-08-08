@@ -65,7 +65,7 @@ void test_pca()
     cv::Mat ok_feature = ok_hog_transform();
 
     VPCA    pca;
-    cv::Mat dst = pca.reduce(ok_feature);
+    cv::Mat dst = pca.reduce(ok_feature,30);
     pca.write(R"(./pca.xml)");
     nao::NAO_ECHO("pca done");
 }
