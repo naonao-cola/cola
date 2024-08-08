@@ -5,7 +5,7 @@
  * @Date         : 2024-07-18 19:11:03
  * @Version      : 0.0.1
  * @LastEditors  : error: git config user.name & please set dead value or install git
- * @LastEditTime : 2024-08-08 22:41:19
+ * @LastEditTime : 2024-08-08 22:58:21
  **/
 #include "VSvm.h"
 #include "../../../UtilsCtrl/FileSystem/UFs.h"
@@ -201,16 +201,17 @@ void VSvm::test_cross()
             sumyy += y * y;
             sumvy += v * y;
         }
-        printf("Cross Validation Mean squared error = %g\n", total_error / prob_.l);
-        printf("Cross Validation Squared correlation coefficient = %g\n",
-               ((prob_.l * sumvy - sumv * sumy) * (prob_.l * sumvy - sumv * sumy)) / ((prob_.l * sumvv - sumv * sumv) * (prob_.l * sumyy - sumy * sumy)));
+        nao::NAO_ECHO("Cross Validation Mean squared error = %g\n", total_error / prob_.l);
+        nao::NAO_ECHO("Cross Validation Squared correlation coefficient = %g\n",
+                      ((prob_.l * sumvy - sumv * sumy) * (prob_.l * sumvy - sumv * sumy)) / ((prob_.l * sumvv - sumv * sumv) * (prob_.l * sumyy - sumy * sumy)));
     }
     else {
-        for (int i = 0; i < prob_.l; i++)
+        for (int i = 0; i < prob_.l; i++) {
             if (target[i] == prob_.y[i]) {
                 ++total_correct;
             }
-        printf("Cross Validation Accuracy = %g%%\n", 100.0 * total_correct / prob_.l);
+        }
+        nao::NAO_ECHO("Cross Validation Accuracy = %g%%\n", 100.0 * total_correct / prob_.l);
     }
     free(target);
 }
@@ -287,10 +288,10 @@ void VSvm::addFeatureLabel(const cv::Mat& feature, const std::vector<int>& label
 
 void VSvm::copyFeatureLabel()
 {
-    std::cout << "正在暂存区中拷贝特征值与标签" << std::endl;
+    nao::NAO_ECHO("正在暂存区中拷贝特征值与标签");
     int sample_length = static_cast<int>(train_feature_data_.size());
     if (sample_length <= 1) {
-        std::cout << "样本太少" << std::endl;
+        nao::NAO_ECHO("样本太少");
         return;
     }
     //_data_mat = cv::Mat(sample_length, _train_feature_data[0].second.cols, CV_32FC1, cv::Scalar(0));
@@ -299,7 +300,7 @@ void VSvm::copyFeatureLabel()
         label_mat_.ptr<float>(i)[0] = static_cast<float>(train_feature_data_[i].first);
         data_mat_.push_back(train_feature_data_[i].second);
     }
-    std::cout << "暂存区拷贝特征值与标签完成" << std::endl;
+    nao::NAO_ECHO("暂存区拷贝特征值与标签完成");
 }
 
 double VSvm::testFeatureLibSVM(const cv::Mat& feature, double prob_estimates[])
@@ -322,7 +323,7 @@ double VSvm::testFeatureLibSVM(const cv::Mat& feature, double prob_estimates[])
 
 void VSvm::test()
 {
-    std::cout << "使用暂存区的样本进行测试" << std::endl;
+    nao::NAO_ECHO("使用暂存区的样本进行测试");
     int         errorCount = 0;
     std::string path       = base_path_ + "\\" + model_name_;
     svm_                   = svm_load_model(path.c_str());
@@ -340,13 +341,12 @@ void VSvm::test()
     }
     double errorPercentage = 0.0;
     errorPercentage        = errorCount / (train_feature_data_.size() * 1.0);
-    std::cout << "Error rate：" << errorPercentage << std::endl;
-    std::cout << "Accuracy: " << 1 - errorPercentage << std::endl;
+    nao::NAO_ECHO("test Error rate： = %g%%\n", errorPercentage);
+    nao::NAO_ECHO("test Accuracy = %g%%\n", 1 - errorPercentage);
 }
 
 void VSvm::free_model()
 {
-
     if (svm_ != NULL) {
         svm_free_and_destroy_model(&svm_);
         svm_destroy_param(&default_param_);
