@@ -4,8 +4,8 @@
  * @Author       : naonao
  * @Date         : 2024-07-18 19:11:03
  * @Version      : 0.0.1
- * @LastEditors  : naonao
- * @LastEditTime : 2024-08-08 17:57:28
+ * @LastEditors  : error: git config user.name & please set dead value or install git
+ * @LastEditTime : 2024-08-08 22:41:19
  **/
 #include "VSvm.h"
 #include "../../../UtilsCtrl/FileSystem/UFs.h"
@@ -14,6 +14,7 @@
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
+#define Malloc(type, n) (type*)malloc((n) * sizeof(type))
 void setDefaultParam()
 {
     default_param_.svm_type    = C_SVC;
@@ -22,7 +23,7 @@ void setDefaultParam()
     default_param_.gamma       = 0.03;
     default_param_.coef0       = 1.0;
     default_param_.nu          = 0.005;
-    default_param_.cache_size  = 1000;
+    default_param_.cache_size  = 1024;
     default_param_.C           = 32.0;
     default_param_.eps         = 1e-4;
     default_param_.p           = 1.0;
@@ -47,9 +48,7 @@ VSvm::VSvm()
 
 VSvm::~VSvm(void)
 {
-    if (svm_ != nullptr) {
-        svm_free_model_content(svm_);
-    }
+    free_model();
 }
 
 bool VSvm::init(std::string svm_model_path, std::string model_name)
@@ -86,7 +85,6 @@ void VSvm::processHogFeature(const cv::HOGDescriptor& hog)
     // 创建数据存库空间
     label_mat_ = cv::Mat(static_cast<int>(train_img_size), 1, CV_32FC1, cv::Scalar(0));
     data_mat_  = cv::Mat(static_cast<int>(train_img_size), static_cast<int>(hog.getDescriptorSize()), CV_32FC1, cv::Scalar(0));
-
     for (int i = 0; i < train_img_size; i++) {
         cv::Mat src = cv::imread(train_data_[i].second, 0);
         if (src.empty()) {
@@ -113,51 +111,32 @@ void VSvm::processHogFeature(const cv::HOGDescriptor& hog)
 
 void VSvm::trainLibSVM(svm_parameter& param /*= _default_param*/, const int& used /*= 0*/)
 {
-    // svm_prob读取
+    free_model();
+    setDefaultParam();
     if (used == 0) {
         param = default_param_;
     }
-    svm_problem svm_prob;
-    int         sample_size    = data_mat_.rows;
-    int         feature_length = data_mat_.cols;
-    // 准备空间
-    svm_prob.l = sample_size;
-    // 标签空间
-    svm_prob.y = new double[sample_size];
-    // 标签赋值
-    for (int i = 0; i < sample_size; i++) {
-        float* ptr    = data_mat_.ptr<float>(i);
-        svm_prob.y[i] = ptr[0];
-    }
-    // 每个样本的特征向量
-    svm_prob.x = new svm_node*[sample_size];
-    // 为每一个特征向量赋值
-    for (int i = 0; i < sample_size; i++) {
-        // 每一个特征向量的维度
-        svm_node* x_sapce = new svm_node[feature_length];
-        float*    ptr     = data_mat_.ptr<float>(i);
-        // 为每个向量的每一个维度赋值
-        for (int j = 0; j < feature_length; j++) {
-            x_sapce[j].index = j;
-            x_sapce[j].value = ptr[j];
+    long len      = data_mat_.rows;
+    long dim      = data_mat_.cols;
+    long elements = len * dim;
+    prob_.l       = len;
+    prob_.y       = Malloc(double, prob_.l);
+    prob_.x       = Malloc(struct svm_node*, prob_.l);
+    x_space_      = Malloc(struct svm_node, elements + len);
+    int j         = 0;
+    for (int l = 0; l < len; l++) {
+        prob_.x[l] = &x_space_[j];
+        for (int d = 0; d < dim; d++) {
+            x_space_[j].index = d + 1;
+            x_space_[j].value = *data_mat_.ptr<float>(l, d);
+            j++;
         }
-        // 注意，结束符号，一开始忘记加了
-        x_sapce[feature_length].index = -1;
-        svm_prob.x[i]                 = x_sapce;
+        x_space_[j++].index = -1;
+        prob_.y[l]          = *label_mat_.ptr<float>(l);
     }
-    // 训练模型
-    svm_model* svm_model = svm_train(&svm_prob, &param);
-    // 保存路径
-    std::string path = base_path_ + "\\" + model_name_;
+    svm_model*  svm_model = svm_train(&prob_, &param);
+    std::string path      = base_path_ + "\\" + model_name_;
     svm_save_model(path.c_str(), svm_model);
-    // 删除申请的内存
-    for (int i = 0; i < svm_prob.l; i++) {
-        delete[] svm_prob.x[i];
-    }
-    delete[] svm_prob.x;
-    delete[] svm_prob.y;
-    // 释放模型
-    svm_free_model_content(svm_model);
 }
 
 void VSvm::write(std::string file)
@@ -180,29 +159,30 @@ void VSvm::write(std::string file)
 
 void VSvm::test_cross()
 {
-    svm_problem   svm_prob;
-    svm_parameter param          = default_param_;
-    int           sample_size    = data_mat_.rows;
-    int           feature_length = data_mat_.cols;
-    svm_prob.l                   = sample_size;
-    svm_prob.y                   = new double[sample_size];
-    for (int i = 0; i < sample_size; i++) {
-        float* ptr    = label_mat_.ptr<float>(i);
-        svm_prob.y[i] = ptr[0];
-    }
-    svm_prob.x = new svm_node*[sample_size];
-    for (int i = 0; i < sample_size; i++) {
-        svm_node* x_sapce = new svm_node[feature_length];
-        float*    ptr     = data_mat_.ptr<float>(i);
-        for (int j = 0; j < feature_length; j++) {
-            x_sapce[j].index = j;
-            x_sapce[j].value = ptr[j];
+    free_model();
+    setDefaultParam();
+    svm_parameter param    = default_param_;
+    long          len      = data_mat_.rows;
+    long          dim      = data_mat_.cols;
+    long          elements = len * dim;
+    prob_.l                = len;
+    prob_.y                = Malloc(double, prob_.l);
+    prob_.x                = Malloc(struct svm_node*, prob_.l);
+    x_space_               = Malloc(struct svm_node, elements + len);
+    int j                  = 0;
+    for (int l = 0; l < len; l++) {
+        prob_.x[l] = &x_space_[j];
+        for (int d = 0; d < dim; d++) {
+            x_space_[j].index = d + 1;
+            x_space_[j].value = *data_mat_.ptr<float>(l, d);
+            j++;
         }
-        x_sapce[feature_length].index = -1;
-        svm_prob.x[i]                 = x_sapce;
+        x_space_[j++].index = -1;
+        prob_.y[l]          = *label_mat_.ptr<float>(l);
     }
-    double* target = new double[sample_size];
-    svm_cross_validation(&svm_prob, &param, 9, target);
+
+    double* target = Malloc(double, prob_.l);
+    svm_cross_validation(&prob_, &param, 9, target);
     int    total_correct = 0;
     double total_error   = 0;
     double sumv          = 0;
@@ -211,8 +191,8 @@ void VSvm::test_cross()
     double sumyy         = 0;
     double sumvy         = 0;
     if (param.svm_type == EPSILON_SVR || param.svm_type == NU_SVR) {
-        for (int i = 0; i < svm_prob.l; i++) {
-            double y = svm_prob.y[i];
+        for (int i = 0; i < prob_.l; i++) {
+            double y = prob_.y[i];
             double v = target[i];
             total_error += (v - y) * (v - y);
             sumv += v;
@@ -221,23 +201,18 @@ void VSvm::test_cross()
             sumyy += y * y;
             sumvy += v * y;
         }
-        printf("Cross Validation Mean squared error = %g\n", total_error / svm_prob.l);
+        printf("Cross Validation Mean squared error = %g\n", total_error / prob_.l);
         printf("Cross Validation Squared correlation coefficient = %g\n",
-               ((svm_prob.l * sumvy - sumv * sumy) * (svm_prob.l * sumvy - sumv * sumy)) / ((svm_prob.l * sumvv - sumv * sumv) * (svm_prob.l * sumyy - sumy * sumy)));
+               ((prob_.l * sumvy - sumv * sumy) * (prob_.l * sumvy - sumv * sumy)) / ((prob_.l * sumvv - sumv * sumv) * (prob_.l * sumyy - sumy * sumy)));
     }
     else {
-        for (int i = 0; i < svm_prob.l; i++)
-            if (target[i] == svm_prob.y[i]) {
+        for (int i = 0; i < prob_.l; i++)
+            if (target[i] == prob_.y[i]) {
                 ++total_correct;
             }
-        printf("Cross Validation Accuracy = %g%%\n", 100.0 * total_correct / svm_prob.l);
+        printf("Cross Validation Accuracy = %g%%\n", 100.0 * total_correct / prob_.l);
     }
-    for (int i = 0; i < svm_prob.l; i++) {
-        delete[] svm_prob.x[i];
-    }
-    delete[] svm_prob.x;
-    delete[] svm_prob.y;
-    delete[] target;
+    free(target);
 }
 double VSvm::testLibSVM(const cv::Mat& src, const cv::HOGDescriptor& hog, double prob_estimates[])
 {
@@ -315,8 +290,8 @@ void VSvm::copyFeatureLabel()
     std::cout << "正在暂存区中拷贝特征值与标签" << std::endl;
     int sample_length = static_cast<int>(train_feature_data_.size());
     if (sample_length <= 1) {
-        throw std::logic_error("样本数量太少");
-        exit(0);
+        std::cout << "样本太少" << std::endl;
+        return;
     }
     //_data_mat = cv::Mat(sample_length, _train_feature_data[0].second.cols, CV_32FC1, cv::Scalar(0));
     label_mat_ = cv::Mat(static_cast<int>(sample_length), 1, CV_32FC1, cv::Scalar(0));
@@ -367,6 +342,18 @@ void VSvm::test()
     errorPercentage        = errorCount / (train_feature_data_.size() * 1.0);
     std::cout << "Error rate：" << errorPercentage << std::endl;
     std::cout << "Accuracy: " << 1 - errorPercentage << std::endl;
+}
+
+void VSvm::free_model()
+{
+
+    if (svm_ != NULL) {
+        svm_free_and_destroy_model(&svm_);
+        svm_destroy_param(&default_param_);
+        free(prob_.y);
+        free(prob_.x);
+        free(x_space_);
+    }
 }
 
 NAO_VISION_NAMESPACE_END

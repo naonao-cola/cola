@@ -1,6 +1,15 @@
 #pragma once
 
-#define CURRENT_PATH   "E:/demo/rep/cola"
+/**
+ * @FilePath     : /cola/tutorial/Common/config.h
+ * @Description  :
+ * @Author       : error: git config user.name & please set dead value or install git
+ * @Date         : 2024-08-08 21:47:10
+ * @Version      : 0.0.1
+ * @LastEditors  : error: git config user.name & please set dead value or install git
+ * @LastEditTime : 2024-08-08 21:53:18
+**/
+#define CURRENT_PATH   "/Users/naonao/document/demo/rep/cola"
 #define CONFIG_VERSION "0.0.1"
 #define CONFIG_VERSION_MAJOR 0
 #define CONFIG_VERSION_MINOR 0

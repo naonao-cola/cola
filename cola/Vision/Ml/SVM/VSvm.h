@@ -118,6 +118,7 @@ public:
     void write(std::string file);
 
 private:
+    void free_model();
     // the list of train images  //the lable of train image
     std::vector<std::pair<int, std::string>> train_data_;
     // 其他方式提取的特征值与标签的暂存区
@@ -130,8 +131,12 @@ private:
     // feature data and lable
     cv::Mat    data_mat_;
     cv::Mat    label_mat_;
-    svm_model* svm_;
     cv::Size   train_size_;
+
+    struct svm_problem        prob_;
+    struct svm_node *        x_space_;
+    svm_model* svm_;
+
 };   // class VSvm
 
 NAO_VISION_NAMESPACE_END

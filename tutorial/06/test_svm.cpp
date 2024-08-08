@@ -4,8 +4,8 @@
  * @Author       : naonao
  * @Date         : 2024-07-18 19:51:49
  * @Version      : 0.0.1
- * @LastEditors  : naonao
- * @LastEditTime : 2024-08-08 16:18:51
+ * @LastEditors  : error: git config user.name & please set dead value or install git
+ * @LastEditTime : 2024-08-08 22:00:00
  **/
 #include "../Common/common.h"
 #include "../Common/config.h"
