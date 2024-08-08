@@ -113,7 +113,7 @@ public:
      */
     void test();
 
-    void train_cross();
+    void test_cross();
 
     void write(std::string file);
 
@@ -133,7 +133,6 @@ private:
     svm_model* svm_;
     cv::Size   train_size_;
 };   // class VSvm
-
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

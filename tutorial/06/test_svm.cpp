@@ -44,7 +44,8 @@ void test_svm()
     svm_obj.addFeatureLabel(ok_feature, ok_label);
     svm_obj.addFeatureLabel(ng_feature, ng_label);
     svm_obj.copyFeatureLabel();
-    svm_obj.train_cross();
+    svm_obj.test_cross();
+    svm_obj.trainLibSVM();
     svm_obj.test();
     nao::NAO_ECHO("svm done");
 }
@@ -90,8 +91,8 @@ void test_pca_read()
 
 int main()
 {
-    printf("----------------- svm -----------------\n");
-    test_svm();
+    //printf("----------------- svm -----------------\n");
+    //test_svm();
     printf("----------------- pca -----------------\n");
     test_pca();
     printf("----------------- pca_read -----------------\n");

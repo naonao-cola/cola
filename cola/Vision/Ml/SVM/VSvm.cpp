@@ -5,7 +5,7 @@
  * @Date         : 2024-07-18 19:11:03
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-01 19:18:34
+ * @LastEditTime : 2024-08-08 14:57:27
  **/
 #include "VSvm.h"
 #include "../../../UtilsCtrl/FileSystem/UFs.h"
@@ -19,12 +19,12 @@ void setDefaultParam()
     default_param_.svm_type    = C_SVC;
     default_param_.kernel_type = RBF;
     default_param_.degree      = 10;
-    default_param_.gamma       = 0.09;
+    default_param_.gamma       = 0.03;
     default_param_.coef0       = 1.0;
-    default_param_.nu          = 0.5;
+    default_param_.nu          = 0.005;
     default_param_.cache_size  = 1000;
-    default_param_.C           = 10.0;
-    default_param_.eps         = 1e-3;
+    default_param_.C           = 32.0;
+    default_param_.eps         = 1e-4;
     default_param_.p           = 1.0;
     default_param_.nr_weight   = 0;
     default_param_.shrinking   = 1;
@@ -178,7 +178,7 @@ void VSvm::write(std::string file)
     fout.close();
 }
 
-void VSvm::train_cross()
+void VSvm::test_cross()
 {
     svm_problem   svm_prob;
     svm_parameter param          = default_param_;
@@ -186,12 +186,10 @@ void VSvm::train_cross()
     int           feature_length = data_mat_.cols;
     svm_prob.l                   = sample_size;
     svm_prob.y                   = new double[sample_size];
-
     for (int i = 0; i < sample_size; i++) {
         float* ptr    = label_mat_.ptr<float>(i);
         svm_prob.y[i] = ptr[0];
     }
-
     svm_prob.x = new svm_node*[sample_size];
     for (int i = 0; i < sample_size; i++) {
         svm_node* x_sapce = new svm_node[feature_length];
@@ -205,26 +203,42 @@ void VSvm::train_cross()
     }
 
     double* target = new double[sample_size];
-    svm_cross_validation(&svm_prob, &param, 5, target);
-
-    int total_correct = 0;
-    for (int i = 0; i < svm_prob.l; i++) {
-        if (target[i] == svm_prob.y[i]) {
-            ++total_correct;
+    svm_cross_validation(&svm_prob, &param, 9, target);
+    int    total_correct = 0;
+    double total_error   = 0;
+    double sumv          = 0;
+    double sumy          = 0;
+    double sumvv         = 0;
+    double sumyy         = 0;
+    double sumvy         = 0;
+    if (param.svm_type == EPSILON_SVR || param.svm_type == NU_SVR) {
+        for (int i = 0; i < svm_prob.l; i++) {
+            double y = svm_prob.y[i];
+            double v = target[i];
+            total_error += (v - y) * (v - y);
+            sumv += v;
+            sumy += y;
+            sumvv += v * v;
+            sumyy += y * y;
+            sumvy += v * y;
         }
+        printf("Cross Validation Mean squared error = %g\n", total_error / svm_prob.l);
+        printf("Cross Validation Squared correlation coefficient = %g\n",
+               ((svm_prob.l * sumvy - sumv * sumy) * (svm_prob.l * sumvy - sumv * sumy)) / ((svm_prob.l * sumvv - sumv * sumv) * (svm_prob.l * sumyy - sumy * sumy)));
     }
-    printf("Cross Validation Accuracy = %g%%\n", 100.0 * total_correct / svm_prob.l);
-
-    svm_model*  svm_model = svm_train(&svm_prob, &param);
-    std::string path      = base_path_ + "\\" + model_name_;
-    svm_save_model(path.c_str(), svm_model);
+    else {
+        for (int i = 0; i < svm_prob.l; i++)
+            if (target[i] == svm_prob.y[i]) {
+                ++total_correct;
+            }
+        printf("Cross Validation Accuracy = %g%%\n", 100.0 * total_correct / svm_prob.l);
+    }
     for (int i = 0; i < svm_prob.l; i++) {
         delete[] svm_prob.x[i];
     }
     delete[] svm_prob.x;
     delete[] svm_prob.y;
     delete[] target;
-    svm_free_model_content(svm_model);
 }
 double VSvm::testLibSVM(const cv::Mat& src, const cv::HOGDescriptor& hog, double prob_estimates[])
 {
@@ -278,8 +292,8 @@ void VSvm::test(const cv::HOGDescriptor& hog)
     }
     double errorPercentage = 0.0;
     errorPercentage        = errorCount / (train_data_.size() * 1.0);
-    std::cout << "错误率为：" << errorPercentage << std::endl;
-    std::cout << "正确率为：" << 1 - errorPercentage << std::endl;
+    std::cout << "Error rate：" << errorPercentage << std::endl;
+    std::cout << "Accuracy: " << 1 - errorPercentage << std::endl;
 }
 
 /*-----------------------------------------------------------------------------------------------------------*/
@@ -352,8 +366,8 @@ void VSvm::test()
     }
     double errorPercentage = 0.0;
     errorPercentage        = errorCount / (train_feature_data_.size() * 1.0);
-    std::cout << "错误率为：" << errorPercentage << std::endl;
-    std::cout << "正确率为：" << 1 - errorPercentage << std::endl;
+    std::cout << "Error rate：" << errorPercentage << std::endl;
+    std::cout << "Accuracy: " << 1 - errorPercentage << std::endl;
 }
 
 NAO_VISION_NAMESPACE_END
