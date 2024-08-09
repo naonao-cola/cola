@@ -4,8 +4,8 @@
  * @Author       : naonao
  * @Date         : 2024-07-18 19:11:03
  * @Version      : 0.0.1
- * @LastEditors  : error: git config user.name & please set dead value or install git
- * @LastEditTime : 2024-08-08 22:58:21
+ * @LastEditors  : naonao
+ * @LastEditTime : 2024-08-09 09:53:30
  **/
 #include "VSvm.h"
 #include "../../../UtilsCtrl/FileSystem/UFs.h"
@@ -34,16 +34,24 @@ void setDefaultParam()
 }
 
 VSvm::VSvm(cv::Size train_size)
-    : svm_(nullptr)
+    : x_space_(nullptr)
+    , svm_(nullptr)
     , train_size_(train_size)
 {
     setDefaultParam();
+    prob_.l = 0;
+    prob_.y = nullptr;
+    prob_.x = nullptr;
 }
 
 VSvm::VSvm()
     : svm_(nullptr)
+    , x_space_(nullptr)
 {
     setDefaultParam();
+    prob_.l = 0;
+    prob_.y = nullptr;
+    prob_.x = nullptr;
 }
 
 VSvm::~VSvm(void)
@@ -341,7 +349,7 @@ void VSvm::test()
     }
     double errorPercentage = 0.0;
     errorPercentage        = errorCount / (train_feature_data_.size() * 1.0);
-    nao::NAO_ECHO("test Error rate： = %g%%\n", errorPercentage);
+    nao::NAO_ECHO("test Error rate： = %g%%", errorPercentage);
     nao::NAO_ECHO("test Accuracy = %g%%\n", 1 - errorPercentage);
 }
 
@@ -350,9 +358,12 @@ void VSvm::free_model()
     if (svm_ != NULL) {
         svm_free_and_destroy_model(&svm_);
         svm_destroy_param(&default_param_);
-        free(prob_.y);
-        free(prob_.x);
-        free(x_space_);
+        if (prob_.y != NULL)
+            free(prob_.y);
+        if (prob_.x != NULL)
+            free(prob_.x);
+        if (x_space_ != NULL)
+            free(x_space_);
     }
 }
 

@@ -5,7 +5,7 @@
  * @Date         : 2024-07-18 19:10:54
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-01 19:02:05
+ * @LastEditTime : 2024-08-09 10:00:36
  **/
 #ifndef NAONAO_VSVM_H
 #define NAONAO_VSVM_H
@@ -13,6 +13,7 @@
 /*
 https://www.cnblogs.com/jiahuiyu/p/5415936.html
 使用官方的grid.py 进行网格搜索，得到最优参数
+https://www.cnblogs.com/ranjiewen/p/6869402.html
 */
 
 #include "../../VisionObject.h"
@@ -129,13 +130,13 @@ private:
     std::string base_path_;
     std::string model_name_;
     // feature data and lable
-    cv::Mat    data_mat_;
-    cv::Mat    label_mat_;
-    cv::Size   train_size_;
+    cv::Mat  data_mat_;
+    cv::Mat  label_mat_;
+    cv::Size train_size_;
 
-    struct svm_problem        prob_;
-    struct svm_node *        x_space_;
-    svm_model* svm_;
+    struct svm_problem prob_;
+    struct svm_node*   x_space_;
+    svm_model*         svm_;
 
 };   // class VSvm
 

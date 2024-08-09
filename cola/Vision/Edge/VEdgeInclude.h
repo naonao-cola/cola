@@ -13,5 +13,6 @@
 #include "LSD/VLsd.h"
 #include "Threshold/VThreshold.h"
 #include "Thin/VThin.h"
+#include "Contours/VContours.h"
 
 #endif
