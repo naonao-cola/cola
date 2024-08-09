@@ -23,12 +23,12 @@ cv::Mat VPCA::reduce(const cv::Mat& data, int dimension, double Retained)
     cv::Mat mean;
     cv::reduce(data, mean, 0, cv::REDUCE_AVG);
     // 2. 数据准备：数据中心化
-    cv::Mat data_mean = data.clone();
-    for (int i = 0; i < data.rows; i++) {
-        data_mean.row(i) -= mean;
-    }
+    // cv::Mat data_mean = data.clone();
+    // for (int i = 0; i < data.rows; i++) {
+    //    data_mean.row(i) -= mean;
+    //}
     // 3. PCA计算，构建pca的时候使用中心化数据，投影的时候不需要
-    cv::PCA pca(data_mean, cv::Mat(), cv::PCA::DATA_AS_ROW, dimension);
+    cv::PCA pca(data, mean, cv::PCA::DATA_AS_ROW, dimension);
     // 4. 获取特征值和特征向量
     eigenvalues_  = pca.eigenvalues;
     eigenvectors_ = pca.eigenvectors;
@@ -46,7 +46,8 @@ cv::Mat VPCA::reduce(const cv::Mat& data, int dimension, double Retained)
         }
     }
     std::sort(eigenvecWithVal_.begin(), eigenvecWithVal_.end(), compareEigenvectors);
-    cv::Mat dst = pca.project(data);   // 映射新空间
+    cv::Mat dst      = pca.project(data);      // 映射新空间
+    cv::Mat back_mat = pca.backProject(dst);   // 反映射回来
     return dst;
 }
 
@@ -74,8 +75,7 @@ cv::Mat VPCA::reduce_single(const cv::Mat& data)
     pca.mean                = eigenmean_;
     pca.eigenvalues         = eigenvalues_;
     pca.eigenvectors        = eigenvectors_;
-    cv::Mat singleVector    = data.clone();
-    cv::Mat projectedVector = pca.project(singleVector);
+    cv::Mat projectedVector = pca.project(data);
     return projectedVector;
 }
 NAO_VISION_NAMESPACE_END

@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/test/01/test_svm.cpp
+ * @FilePath     : /cola/tutorial/06/test_svm.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-07-18 19:51:49
  * @Version      : 0.0.1
- * @LastEditors  : naonao
- * @LastEditTime : 2024-08-07 14:51:20
+ * @LastEditors  : error: git config user.name & please set dead value or install git
+ * @LastEditTime : 2024-08-08 22:00:00
  **/
 #include "../Common/common.h"
 #include "../Common/config.h"
@@ -25,11 +25,19 @@ void test_svm()
     std::vector<cv::Mat> ng_img_vec;
     for (const auto& item : ok_file) {
         cv::Mat tmp = cv::imread(item);
-        ok_img_vec.push_back(cv::imread(item));
+        if(tmp.empty()){
+            std::cout << "test_svm ok img is empty: " << item << std::endl;
+            continue;
+        }
+        ok_img_vec.push_back(tmp);
     }
     for (const auto& item : ng_file) {
         cv::Mat tmp = cv::imread(item);
-        ng_img_vec.push_back(cv::imread(item));
+        if(tmp.empty()){
+            std::cout << "test_svm ng img is empty: " << item << std::endl;
+            continue;
+        }
+        ng_img_vec.push_back(tmp);
     }
 
     VHog             ok_hog_transform(ok_img_vec, 11, 8, 4, cv::Size(88, 34), 1);
@@ -44,7 +52,10 @@ void test_svm()
     svm_obj.addFeatureLabel(ok_feature, ok_label);
     svm_obj.addFeatureLabel(ng_feature, ng_label);
     svm_obj.copyFeatureLabel();
-    svm_obj.train_cross();
+    svm_obj.test_cross();
+    nao::NAO_ECHO("test_cross done");
+    svm_obj.trainLibSVM();
+    nao::NAO_ECHO("trainLibSVM done");
     svm_obj.test();
     nao::NAO_ECHO("svm done");
 }
@@ -64,7 +75,7 @@ void test_pca()
     cv::Mat ok_feature = ok_hog_transform();
 
     VPCA    pca;
-    cv::Mat dst = pca.reduce(ok_feature);
+    cv::Mat dst = pca.reduce(ok_feature,30);
     pca.write(R"(./pca.xml)");
     nao::NAO_ECHO("pca done");
 }

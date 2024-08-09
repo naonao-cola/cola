@@ -30,6 +30,7 @@ public:
     cv::Mat eigenvalues_;
     cv::Mat eigenvectors_;
     cv::Mat eigenmean_;
+    cv::Mat back_mat_;
     struct Eigenvector
     {
         float   eigenvalue;
