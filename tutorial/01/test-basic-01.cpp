@@ -1,16 +1,17 @@
 ﻿/**
- * @FilePath     : /cola/test/01/test-basic-01.cpp
+ * @FilePath     : /cola/tutorial/01/test-basic-01.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-21 13:06:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-21 14:53:02
-**/
+ * @LastEditTime : 2024-08-12 15:41:06
+ **/
 #include "../Common/common.h"
 using namespace nao;
 
-void test_lru() {
+void test_lru()
+{
 
     ULru<int, std::string, 3> lru;
 
@@ -37,7 +38,6 @@ void test_lru() {
     else {
         NAO_ECHO("[%d] no get value", key);
     }
-
 }
 
 void test_trie()
@@ -136,7 +136,8 @@ void test_distance()
 }
 
 
-int main(){
+int main()
+{
     printf("----------------- lru -----------------\n");
     test_lru();
     printf("----------------- trie -----------------\n");

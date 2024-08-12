@@ -52,6 +52,13 @@ private:
      */
     NStatus process(DEventType type, DEventAsyncStrategy strategy);
 
+     /**
+     * 异步事件处理
+     * @param strategy
+     * @return
+     */
+    std::shared_future<NVoid> asyncProcess(DEventAsyncStrategy strategy);
+
     /**
      * 等待并清理所有异步的event逻辑
      * @param strategy
@@ -60,10 +67,12 @@ private:
     NVoid asyncWait(DEventAsyncStrategy strategy);
 
 private:
-    NBool                           is_init_{false};               // 是否初始化
-    std::vector<std::future<NVoid>> async_run_finish_futures_{};   // 异步执行的逻辑集合（pipeline run结束的时候）
-    std::vector<std::future<NVoid>> async_destroy_futures_{};      // 异步执行的逻辑集合（pipeline destroy 的时候）
-    DEventParamPtr                  param_{nullptr};               // 事件参数信息
+
+    std::vector<std::shared_future<NVoid>> async_run_finish_futures_ {};    // 异步执行的逻辑集合（pipeline run结束的时候）
+    std::vector<std::shared_future<NVoid>> async_destroy_futures_ {};       // 异步执行的逻辑集合（pipeline destroy 的时候）
+    DEventParamPtr param_ { nullptr };                                      // 事件参数信息
+
+
     std::mutex                      async_run_finished_lock_;
     std::mutex                      async_destroy_lock_;
     friend class DEventManager;

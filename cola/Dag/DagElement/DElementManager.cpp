@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/DElementManager.cpp
+ * @FilePath     : /cola/cola/Dag/DagElement/DElementManager.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 23:07:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:41:06
+ * @LastEditTime : 2024-08-12 13:56:06
  **/
 #include "DElementManager.h"
 #include "_DOptimizer/DOptimizerInclude.h"
@@ -139,6 +139,7 @@ NStatus DElementManager::initEngine()
     switch (engine_type_) {
     case DEngineType::DYNAMIC: engine_ = NAO_SAFE_MALLOC_NOBJECT(DDynamicEngine) break;
     case DEngineType::TOPO: engine_ = NAO_SAFE_MALLOC_NOBJECT(DTopoEngine) break;
+    case DEngineType::STATIC: engine_ = NAO_SAFE_MALLOC_NOBJECT(DStaticEngine) break;
     default: NAO_RETURN_ERROR_STATUS("unknown engine type")
     }
 

@@ -5,7 +5,7 @@
  * @Date         : 2024-07-15 17:32:06
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-20 12:15:57
+ * @LastEditTime : 2024-08-09 21:47:02
  **/
 
 #include "VThreshold.h"
@@ -1283,10 +1283,17 @@ int VThreshold::jubu(cv::Mat& src, METHOD type, int radius, float ratio)
     // 对图像矩阵进行平滑处理
     cv::Mat smooth;
     switch (type) {
-    case METHOD::MEAN: cv::boxFilter(src, smooth, CV_32FC1, cv::Size(2 * radius + 1, 2 * radius + 1)); break;
-    case METHOD::GAUSS: cv::GaussianBlur(src, smooth, cv::Size(2 * radius + 1, 2 * radius + 1), 0.0); break;
-    case METHOD::MEDIAN: cv::medianBlur(src, smooth, 2 * radius + 1); break;
-    default: break;
+    case METHOD::MEAN:
+        cv::boxFilter(src, smooth, CV_32FC1, cv::Size(2 * radius + 1, 2 * radius + 1));
+        break;
+    case METHOD::GAUSS:
+        cv::GaussianBlur(src, smooth, cv::Size(2 * radius + 1, 2 * radius + 1), 0.0);
+        break;
+    case METHOD::MEDIAN:
+        cv::medianBlur(src, smooth, 2 * radius + 1);
+        break;
+    default:
+        break;
     }
     // 平滑结果乘以比例系数，然后图像矩阵与其做差
     src.convertTo(src, CV_32FC1);

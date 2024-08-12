@@ -21,8 +21,8 @@ class DElement;
 struct DElementRelation : public NStruct
 {
 public:
-    std::set<DElement*> predecessors_;       // 前驱信息
-    std::set<DElement*> successors_;         // 后继信息
+    std::vector<DElement*> predecessors_{};       // 前驱信息
+    std::vector<DElement*> successors_{};         // 后继信息
     DElement*           belong_ = nullptr;   // 从属信息。如果从属于group，则为该group的值；如果从属于pipeline，则为nullptr
 };
 

@@ -1,11 +1,11 @@
 ﻿/*
- * @FilePath     : /cola/src/Dag/DagPipeline/DPipeline.inl
+ * @FilePath     : /cola/cola/Dag/DagPipeline/DPipeline.inl
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-28 10:36:10
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 11:21:45
+ * @LastEditTime : 2024-08-12 15:17:24
  */
 #ifndef NAO_DPIPELINE_INL
 #define NAO_DPIPELINE_INL
@@ -39,8 +39,43 @@ NStatus DPipeline::registerDElement(DElementPPtr elementRef, const DElementPtrSe
          */
         (*elementRef) = new (std::nothrow) T();
     }
+    else {
+        NAO_RETURN_ERROR_STATUS("resister error type")
+    }
 
     status = innerRegister(*elementRef, dependElements, name, loop);
+    NAO_FUNCTION_END
+}
+
+template<typename TNode, c_enable_if_t<std::is_base_of<DNode, TNode>::value, int>>
+TNode* DPipeline::registerDNode(const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+{
+    DElementPtr node = nullptr;
+    NAO_THROW_EXCEPTION_BY_STATUS(registerGElement<TNode>(&node, dependElements, name, loop))
+    return (TNode*)node;
+}
+
+
+template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DTemplateNode<Args...>, TNode>::value, int>>
+TNode* DPipeline::registerDNode(const DElementPtrSet& dependElements, Args... args)
+{
+    DTemplateNodePtr<Args...> node = nullptr;
+    NAO_THROW_EXCEPTION_BY_STATUS(registerGElement<TNode>(&node, dependElements, args...))
+    return (TNode*)node;
+}
+
+
+template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DTemplateNode<Args...>, TNode>::value, int>>
+NStatus DPipeline::registerDElement(DTemplateNodePtr<Args...>* elementRef, const DElementPtrSet& dependElements, Args... args)
+{
+    NAO_FUNCTION_BEGIN
+    NAO_ASSERT_INIT(false)
+
+    // 构建模板node信息
+    (*elementRef) = new (std::nothrow) TNode(std::forward<Args&&>(args)...);
+    NAO_ASSERT_NOT_NULL(*elementRef)
+
+    status = innerRegister(*elementRef, dependElements, NAO_EMPTY, NAO_DEFAULT_LOOP_TIMES);
     NAO_FUNCTION_END
 }
 
@@ -66,29 +101,13 @@ NStatus DPipeline::registerDElement(DCoordinatorPPtr<SIZE> coordinatorRef, const
     return this->registerDElement<DCoordinator, SIZE>((DElementPtr*)(coordinatorRef), dependElements, name, loop);
 }
 
-
-template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DTemplateNode<Args...>, TNode>::value, int>>
-NStatus DPipeline::registerDElement(DTemplateNodePtr<Args...>* elementRef, const DElementPtrSet& dependElements, Args... args)
-{
-    NAO_FUNCTION_BEGIN
-    NAO_ASSERT_INIT(false)
-
-    // 构建模板node信息
-    (*elementRef) = new (std::nothrow) TNode(std::forward<Args&&>(args)...);
-    NAO_ASSERT_NOT_NULL(*elementRef)
-
-    status = innerRegister(*elementRef, dependElements, NAO_EMPTY, NAO_DEFAULT_LOOP_TIMES);
-    NAO_FUNCTION_END
-}
-
-
-template<typename T, typename... Args, c_enable_if_t<std::is_base_of<DNode, T>::value, int>>
+template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DNode, TNode>::value, int>>
 DNodePtr DPipeline::createDNode(const DNodeInfo& info, Args&&... args)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT_THROW_ERROR(false)
 
-    DNodePtr node = new (std::nothrow) T(std::forward<Args&&>(args)...);
+    DNodePtr node = new (std::nothrow) TNode(std::forward<Args&&>(args)...);
     NAO_ASSERT_NOT_NULL_THROW_ERROR(node)
     status = node->addElementInfo(info.dependence_, info.name_, info.loop_);
     NAO_THROW_EXCEPTION_BY_STATUS(status)
@@ -96,6 +115,8 @@ DNodePtr DPipeline::createDNode(const DNodeInfo& info, Args&&... args)
     repository_.insert(node);
     return node;
 }
+
+
 
 
 template<typename T, typename... Args, c_enable_if_t<std::is_base_of<DNode, T>::value, int>>
@@ -113,11 +134,8 @@ DGroupPtr DPipeline::createDGroup(const DElementPtrArr& elements, const DElement
     NAO_ASSERT_INIT_THROW_ERROR(false)
 
     // 如果不是所有的都非空，则创建失败
-    NAO_THROW_EXCEPTION_BY_CONDITION(std::any_of(elements.begin(), elements.end(), [](DElementPtr element) { return (nullptr == element); }),
-                                     "createGGroup elements have nullptr.")
-    NAO_THROW_EXCEPTION_BY_CONDITION(
-        std::any_of(dependElements.begin(), dependElements.end(), [](DElementPtr element) { return (nullptr == element); }),
-        "createGGroup dependElements have nullptr.")
+    NAO_THROW_EXCEPTION_BY_CONDITION(std::any_of(elements.begin(), elements.end(), [](DElementPtr element) { return (nullptr == element); }), "createGGroup elements have nullptr.")
+    NAO_THROW_EXCEPTION_BY_CONDITION(std::any_of(dependElements.begin(), dependElements.end(), [](DElementPtr element) { return (nullptr == element); }), "createGGroup dependElements have nullptr.")
 
     DGroupPtr group = NAO_SAFE_MALLOC_NOBJECT(T) for (DElementPtr element : elements)
     {
@@ -135,8 +153,7 @@ DGroupPtr DPipeline::createDGroup(const DElementPtrArr& elements, const DElement
 }
 
 
-template<typename TAspect, typename TParam, c_enable_if_t<std::is_base_of<DAspect, TAspect>::value, int>,
-         c_enable_if_t<std::is_base_of<DAspectParam, TParam>::value, int>>
+template<typename TAspect, typename TParam, c_enable_if_t<std::is_base_of<DAspect, TAspect>::value, int>, c_enable_if_t<std::is_base_of<DAspectParam, TParam>::value, int>>
 DPipelinePtr DPipeline::addDAspect(const DElementPtrSet& elements, TParam* param)
 {
     NAO_FUNCTION_BEGIN
@@ -154,8 +171,7 @@ DPipelinePtr DPipeline::addDAspect(const DElementPtrSet& elements, TParam* param
 }
 
 
-template<typename TDaemon, typename TParam, c_enable_if_t<std::is_base_of<DDaemon, TDaemon>::value, int>,
-         c_enable_if_t<std::is_base_of<DDaemonParam, TParam>::value, int>>
+template<typename TDaemon, typename TParam, c_enable_if_t<std::is_base_of<DDaemon, TDaemon>::value, int>, c_enable_if_t<std::is_base_of<DDaemonParam, TParam>::value, int>>
 DPipelinePtr DPipeline::addDDaemon(NMSec ms, TParam* param)
 {
     NAO_FUNCTION_BEGIN
@@ -190,8 +206,7 @@ DPipelinePtr DPipeline::addDDaemon(NMSec ms, Args&&... args)
 }
 
 
-template<typename TEvent, typename TParam, c_enable_if_t<std::is_base_of<DEvent, TEvent>::value, int>,
-         c_enable_if_t<std::is_base_of<DEventParam, TParam>::value, int>>
+template<typename TEvent, typename TParam, c_enable_if_t<std::is_base_of<DEvent, TEvent>::value, int>, c_enable_if_t<std::is_base_of<DEventParam, TParam>::value, int>>
 DPipelinePtr DPipeline::addDEvent(const std::string& key, TParam* param)
 {
     NAO_FUNCTION_BEGIN

@@ -27,8 +27,6 @@ protected:
 
     NStatus run() override;
 
-    NStatus afterRunCheck() override;
-
 private:
     DElementPtrArr topo_elements_{};   // 拓扑排序后的
 

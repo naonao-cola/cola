@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/DElement.h
+ * @FilePath     : /cola/cola/Dag/DagElement/DElement.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 11:31:32
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 14:15:30
+ * @LastEditTime : 2024-08-12 15:05:09
  **/
 #ifndef NAO_DELEMENT_H
 #define NAO_DELEMENT_H
@@ -115,16 +115,46 @@ public:
     DElement* setTimeout(NMSec timeout, DElementTimeoutStrategy strategy = DElementTimeoutStrategy::AS_ERROR);
 
     /**
+     * 设置为微任务
+     * @param macro
+     * @return
+     * @notice 当前仅对 GNode 类型数据生效
+     */
+    DElement* setMacro(NBool macro);
+    /**
      * 当前element是否是一个 group逻辑
      * @return
      */
-    NBool isGroup() const;
+    NBool isDGroup() const;
+
+     /**
+     * 当前element是否是一个 adaptor逻辑
+     * @return
+     */
+    NBool isGAdaptor() const;
+
+    /**
+     * 当前element是否是一个 node逻辑
+     * @return
+     */
+    NBool isGNode() const;
+
 
     /**
      * 获取当前节点状态信息
      * @return
      */
     DElementState getCurState() const;
+
+    /**
+     * 获取对应的ptr类型
+     * @tparam T
+     * @param ptr
+     * @return
+     */
+    template<typename T, c_enable_if_t<std::is_base_of<DElement, T>::value, int> = 0>
+    T* getPtr(NBool allowEmpty = true);
+
 
     /**
      * 实现连续注册的语法糖，形如：
@@ -256,6 +286,12 @@ private:
      * @return
      */
     NBool isMutable() const;
+
+    /**
+     * 判断当前是否是微节点
+     * @return
+     */
+    NBool isMacro() const;
 
     /**
      * 判断当前element是否已经被注册到特定pipeline中了。避免反复注册的问题
@@ -392,11 +428,12 @@ private:
     std::atomic<DElementState> cur_state_{DElementState::CREATE};      // 当前执行状态
 
     /** 配置相关信息 */
-    NSize                   loop_{NAO_DEFAULT_LOOP_TIMES};               // 元素执行次数
-    NLevel                  level_{NAO_DEFAULT_ELEMENT_LEVEL};           // 用于设定init的执行顺序(值小的，优先init，可以为负数)
-    NIndex                  binding_index_{NAO_DEFAULT_BINDING_INDEX};   // 用于设定绑定线程id
-    NMSec                   timeout_{NAO_DEFAULT_ELEMENT_TIMEOUT};       // 超时时间信息（0表示不计算超时）
+    NSize                   loop_{NAO_DEFAULT_LOOP_TIMES};                          // 元素执行次数
+    NLevel                  level_{NAO_DEFAULT_ELEMENT_LEVEL};                      // 用于设定init的执行顺序(值小的，优先init，可以为负数)
+    NIndex                  binding_index_{NAO_DEFAULT_BINDING_INDEX};              // 用于设定绑定线程id
+    NMSec                   timeout_{NAO_DEFAULT_ELEMENT_TIMEOUT};                  // 超时时间信息（0表示不计算超时）
     DElementTimeoutStrategy timeout_strategy_{DElementTimeoutStrategy::AS_ERROR};   // 判定超时的情况下，是否返回错误
+    NBool                   is_marco_{false};                                       // 微任务
 
     /** 执行期间相关信息 */
     DElementParamMap  local_params_;              // 用于记录当前element的内部参数
@@ -406,10 +443,10 @@ private:
     NBool             is_prepared_{false};        // 判断是否已经执行过 prepareRun() 方法
 
     /** 图相关信息 */
-    std::atomic<NSize>  left_depend_{0};    // 当 left_depend_ 值为0的时候，即可以执行该element信息
-    std::set<DElement*> run_before_;        // 被依赖的节点（后继）
-    std::set<DElement*> dependence_;        // 依赖的节点信息（前驱）
-    DElement*           belong_{nullptr};   // 从属的element 信息，如为nullptr，则表示从属于 pipeline
+    std::atomic<NSize>      left_depend_{0};    // 当 left_depend_ 值为0的时候，即可以执行该element信息
+    USmallVector<DElement*> run_before_;        // 被依赖的节点（后继）
+    USmallVector<DElement*> dependence_;        // 依赖的节点信息（前驱）
+    DElement*               belong_{nullptr};   // 从属的element 信息，如为nullptr，则表示从属于 pipeline
 
     /** 异步执行相关信息 */
     std::future<NStatus>    async_result_;   // 用于记录当前节点的异步执行情况
@@ -439,6 +476,7 @@ private:
     friend class DEngine;
     friend class DDynamicEngine;
     friend class DTopoEngine;
+    friend class DStaticEngine;
     friend class DAspectObject;
     friend class DOptimizer;
     friend class DMaxParaOptimizer;
@@ -450,12 +488,13 @@ private:
     NAO_DECLARE_DEVENT_MANAGER_WRAPPER_WITH_MEMBER
 };
 
-using DElementRef    = DElement&;
-using DElementPtr    = DElement*;
-using DElementCPtr   = const DElement*;
-using DElementPPtr   = DElementPtr*;
-using DElementPtrArr = std::vector<DElementPtr>;
-using DElementPtrSet = std::set<DElementPtr>;
+using DElementRef      = DElement&;
+using DElementPtr      = DElement*;
+using DElementCPtr     = const DElement*;
+using DElementPPtr     = DElementPtr*;
+using DElementPtrArr   = std::vector<DElementPtr>;
+using DElementPtrMat2D = std::vector<DElementPtrArr>;
+using DElementPtrSet   = std::set<DElementPtr>;
 NAO_NAMESPACE_END
 
 #include "DElement.inl"

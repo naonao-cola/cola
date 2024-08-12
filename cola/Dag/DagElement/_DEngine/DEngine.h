@@ -33,7 +33,9 @@ protected:
      * 执行完毕后，确认运行是否正常
      * @return
      */
-    virtual NStatus afterRunCheck() = 0;
+    virtual NStatus afterRunCheck(){
+        NAO_EMPTY_FUNCTION
+    }
 
     /**
      * 计算出来最终计算的index值
@@ -68,9 +70,9 @@ protected:
         linked_size_ = 0;
         for (DElementPtr element : elements) {
             element->linkable_ = false;   // 防止出现之前的留存逻辑。确保只有当前链接关系下，需要设置 linkable的，才会设置为 true
-            if (1 == element->dependence_.size() && 1 == (*element->dependence_.begin())->run_before_.size() &&
-                (*(element->dependence_.begin()))->run_before_.find(element) != (*(element->dependence_.begin()))->run_before_.end() &&
-                element->getBindingIndex() == (*(element->dependence_.begin()))->getBindingIndex()) {
+             if (1 == element->dependence_.size()
+                && 1 == (*element->dependence_.begin())->run_before_.size()
+                && element->getBindingIndex() == (*(element->dependence_.begin()))->getBindingIndex()) {
                 element->linkable_ = true;
                 linked_size_++;
             }

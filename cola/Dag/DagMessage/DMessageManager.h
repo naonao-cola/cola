@@ -33,7 +33,7 @@ public:
      * @return
      */
     template<typename TImpl, c_enable_if_t<std::is_base_of<T, TImpl>::value, int> = 0>
-    NStatus createTopic(const std::string& topic, NUint size)
+    NStatus createTopic(const std::string& topic, NUInt size)
     {
         NAO_FUNCTION_BEGIN
 
@@ -48,7 +48,7 @@ public:
         }
         else {
             // 创建一个 topic信息
-            auto message = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>, NUint>(size);
+            auto message = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>, NUInt>(size);
             send_recv_message_map_.insert(std::pair<const std::string&, DMessagePtr<T>>(innerTopic, DMessagePtr<T>(message)));
         }
 
@@ -185,10 +185,10 @@ public:
      * @return
      */
     template<typename TImpl, c_enable_if_t<std::is_base_of<T, TImpl>::value, int> = 0>
-    NIndex bindTopic(const std::string& topic, NUint size)
+    NIndex bindTopic(const std::string& topic, NUInt size)
     {
         auto innerTopic = internal::PUB_SUB_PREFIX + topic;
-        auto message    = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>, NUint>(size);
+        auto message    = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>, NUInt>(size);
 
         NAO_LOCK_GUARD lock(bind_mutex_);
         NIndex         connId = (++cur_conn_id_);

@@ -212,11 +212,16 @@ VlHog* vl_hog_new(VlHogVariant variant, vl_size numOrientations, vl_bool transpo
      DalalTriggs:: 9 undirected orientations x 4 blocks.
      */
     switch (self->variant) {
-    case VlHogVariantUoctti: self->dimension = 3 * self->numOrientations + 4; break;
+    case VlHogVariantUoctti:
+        self->dimension = 3 * self->numOrientations + 4;
+        break;
 
-    case VlHogVariantDalalTriggs: self->dimension = 4 * self->numOrientations; break;
+    case VlHogVariantDalalTriggs:
+        self->dimension = 4 * self->numOrientations;
+        break;
 
-    default: assert(0);
+    default:
+        assert(0);
     }
 
     /*
@@ -260,7 +265,8 @@ VlHog* vl_hog_new(VlHogVariant variant, vl_size numOrientations, vl_bool transpo
         }
         break;
 
-    default: assert(0);
+    default:
+        assert(0);
     }
 
     /*
@@ -442,12 +448,15 @@ void vl_hog_render(VlHog const* self, float* image, float const* descriptor, vl_
                 float*       glyphImage = image + self->glyphSize * x + y * width * (self->glyphSize * self->glyphSize);
 
                 switch (self->variant) {
-                case VlHogVariantUoctti: weight = descriptor[k * hogStride] + descriptor[(k + self->numOrientations) * hogStride] + descriptor[(k + 2 * self->numOrientations) * hogStride]; break;
+                case VlHogVariantUoctti:
+                    weight = descriptor[k * hogStride] + descriptor[(k + self->numOrientations) * hogStride] + descriptor[(k + 2 * self->numOrientations) * hogStride];
+                    break;
                 case VlHogVariantDalalTriggs:
                     weight = descriptor[k * hogStride] + descriptor[(k + self->numOrientations) * hogStride] + descriptor[(k + 2 * self->numOrientations) * hogStride] +
                              descriptor[(k + 3 * self->numOrientations) * hogStride];
                     break;
-                default: abort();
+                default:
+                    abort();
                 }
                 maxWeight = VL_MAX(weight, maxWeight);
                 minWeight = VL_MIN(weight, minWeight);
@@ -1032,7 +1041,8 @@ void vl_hog_extract(VlHog* self, float* features)
                     oiter += hogStride;
                     break;
 
-                case VlHogVariantDalalTriggs: break;
+                case VlHogVariantDalalTriggs:
+                    break;
                 }
                 ++iter;
             } /* next x */

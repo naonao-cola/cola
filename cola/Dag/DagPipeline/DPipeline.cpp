@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagPipeline/DPipeline.cpp
+ * @FilePath     : /cola/cola/Dag/DagPipeline/DPipeline.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-28 10:35:54
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 10:35:54
+ * @LastEditTime : 2024-08-12 15:09:35
  **/
 #include "DPipeline.h"
 #include "../DagElement/_DOptimizer/DOptimizerInclude.h"
@@ -324,7 +324,7 @@ NBool DPipeline::checkSeparate(DElementPtr fst, DElementPtr snd) const
     }
     else if (ancestor) {
         // 两个同属于一个 group 的情况，则根据 group 的属性来决定
-        NAO_THROW_EXCEPTION_BY_CONDITION(!ancestor->isGroup(), "calculate ancestor failed, not a group.")
+        NAO_THROW_EXCEPTION_BY_CONDITION(!ancestor->isDGroup(), "calculate ancestor failed, not a group.")
         result = (dynamic_cast<DGroupPtr>(ancestor))->isSeparate(fstPatch, sndPatch);
     }
     else {

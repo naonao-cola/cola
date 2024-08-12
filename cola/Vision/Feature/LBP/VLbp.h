@@ -5,13 +5,14 @@
  * @Date         : 2024-07-18 16:29:50
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-18 16:39:46
+ * @LastEditTime : 2024-08-09 21:49:01
  **/
 #ifndef NAONAO_VLBP_H
 #define NAONAO_VLBP_H
 
-#include <utility>
 #include "../../VisionObject.h"
+#include <utility>
+
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN

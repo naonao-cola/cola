@@ -20,11 +20,11 @@ NAO_NAMESPACE_BEGIN
 /*
 消息类，每个消息里面有个环形队列
 */
-template<typename T, NUint capacity = NAO_DEFAULT_RINGBUFFER_SIZE, c_enable_if_t<std::is_base_of<DMessageParam, T>::value, int> = 0>
+template<typename T, NUInt capacity = NAO_DEFAULT_RINGBUFFER_SIZE, c_enable_if_t<std::is_base_of<DMessageParam, T>::value, int> = 0>
 class DMessage : public DMessageObject
 {
 public:
-    explicit DMessage(NUint size = capacity) { queue_.setCapacity(size); }
+    explicit DMessage(NUInt size = capacity) { queue_.setCapacity(size); }
 
     /**
      * 析构函数。释放前，要先释放队列中所有的信息
@@ -86,14 +86,14 @@ public:
      * 获取容量大小
      * @return
      */
-    NUint getCapacity() const { return queue_.getCapacity(); }
+    NUInt getCapacity() const { return queue_.getCapacity(); }
 
 private:
     UAtomicRingBufferQueue<T, capacity> queue_;
 };
 
 
-template<typename T, NUint capacity = NAO_DEFAULT_RINGBUFFER_SIZE>
+template<typename T, NUInt capacity = NAO_DEFAULT_RINGBUFFER_SIZE>
 using DMessagePtr = DMessage<T, capacity>*;
 
 NAO_NAMESPACE_END

@@ -81,6 +81,19 @@ auto UThreadPool::commitWithPriority(const FunctionType& task, int priority)
     return result;
 }
 
+template<typename FunctionType>
+NVoid UThreadPool::execute(const FunctionType& task, NIndex index) {
+    NIndex realIndex = dispatch(index);
+    if (realIndex >= 0 && realIndex < config_.default_thread_size_) {
+        primary_threads_[realIndex]->pushTask(std::move(task));
+    } else if (NAO_LONG_TIME_TASK_STRATEGY == realIndex) {
+        priority_task_queue_.push(std::move(task), NAO_LONG_TIME_TASK_STRATEGY);
+    } else {
+        // 返回其他结果，放到pool的queue中执行
+        task_queue_.push(std::move(task));
+    }
+}
+
 NAO_NAMESPACE_END
 
 #endif   // NAO_UTHREADPOOL_INL

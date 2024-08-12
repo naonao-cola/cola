@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagPipeline/DPipeline.h
+ * @FilePath     : /cola/cola/Dag/DagPipeline/DPipeline.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-28 10:35:36
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 11:17:21
+ * @LastEditTime : 2024-08-12 15:02:17
  **/
 #ifndef NAO_DPIPELINE_H
 #define NAO_DPIPELINE_H
@@ -112,8 +112,9 @@ public:
      * @param args
      * @return
      */
-    template<typename T, typename... Args, c_enable_if_t<std::is_base_of<DNode, T>::value, int> = 0>
-    DNodePtr createDNode(const DNodeInfo& info, Args&&... args);
+    template<typename TNode, typename ...Args,
+            c_enable_if_t<std::is_base_of<DNode, TNode>::value, int> = 0>
+    DNodePtr createDNode(const DNodeInfo &info, Args&&... args);
 
     /**
      * 根据传入的信息，创建node节点
@@ -153,9 +154,80 @@ public:
      * @param loop
      * @return
      */
-    template<typename T, c_enable_if_t<std::is_base_of<DElement, T>::value, int> = 0>
-    NStatus registerDElement(DElementPPtr elementRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(),
-                             const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
+    template<typename T,
+            c_enable_if_t<std::is_base_of<DElement, T>::value, int> = 0>
+    NStatus registerDElement(DElementPPtr elementRef,
+                             const DElementPtrSet &dependElements = std::initializer_list<DElementPtr>(),
+                             const std::string &name = NAO_EMPTY,
+                             NSize loop = NAO_DEFAULT_LOOP_TIMES);
+
+     /**
+     * 在图中注册一个模板Element信息
+     * @tparam TNode
+     * @tparam Args
+     * @param elementRef
+     * @param dependElements
+     * @return
+     */
+    template<typename TNode, typename ...Args,
+            c_enable_if_t<std::is_base_of<DTemplateNode<Args ...>, TNode>::value, int> = 0>
+    NStatus registerDElement(DTemplateNodePtr<Args ...> *elementRef,
+                             const DElementPtrSet &dependElements,
+                             Args... args);
+
+    /**
+     * 注册一个 node
+     * @tparam T
+     * @param dependElements
+     * @param name
+     * @param loop
+     * @return
+     */
+    template<typename TNode,
+            c_enable_if_t<std::is_base_of<DNode, TNode>::value, int> = 0>
+    TNode* registerDNode(const DElementPtrSet &dependElements = std::initializer_list<DElementPtr>(),
+                     const std::string &name = NAO_EMPTY,
+                     NSize loop = NAO_DEFAULT_LOOP_TIMES);
+
+    /**
+     * 注册一个 node
+     * @tparam TNode
+     * @tparam Args
+     * @param dependElements
+     * @param args
+     * @return
+     */
+    template<typename TNode, typename ...Args,
+            c_enable_if_t<std::is_base_of<DTemplateNode<Args ...>, TNode>::value, int> = 0>
+    TNode* registerDNode(const DElementPtrSet &dependElements,
+                         Args... args);
+
+    /**
+     * 注册一个节点信息
+     * @param nodeRef
+     * @param dependElements
+     * @param name
+     * @param loop
+     * @return
+     */
+    NStatus registerDNode(DElementPPtr nodeRef,
+                          const DElementPtrSet &dependElements = std::initializer_list<DElementPtr>(),
+                          const std::string &name = NAO_EMPTY,
+                          NSize loop = NAO_DEFAULT_LOOP_TIMES);
+
+    /**
+     * 注册一个组信息（推荐使用）
+     * @param groupRef
+     * @param dependElements
+     * @param name
+     * @param loop
+     * @return
+     */
+    NStatus registerDGroup(DElementPPtr groupRef,
+                           const DElementPtrSet &dependElements = std::initializer_list<DElementPtr>(),
+                           const std::string &name = NAO_EMPTY,
+                           NSize loop = NAO_DEFAULT_LOOP_TIMES);
+
 
     /**
      * 注册function类型的内容，模板特化
@@ -196,39 +268,6 @@ public:
     template<typename DCoordinator, NInt SIZE>
     NStatus registerDElement(DCoordinatorPPtr<SIZE> coordinatorRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(),
                              const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
-
-    /**
-     * 在图中注册一个模板Element信息
-     * @tparam TNode
-     * @tparam Args
-     * @param elementRef
-     * @param dependElements
-     * @return
-     */
-    template<typename DNode, typename... Args, c_enable_if_t<std::is_base_of<DTemplateNode<Args...>, DNode>::value, int> = 0>
-    NStatus registerDElement(DTemplateNodePtr<Args...>* elementRef, const DElementPtrSet& dependElements, Args... args);
-
-    /**
-     * 注册一个节点信息
-     * @param nodeRef
-     * @param dependElements
-     * @param name
-     * @param loop
-     * @return
-     */
-    NStatus registerDNode(DElementPPtr nodeRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(),
-                          const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
-
-    /**
-     * 注册一个组信息（推荐使用）
-     * @param groupRef
-     * @param dependElements
-     * @param name
-     * @param loop
-     * @return
-     */
-    NStatus registerDGroup(DElementPPtr groupRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(),
-                           const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
 
     /**
      * 添加切面

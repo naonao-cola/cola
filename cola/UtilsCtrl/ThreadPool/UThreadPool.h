@@ -101,6 +101,16 @@ public:
     auto commitWithPriority(const FunctionType& task,
                             int priority) -> std::future<decltype(std::declval<FunctionType>()())>;
 
+     /**
+     * 异步执行任务
+     * @tparam FunctionType
+     * @param task
+     * @param index
+     */
+    template<typename FunctionType>
+    NVoid execute(const FunctionType& task,
+                 NIndex index = NAO_DEFAULT_TASK_STRATEGY);
+
     /**
      * 执行任务组信息
      * 取taskGroup内部ttl和入参ttl的最小值，为计算ttl标准，任务组内的任务无序执行，不同任务组之间是阻塞执行

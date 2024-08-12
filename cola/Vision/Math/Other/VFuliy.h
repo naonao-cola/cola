@@ -5,7 +5,7 @@
  * @Date         : 2024-07-27 22:57:37
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-01 11:51:12
+ * @LastEditTime : 2024-08-09 21:47:55
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VFULIY_H
@@ -61,7 +61,7 @@ public:
 
         cv::normalize(magnitudeImage, magnitudeImage, 0, 1, cv::NORM_MINMAX);
         return magnitudeImage;
-        //dst = magnitudeImage.clone();
+        // dst = magnitudeImage.clone();
     }
 };
 

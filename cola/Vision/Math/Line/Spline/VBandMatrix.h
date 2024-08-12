@@ -5,7 +5,7 @@
  * @Date         : 2024-07-21 22:06:36
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-21 22:07:04
+ * @LastEditTime : 2024-08-09 21:52:56
  **/
 #ifndef NAONAO_VBANDMATRIX_H
 #define NAONAO_VBANDMATRIX_H
@@ -50,4 +50,4 @@ public:
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
 
-#endif //NAONAO_VBANDMATRIX_H
+#endif   // NAONAO_VBANDMATRIX_H

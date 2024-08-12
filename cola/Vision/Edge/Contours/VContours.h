@@ -5,7 +5,7 @@
  * @Date         : 2024-08-09 11:59:03
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-09 20:38:20
+ * @LastEditTime : 2024-08-12 10:08:16
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VCONTOURS_H
@@ -19,10 +19,9 @@ NAO_VISION_NAMESPACE_BEGIN
 class VContours : public VisionObject
 {
 public:
-    VContours();
-    ~VContours() override;
+    VContours()=default;
+    ~VContours() override=default;
 
-public:
     // 寻找轮廓
     static std::vector<std::vector<cv::Point>> get_contours(const cv::Mat& src);
 

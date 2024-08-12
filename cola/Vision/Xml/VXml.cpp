@@ -5,7 +5,7 @@
  * @Date         : 2024-07-08 15:04:32
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-08 15:04:33
+ * @LastEditTime : 2024-08-09 21:46:30
  **/
 #include "VXml.h"
 
@@ -23,8 +23,11 @@ VXmlw::VXmlw(const int& type_w, const std::string& file_name)
         fs_ = cv::FileStorage(file_name_, cv::FileStorage::WRITE);
         fs_ << "WIRTE_TIME" << asctime(localtime(&raw_time));
         break;
-    case 2: fs_ = cv::FileStorage(file_name_, cv::FileStorage::APPEND); fs_ << "WRITE_TIME" << asctime(localtime(&raw_time));
-    default: break;
+    case 2:
+        fs_ = cv::FileStorage(file_name_, cv::FileStorage::APPEND);
+        fs_ << "WRITE_TIME" << asctime(localtime(&raw_time));
+    default:
+        break;
     }
     if (!fs_.isOpened()) {
         std::cerr << file_name_ << "file open false" << std::endl;

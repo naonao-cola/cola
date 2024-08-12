@@ -5,34 +5,39 @@
  * @Date         : 2024-06-21 16:01:30
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 17:27:25
-**/
+ * @LastEditTime : 2024-08-12 15:40:01
+ **/
 
 #include "../Common/common.h"
 using namespace nao;
 
 
-int add(int i, int j) {
+int add(int i, int j)
+{
     return i + j;
 }
 
-static float minusBy5(float i) {
+static float minusBy5(float i)
+{
     return i - 5.0f;
 }
 
 
-class MyFunction {
+class MyFunction
+{
 public:
-    std::string pow2(std::string& str) const {
+    std::string pow2(std::string& str) const
+    {
         int result = 1;
-        int pow = power_;
+        int pow    = power_;
         while (pow--) {
             result *= atoi(str.c_str());
         }
         return "multiply result is : " + std::to_string(result);
     }
 
-    static int divide(int i, int j) {
+    static int divide(int i, int j)
+    {
         if (0 == j) {
             return 0;
         }
@@ -44,7 +49,8 @@ private:
     int power_ = 2;
 };
 
-void test_threadpool_1(UThreadPoolPtr tp) {
+void test_threadpool_1(UThreadPoolPtr tp)
+{
     /**
      * 依次向线程池中传入：
      * 1、普通函数
@@ -52,29 +58,30 @@ void test_threadpool_1(UThreadPoolPtr tp) {
      * 3、类成员函数
      * 4、类成员静态函数
      */
-    int i = 6, j = 3;
+    int         i = 6, j = 3;
     std::string str = "5";
-    MyFunction mf;
+    MyFunction  mf;
 
-    auto r1 = tp->commit([i, j] { return add(i, j); });    // 可以通过lambda表达式传递函数
-    std::future<float> r2 = tp->commit(std::bind(minusBy5, 8.5f));    // 可以传入任意个数的入参
-    auto r3 = tp->commit(std::bind(&MyFunction::pow2, mf, str));    // 返回值可以是任意类型
-    std::future<int> r4 = tp->commit([i, j] { return MyFunction::divide(i, j); });    // 返回值实际上是std::future<T>类型
+    auto               r1 = tp->commit([i, j] { return add(i, j); });                  // 可以通过lambda表达式传递函数
+    std::future<float> r2 = tp->commit(std::bind(minusBy5, 8.5f));                     // 可以传入任意个数的入参
+    auto               r3 = tp->commit(std::bind(&MyFunction::pow2, mf, str));         // 返回值可以是任意类型
+    std::future<int>   r4 = tp->commit([i, j] { return MyFunction::divide(i, j); });   // 返回值实际上是std::future<T>类型
 
-    std::cout << r1.get() << std::endl;    // 返回值可以是int类型
-    std::cout << r2.get() << std::endl;    // 等待r2对应函数执行完毕后，再继续执行。不调用get()为不等待
-    std::cout << r3.get() << std::endl;    // 返回值也可是string或其他任意类型
+    std::cout << r1.get() << std::endl;   // 返回值可以是int类型
+    std::cout << r2.get() << std::endl;   // 等待r2对应函数执行完毕后，再继续执行。不调用get()为不等待
+    std::cout << r3.get() << std::endl;   // 返回值也可是string或其他任意类型
     std::cout << r4.get() << std::endl;
 }
 
-void test_threadpool_2(UThreadPoolPtr tp) {
+void test_threadpool_2(UThreadPoolPtr tp)
+{
     /**
      * 通过添加工作组(taskGroup)来执行任务
      */
     UTaskGroup taskGroup;
 
     /** 添加一个不耗时的任务 */
-    int i = 1, j = 2, k = 3;
+    int  i = 1, j = 2, k = 3;
     auto hcg = [] { NAO_ECHO("Hello, CGraph."); };
     taskGroup.addTask(hcg);
 
@@ -89,7 +96,7 @@ void test_threadpool_2(UThreadPoolPtr tp) {
         int result = i - j + k;
         NAO_SLEEP_MILLISECOND(2000)
         NAO_ECHO("sleep for 2 second, [%d] - [%d] + [%d] = [%d], run success.", i, j, k, result);
-        return result;    // submit接口，不会对线程函数返回值进行判断。如果需要判断，考虑commit方式
+        return result;   // submit接口，不会对线程函数返回值进行判断。如果需要判断，考虑commit方式
     });
 
     /** 如果添加耗时3000ms的任务，则整体执行失败 */
@@ -119,7 +126,8 @@ void test_threadpool_2(UThreadPoolPtr tp) {
 }
 
 
-void test_threadpool_3(UThreadPoolPtr tp) {
+void test_threadpool_3(UThreadPoolPtr tp)
+{
     /**
      * 并发打印0~100之间的数字
      * 使用commit和submit函数的区别，主要在于：
@@ -130,15 +138,15 @@ void test_threadpool_3(UThreadPoolPtr tp) {
     const int size = 100;
     NAO_ECHO("thread pool task submit version : ");
     for (int i = 0; i < size; i++) {
-        tp->submit([i] { std::cout << i << " "; });    // 可以看到，submit版本是有序执行的。如果需要想要无序执行，可以通过创建taskGroup的方式进行，或者使用commit方法
+        tp->submit([i] { std::cout << i << " "; });   // 可以看到，submit版本是有序执行的。如果需要想要无序执行，可以通过创建taskGroup的方式进行，或者使用commit方法
     }
-    NAO_SLEEP_SECOND(1)    // 等待上面函数执行完毕，以便于观察结果。无实际意义
+    NAO_SLEEP_SECOND(1)   // 等待上面函数执行完毕，以便于观察结果。无实际意义
     std::cout << "\r\n";
 
     NAO_ECHO("thread pool task group submit version : ");
     UTaskGroup taskGroup;
     for (int i = 0; i < size; i++) {
-        taskGroup.addTask([i] { std::cout << i << " "; });    // 将任务放到一个taskGroup中，并发执行。执行的结果是无序的
+        taskGroup.addTask([i] { std::cout << i << " "; });   // 将任务放到一个taskGroup中，并发执行。执行的结果是无序的
     }
     tp->submit(taskGroup);
     NAO_SLEEP_SECOND(1)
@@ -146,15 +154,16 @@ void test_threadpool_3(UThreadPoolPtr tp) {
 
     NAO_ECHO("thread pool task commit version : ");
     for (int i = 0; i < size; i++) {
-        tp->commit([i] { std::cout << i << " "; });    // commit版本，是无序执行的
+        tp->commit([i] { std::cout << i << " "; });   // commit版本，是无序执行的
     }
     NAO_SLEEP_SECOND(1)
     std::cout << "\r\n";
 }
 
 
-int main(){
-     // 构造一个线程池类的智能指针，并且默认初始化
+int main()
+{
+    // 构造一个线程池类的智能指针，并且默认初始化
     std::unique_ptr<UThreadPool> pool(new UThreadPool(true));
     NAO_ECHO("======== test_threadpool_1 begin. ========");
     test_threadpool_1(pool.get());

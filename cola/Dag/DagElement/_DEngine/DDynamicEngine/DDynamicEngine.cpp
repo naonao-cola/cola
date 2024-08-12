@@ -7,7 +7,6 @@
  * @LastEditors  : naonao
  * @LastEditTime : 2024-06-26 11:45:14
  **/
-#include <algorithm>
 
 #include "DDynamicEngine.h"
 
@@ -143,10 +142,11 @@ NVoid DDynamicEngine::process(DElementPtr element, NBool affinity)
         return;
     }
 
-    const auto& execute = [this, element] {
+    const auto& exec = [this, element] {
         const NStatus& curStatus = element->fatProcessor(NFunctionType::RUN);
         if (unlikely(curStatus.isErr())) {
             // 当且仅当整体状正常，且当前状态异常的时候，进入赋值逻辑。确保不重复赋值
+            NAO_LOCK_GUARD lk(status_lock_);
             cur_status_ += curStatus;
         }
         afterElementRun(element);
@@ -154,10 +154,10 @@ NVoid DDynamicEngine::process(DElementPtr element, NBool affinity)
 
     if (affinity && NAO_DEFAULT_BINDING_INDEX == element->getBindingIndex()) {
         // 如果 affinity=true，表示用当前的线程，执行这个逻辑。以便增加亲和性
-        execute();
+         exec();
     }
     else {
-        thread_pool_->commit(execute, calcIndex(element));
+         thread_pool_->execute(exec, calcIndex(element));
     }
 }
 

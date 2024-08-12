@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/ThreadPool/UThreadPool.cpp
+ * @FilePath     : /cola/cola/UtilsCtrl/ThreadPool/UThreadPool.cpp
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:50:26
+ * @LastEditTime : 2024-08-12 15:25:01
  **/
 #include "UThreadPool.h"
 
@@ -270,11 +270,8 @@ NVoid UThreadPool::monitor()
         }
 
         // 如果 primary线程都在执行，则表示忙碌
-        bool busy =
-            !primary_threads_.empty() &&
-            std::all_of(primary_threads_.begin(),
-                        primary_threads_.end(),
-                        [](UThreadPrimaryPtr ptr) { return nullptr != ptr && ptr->is_running_; });
+        bool busy = !primary_threads_.empty() && std::all_of(primary_threads_.begin(), primary_threads_.end(),
+                                [](UThreadPrimaryPtr ptr) { return ptr && ptr->is_running_; });
 
         NAO_LOCK_GUARD lock(st_mutex_);
         // 如果忙碌或者priority_task_queue_中有任务，则需要添加 secondary线程

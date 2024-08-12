@@ -5,7 +5,7 @@
  * @Date         : 2024-07-21 10:25:58
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-22 10:10:36
+ * @LastEditTime : 2024-08-09 21:52:36
  **/
 #ifndef NAONAO_VRANSAC_H
 #define NAONAO_VRANSAC_H
@@ -77,6 +77,7 @@ private:
     {   // 子集序列比较器
     private:
         int length_;
+
     public:
         explicit SubSetIndexComparator(int arrayLength)
             : length_(arrayLength)
