@@ -68,6 +68,14 @@ T* DElement::getEParam(const std::string& key)
     return dynamic_cast<T*>((iter != local_params_.end()) ? iter->second : nullptr);
 }
 
+template<typename T,
+        c_enable_if_t<std::is_base_of<DElement, T>::value, int>>
+T* DElement::getPtr(NBool allowEmpty) {
+    T* ptr = dynamic_cast<T *>(this);
+    NAO_THROW_EXCEPTION_BY_CONDITION(!allowEmpty && !ptr, "change ptr type failed")
+    return ptr;
+}
+
 NAO_NAMESPACE_END
 
 #endif   // NAO_DELEMENT_INL

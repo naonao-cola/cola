@@ -5,7 +5,7 @@
  * @Date         : 2024-07-21 22:18:15
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-21 22:20:34
+ * @LastEditTime : 2024-08-09 21:53:14
  **/
 #include "VSpline.h"
 #include "VBandMatrix.h"
@@ -159,26 +159,46 @@ double VSpline::deriv(int order, double x) const
     if (x < m_x[0]) {
         // extrapolation to the left
         switch (order) {
-        case 1: interpol = 2.0 * m_b0 * h + m_c0; break;
-        case 2: interpol = 2.0 * m_b0 * h; break;
-        default: interpol = 0.0; break;
+        case 1:
+            interpol = 2.0 * m_b0 * h + m_c0;
+            break;
+        case 2:
+            interpol = 2.0 * m_b0 * h;
+            break;
+        default:
+            interpol = 0.0;
+            break;
         }
     }
     else if (x > m_x[n - 1]) {
         // extrapolation to the right
         switch (order) {
-        case 1: interpol = 2.0 * m_b[n - 1] * h + m_c[n - 1]; break;
-        case 2: interpol = 2.0 * m_b[n - 1]; break;
-        default: interpol = 0.0; break;
+        case 1:
+            interpol = 2.0 * m_b[n - 1] * h + m_c[n - 1];
+            break;
+        case 2:
+            interpol = 2.0 * m_b[n - 1];
+            break;
+        default:
+            interpol = 0.0;
+            break;
         }
     }
     else {
         // interpolation
         switch (order) {
-        case 1: interpol = (3.0 * m_a[idx] * h + 2.0 * m_b[idx]) * h + m_c[idx]; break;
-        case 2: interpol = 6.0 * m_a[idx] * h + 2.0 * m_b[idx]; break;
-        case 3: interpol = 6.0 * m_a[idx]; break;
-        default: interpol = 0.0; break;
+        case 1:
+            interpol = (3.0 * m_a[idx] * h + 2.0 * m_b[idx]) * h + m_c[idx];
+            break;
+        case 2:
+            interpol = 6.0 * m_a[idx] * h + 2.0 * m_b[idx];
+            break;
+        case 3:
+            interpol = 6.0 * m_a[idx];
+            break;
+        default:
+            interpol = 0.0;
+            break;
         }
     }
     return interpol;

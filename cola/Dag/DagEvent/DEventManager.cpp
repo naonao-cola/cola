@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagEvent/DEventManager.cpp
+ * @FilePath     : /cola/cola/Dag/DagEvent/DEventManager.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 15:14:58
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:42:33
+ * @LastEditTime : 2024-08-12 10:29:18
  **/
 #include "DEventManager.h"
 
@@ -47,9 +47,8 @@ NStatus DEventManager::trigger(const std::string& key, DEventType type, DEventAs
 {
     NAO_FUNCTION_BEGIN
     auto result = events_map_.find(key);
-    if (events_map_.end() == result) {
-        NAO_RETURN_ERROR_STATUS("event key [" + key + "] no find")
-    }
+    NAO_RETURN_ERROR_STATUS_BY_CONDITION(events_map_.end() == result,
+                                            "event key [" + key + "] no find")
 
     auto event = result->second;
     NAO_ASSERT_NOT_NULL(event)
@@ -57,6 +56,14 @@ NStatus DEventManager::trigger(const std::string& key, DEventType type, DEventAs
     NAO_FUNCTION_END
 }
 
+std::shared_future<NVoid> DEventManager::asyncTrigger(const std::string &key, DEventAsyncStrategy strategy) {
+    auto result = events_map_.find(key);
+    NAO_THROW_EXCEPTION_BY_CONDITION(events_map_.end() == result || !result->second,
+                                        "event key [" + key + "] no find");
+
+    auto event = result->second;
+    return event->asyncProcess(strategy);
+}
 
 DEventObjectPtr DEventManager::setThreadPool(UThreadPoolPtr ptr)
 {

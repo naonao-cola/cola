@@ -4,8 +4,8 @@
  * @Author       : naonao
  * @Date         : 2024-07-18 19:51:49
  * @Version      : 0.0.1
- * @LastEditors  : error: git config user.name & please set dead value or install git
- * @LastEditTime : 2024-08-08 22:00:00
+ * @LastEditors  : naonao
+ * @LastEditTime : 2024-08-12 15:40:50
  **/
 #include "../Common/common.h"
 #include "../Common/config.h"
@@ -25,7 +25,7 @@ void test_svm()
     std::vector<cv::Mat> ng_img_vec;
     for (const auto& item : ok_file) {
         cv::Mat tmp = cv::imread(item);
-        if(tmp.empty()){
+        if (tmp.empty()) {
             std::cout << "test_svm ok img is empty: " << item << std::endl;
             continue;
         }
@@ -33,7 +33,7 @@ void test_svm()
     }
     for (const auto& item : ng_file) {
         cv::Mat tmp = cv::imread(item);
-        if(tmp.empty()){
+        if (tmp.empty()) {
             std::cout << "test_svm ng img is empty: " << item << std::endl;
             continue;
         }
@@ -75,7 +75,7 @@ void test_pca()
     cv::Mat ok_feature = ok_hog_transform();
 
     VPCA    pca;
-    cv::Mat dst = pca.reduce(ok_feature,30);
+    cv::Mat dst = pca.reduce(ok_feature, 30);
     pca.write(R"(./pca.xml)");
     nao::NAO_ECHO("pca done");
 }

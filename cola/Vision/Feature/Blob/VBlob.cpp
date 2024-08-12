@@ -5,7 +5,7 @@
  * @Date         : 2024-07-31 14:02:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-31 18:47:15
+ * @LastEditTime : 2024-08-09 21:48:33
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "VBlob.h"
@@ -539,7 +539,7 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat G
     cv::Mat matLabel;
     cv::Mat matStats;
     cv::Mat matCentroid;
-    matLabel            = cv::Mat(ThresholdBuffer.size(), CV_32SC1, false);
+    matLabel           = cv::Mat(ThresholdBuffer.size(), CV_32SC1, false);
     NLLong nTotalLabel = 0;
 
     if (ThresholdBuffer.type() == CV_8U) {

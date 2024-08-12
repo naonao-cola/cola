@@ -98,7 +98,8 @@ private:
 
     std::mutex              lock_;
     std::condition_variable cv_;
-
+    std::mutex status_lock_;
+    
     friend class UAllocator;
 };
 

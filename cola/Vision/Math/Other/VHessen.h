@@ -5,7 +5,7 @@
  * @Date         : 2024-07-23 18:29:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-23 18:29:49
+ * @LastEditTime : 2024-08-09 21:48:14
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VHSSEN_H
@@ -118,4 +118,4 @@ public:
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
 
-#endif //NAONAO_VHSSEN_H
+#endif   // NAONAO_VHSSEN_H

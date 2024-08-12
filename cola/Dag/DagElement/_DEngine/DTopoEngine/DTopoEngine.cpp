@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/_DEngine/DTopoEngine/DTopoEngine.cpp
+ * @FilePath     : /cola/cola/Dag/DagElement/_DEngine/DTopoEngine/DTopoEngine.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 11:46:08
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 11:48:41
+ * @LastEditTime : 2024-08-12 13:53:44
  **/
 #include <queue>
 
@@ -54,11 +54,5 @@ NStatus DTopoEngine::run()
     NAO_FUNCTION_END
 }
 
-
-NStatus DTopoEngine::afterRunCheck(){/**
-                                      * topology 纯靠顺序执行。如果有异常，会直接爆出
-                                      * 故，不在这里做判定了
-                                      */
-                                     NAO_EMPTY_FUNCTION}
 
 NAO_NAMESPACE_END

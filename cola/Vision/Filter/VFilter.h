@@ -94,8 +94,20 @@ public:
      * @param eps regularization parameter
      * @return
      * @note : https://blog.csdn.net/weixin_40647819/article/details/89763505
-    **/
-    static cv::Mat guided_filter(cv::Mat& I, cv::Mat& p, int r =9, double eps=0.1*0.1);
+     **/
+    static cv::Mat guided_filter(cv::Mat& I, cv::Mat& p, int r = 9, double eps = 0.1 * 0.1);
+
+    /**
+     * @brief			非局部均值的滤波
+     * @param src
+     * @param dst
+     * @param ds
+     * @param Ds
+     * @param h
+     * @return
+     * 参考链接  https://mp.weixin.qq.com/s/7ul1plr_6RyNGRN766Nt8Q
+     */
+    static void nl_filter(cv::Mat src, cv::Mat& dst, int ds, int Ds, float h);
 
     /**
      * @brief			计算信噪比，用于图像质量评价

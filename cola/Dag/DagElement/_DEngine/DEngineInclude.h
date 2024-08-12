@@ -14,6 +14,6 @@
 #include "DEngine.h"
 #include "DEngineDefine.h"
 #include "DTopoEngine/DTopoEngine.h"
-
+#include "DStaticEngine/DStaticEngine.h"
 
 #endif   // NAO_DENGINEINCLUDE_H

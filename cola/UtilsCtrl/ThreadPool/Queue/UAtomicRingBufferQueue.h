@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/ThreadPool/Queue/UAtomicRingBufferQueue.h
+ * @FilePath     : /cola/cola/UtilsCtrl/ThreadPool/Queue/UAtomicRingBufferQueue.h
  * @Description  : 本 queue 仅支持单入单出模式
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-21 10:34:09
+ * @LastEditTime : 2024-08-12 14:09:10
  **/
 #ifndef NAO_UATOMICRINGBUFFERQUEUE_H
 #define NAO_UATOMICRINGBUFFERQUEUE_H
@@ -18,7 +18,7 @@
 
 NAO_NAMESPACE_BEGIN
 
-template<typename T, NUint capacity = NAO_DEFAULT_RINGBUFFER_SIZE>
+template<typename T, NUInt capacity = NAO_DEFAULT_RINGBUFFER_SIZE>
 class UAtomicRingBufferQueue : public UQueueObject
 {
 public:
@@ -38,7 +38,7 @@ public:
      * @return
      * @notice 谨慎使用，push信息之后，不推荐使用
      */
-    UAtomicRingBufferQueue* setCapacity(NUint size)
+    UAtomicRingBufferQueue* setCapacity(NUInt size)
     {
         capacity_ = size;
         ring_buffer_queue_.resize(capacity_);
@@ -49,7 +49,7 @@ public:
      * 获取容量信息
      * @return
      */
-    NUint getCapacity() const { return capacity_; }
+    NUInt getCapacity() const { return capacity_; }
 
     /**
      * 写入信息
@@ -189,9 +189,9 @@ protected:
     NAO_NO_ALLOWED_COPY(UAtomicRingBufferQueue)
 
 private:
-    NUint head_;       // 头结点位置
-    NUint tail_;       // 尾结点位置
-    NUint capacity_;   // 环形缓冲的容量大小
+    NUInt head_;       // 头结点位置
+    NUInt tail_;       // 尾结点位置
+    NUInt capacity_;   // 环形缓冲的容量大小
 
     std::condition_variable         push_cv_;             // 写入的条件变量。为了保持语义完整，也考虑今后多入多出的可能性，不使用// 父类中的 cv_了
     std::condition_variable         pop_cv_;              // 读取的条件变量

@@ -5,7 +5,7 @@
  * @Date         : 2024-07-20 23:13:34
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-21 21:34:14
+ * @LastEditTime : 2024-08-09 21:51:59
  **/
 #ifndef NAONAO_VFIT_H
 #define NAONAO_VFIT_H
@@ -195,6 +195,7 @@ public:
     --------------------------------------------------------------------------------------------------*/
     size_t getFactorSize() { return factor_.size(); };
     double getFactor(size_t i) { return factor_.at(i); };
+
 private:
     void calcError(const T* x, const T* y, size_t length, double& r_ssr, double& r_sse, double& r_rmse, bool isSaveFitYs = true);
     void gauss_solve(int n, std::vector<T>& A, std::vector<T>& x, std::vector<T>& b);

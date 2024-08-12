@@ -27,7 +27,9 @@ protected:
      */
     static NBool match(const DSortedDElementPtrSet& elements)
     {
-        return !std::any_of(elements.begin(), elements.end(), [](DElementCPtr ptr) { return ptr->isGroup(); });
+        return !std::any_of(elements.begin(), elements.end(), [](DElementCPtr ptr) {
+            return ptr->isDGroup();
+        });
     }
 
     /**

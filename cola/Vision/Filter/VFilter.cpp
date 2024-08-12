@@ -5,7 +5,7 @@
  * @Date         : 2024-07-23 17:57:45
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-23 18:17:13
+ * @LastEditTime : 2024-08-09 21:45:51
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "VFilter.h"
@@ -317,6 +317,71 @@ cv::Mat VFilter::cascade_filter(const cv::Mat& src, int K, int ksize)
     int coefficient = abs(K - diff_mean[0]);
     cv::bilateralFilter(median_dst, bilateral_dst, -1, coefficient, coefficient);
     return bilateral_dst;
+}
+
+void integralImgSqDiff(cv::Mat src, cv::Mat& dst, int Ds, int t1, int t2, int m1, int n1)
+{
+    // 计算图像A与图像B的差值图C
+    cv::Mat Dist2 = src(cv::Range(Ds, src.rows - Ds), cv::Range(Ds, src.cols - Ds)) - src(cv::Range(Ds + t1, src.rows - Ds + t1), cv::Range(Ds + t2, src.cols - Ds + t2));
+    float*  Dist2_data;
+    for (int i = 0; i < m1; i++) {
+        Dist2_data = Dist2.ptr<float>(i);
+        for (int j = 0; j < n1; j++) {
+            Dist2_data[j] *= Dist2_data[j];   // 计算图像C的平方图D
+        }
+    }
+    cv::integral(Dist2, dst, CV_32F);   // 计算图像D的积分图
+}
+
+void VFilter::nl_filter(cv::Mat src, cv::Mat& dst, int ds, int Ds, float h)
+{
+    cv::Mat src_tmp;
+    src.convertTo(src_tmp, CV_32F);
+    int     m         = src_tmp.rows;
+    int     n         = src_tmp.cols;
+    int     boardSize = Ds + ds + 1;
+    cv::Mat src_board;
+    cv::copyMakeBorder(src_tmp, src_board, boardSize, boardSize, boardSize, boardSize, cv::BORDER_REFLECT);
+
+    cv::Mat average(m, n, CV_32FC1, 0.0);
+    cv::Mat sweight(m, n, CV_32FC1, 0.0);
+
+    float h2 = h * h;
+    int   d2 = (2 * ds + 1) * (2 * ds + 1);
+
+    int     m1 = src_board.rows - 2 * Ds;   // 行
+    int     n1 = src_board.cols - 2 * Ds;   // 列
+    cv::Mat St(m1, n1, CV_32FC1, 0.0);
+
+    for (int t1 = -Ds; t1 <= Ds; t1++) {
+        int Dst1 = Ds + t1;
+        for (int t2 = -Ds; t2 <= Ds; t2++) {
+            int Dst2 = Ds + t2;
+            integralImgSqDiff(src_board, St, Ds, t1, t2, m1, n1);
+#pragma omp for
+            for (int i = 0; i < m; i++) {
+                float* sweight_p = sweight.ptr<float>(i);
+                float* average_p = average.ptr<float>(i);
+                float* v_p       = src_board.ptr<float>(i + Ds + t1 + ds);
+                int    i1        = i + ds + 1;   // row
+                float* St_p1     = St.ptr<float>(i1 + ds);
+                float* St_p2     = St.ptr<float>(i1 - ds - 1);
+
+                for (int j = 0; j < n; j++) {
+
+                    int   j1    = j + ds + 1;   // col
+                    float Dist2 = (St_p1[j1 + ds] + St_p2[j1 - ds - 1]) - (St_p1[j1 - ds - 1] + St_p2[j1 + ds]);
+
+                    Dist2 /= (-d2 * h2);
+                    float w = std::exp(Dist2);
+                    sweight_p[j] += w;
+                    average_p[j] += w * v_p[j + Ds + t2 + ds];
+                }
+            }
+        }
+    }
+    average = average / sweight;
+    average.convertTo(dst, CV_8U);
 }
 
 cv::Mat VFilter::guided_filter(cv::Mat& I, cv::Mat& p, int r, double eps)

@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:32:29
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-19 10:03:48
+ * @LastEditTime : 2024-08-12 15:08:00
  **/
 #include <algorithm>
 
@@ -103,6 +103,13 @@ DElementPtr DElement::setTimeout(NMSec timeout, DElementTimeoutStrategy strategy
     return this;
 }
 
+DElementPtr DElement::setMacro(NBool macro) {
+    NAO_ASSERT_INIT_THROW_ERROR(false)
+    // 目前仅针对非group逻辑生效
+    NAO_THROW_EXCEPTION_BY_CONDITION(isDGroup(), "cannot set group as macro")
+    is_marco_ = macro;
+    return this;
+}
 
 DElementRef DElement::operator--(int) noexcept
 {
@@ -196,7 +203,8 @@ NStatus DElement::addDependDElements(const DElementPtrSet& elements)
 NStatus DElement::addElementInfo(const DElementPtrSet& dependElements, const std::string& name, NSize loop)
 {
     NAO_FUNCTION_BEGIN
-    NAO_ASSERT_INIT_THROW_ERROR(false)
+    NAO_ASSERT_INIT(false)
+
 
     // 添加依赖的时候，可能会出现异常情况。故在这里提前添加 && 做判定
     status = this->addDependDElements(dependElements);
@@ -360,6 +368,10 @@ NBool DElement::isMutable() const
 }
 
 
+NBool DElement::isMacro() const {
+    return is_marco_;
+}
+
 NStatus DElement::crashed(const NException& ex)
 {
     return NStatus(internal::STATUS_CRASH, ex.what(), NAO_GET_LOCATE);
@@ -396,14 +408,14 @@ NVoid DElement::dump(std::ostream& oss)
 
 NVoid DElement::dumpEdge(std::ostream& oss, DElementPtr src, DElementPtr dst, const std::string& label)
 {
-    if (src->isGroup() && dst->isGroup()) {
+    if (src->isDGroup() && dst->isDGroup()) {
         // 在group的逻辑中，添加 cluster_ 的信息
         oss << 'p' << src << " -> p" << dst << label << "[ltail=cluster_p" << src << " lhead=cluster_p" << dst << "]";
     }
-    else if (src->isGroup() && !dst->isGroup()) {
+    else if (src->isDGroup() && !dst->isDGroup()) {
         oss << 'p' << src << " -> p" << dst << label << "[ltail=cluster_p" << src << "]";
     }
-    else if (!src->isGroup() && dst->isGroup()) {
+    else if (!src->isDGroup() && dst->isDGroup()) {
         oss << 'p' << src << " -> p" << dst << label << "[lhead=cluster_p" << dst << "]";
     }
     else {
@@ -423,7 +435,7 @@ NVoid DElement::dumpElement(std::ostream& oss)
     dumpPerfInfo(oss);
 
     oss << "\"];\n";
-    if (this->loop_ > 1 && !this->isGroup()) {
+    if (this->loop_ > 1 && !this->isDGroup()) {
         oss << 'p' << this << " -> p" << this << "[label=\"" << this->loop_ << "\"]" << ";\n";
     }
 }
@@ -464,12 +476,20 @@ NVoid DElement::checkYield()
 }
 
 
-NBool DElement::isGroup() const
+NBool DElement::isDGroup() const
 {
     // 按位与 GROUP有值，表示是 GROUP的逻辑
     return (long(element_type_) & long(DElementType::GROUP)) > 0;
 }
 
+NBool DElement::isGAdaptor() const {
+    return (long(element_type_) & long(DElementType::ADAPTER)) > 0;
+}
+
+
+NBool DElement::isGNode() const {
+    return DElementType::NODE == element_type_;
+}
 
 DElementState DElement::getCurState() const
 {
@@ -491,8 +511,8 @@ NIndex DElement::getBindingIndex() const
 DElementRelation DElement::getRelation() const
 {
     DElementRelation relation;
-    relation.predecessors_ = this->dependence_;   // 前驱
-    relation.successors_   = this->run_before_;   // 后继
+    relation.predecessors_ = this->dependence_.asVector();    // 前驱
+    relation.successors_ = this->run_before_.asVector();    // 后继
     relation.belong_       = this->belong_;       // 从属信息
 
     return relation;

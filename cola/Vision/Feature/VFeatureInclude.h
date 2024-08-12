@@ -11,10 +11,11 @@
 #ifndef NAONAO_VFEATUREINCLUDE_H
 #define NAONAO_VFEATUREINCLUDE_H
 
+#include "Blob/VBlob.h"
 #include "Gemm/VGemm.h"
 #include "Hog/VHog.h"
 #include "LBP/VLbp.h"
-#include "Blob/VBlob.h"
+
 
 
 #endif   // NAONAO_VFEATUREINCLUDE_H

@@ -10,11 +10,12 @@
 #ifndef NAO_VXML_H
 #define NAO_VXML_H
 
+#include "../VisionObject.h"
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <time.h>
-#include "../VisionObject.h"
+
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 

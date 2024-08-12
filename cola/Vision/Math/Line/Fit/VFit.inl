@@ -1,11 +1,11 @@
 ﻿/*
- * @FilePath     : /cola/cola/Vision/Math/Line/Fit/VFit.INL
+ * @FilePath     : /cola/cola/Vision/Math/Line/Fit/VFit.inl
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-07-20 23:13:57
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-21 21:42:28
+ * @LastEditTime : 2024-08-09 21:52:17
  */
 #ifndef NAONAO_VFIT_INL
 #define NAONAO_VFIT_INL
@@ -49,7 +49,7 @@ void VFit<T>::polyfit(const std::vector<T>& x, const std::vector<T>& y, int poly
 };
 
 template<typename T>
-void VFit<T>::polyfit( const T* x, const T* y, size_t length, int poly_n, bool isSaveFitYs)
+void VFit<T>::polyfit(const T* x, const T* y, size_t length, int poly_n, bool isSaveFitYs)
 {
     factor_.resize(poly_n + 1, 0);
     int i;

@@ -5,7 +5,7 @@
  * @Date         : 2024-06-28 14:48:09
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 15:27:46
+ * @LastEditTime : 2024-08-12 15:40:33
  **/
 
 #include "../Common/TestNode/HelloDagNode.h"
@@ -66,15 +66,13 @@ void test_cluster()
     nao::DPipelinePtr pipeline = nao::DPipelineFactory::create();
     nao::DElementPtr  a, b_cluster, c, d = nullptr;
 
-    b_cluster = pipeline->createDGroup<nao::DCluster>(
-        {pipeline->createDNode<MyNode1>(nao::DNodeInfo("nodeB1", 1)),   // 创建名为nodeB1的node信息，并将其放入b_cluster中
-         pipeline->createDNode<MyNode1>(nao::DNodeInfo("nodeB2", 3)),   // 创建名为nodeB2且自循环3次的node信息，并将其放入b_cluster中
-         pipeline->createDNode<MyNode2>(nao::DNodeInfo("nodeB3", 1))});   // 创建cluster信息，包含了三个node信息
+    b_cluster = pipeline->createDGroup<nao::DCluster>({pipeline->createDNode<MyNode1>(nao::DNodeInfo("nodeB1", 1)),     // 创建名为nodeB1的node信息，并将其放入b_cluster中
+                                                       pipeline->createDNode<MyNode1>(nao::DNodeInfo("nodeB2", 3)),     // 创建名为nodeB2且自循环3次的node信息，并将其放入b_cluster中
+                                                       pipeline->createDNode<MyNode2>(nao::DNodeInfo("nodeB3", 1))});   // 创建cluster信息，包含了三个node信息
 
     /* 正式使用时，请对所有返回值进行判定 */
-    status = pipeline->registerDElement<MyNode1>(&a, {}, "nodeA", 1);   // 将名为nodeA的node信息，注册入pipeline中
-    status += pipeline->registerDElement<nao::DCluster>(
-        &b_cluster, {a}, "clusterB", 2);   // 将名为clusterB，依赖a执行且自循环2次的cluster信息，注册入pipeline中
+    status = pipeline->registerDElement<MyNode1>(&a, {}, "nodeA", 1);                      // 将名为nodeA的node信息，注册入pipeline中
+    status += pipeline->registerDElement<nao::DCluster>(&b_cluster, {a}, "clusterB", 2);   // 将名为clusterB，依赖a执行且自循环2次的cluster信息，注册入pipeline中
     status += pipeline->registerDElement<MyNode1>(&c, {a}, "nodeC", 1);
     status += pipeline->registerDElement<MyNode2>(&d, {b_cluster, c}, "nodeD", 2);
     if (!status.isOK()) {
@@ -112,8 +110,7 @@ void test_region()
     }
 
     status += pipeline->registerDElement<MyNode1>(&a, {}, "nodeA", 1);
-    status +=
-        pipeline->registerDElement<nao::DRegion>(&b_region, {a}, "regionB", 2);   // 将名为regionB，依赖a执行且自循环2次的region信息，注册入pipeline中
+    status += pipeline->registerDElement<nao::DRegion>(&b_region, {a}, "regionB", 2);   // 将名为regionB，依赖a执行且自循环2次的region信息，注册入pipeline中
     status += pipeline->registerDElement<MyNode2>(&c, {b_region}, "nodeC", 1);
     if (!status.isOK()) {
         return;
@@ -139,10 +136,9 @@ void test_complex()
     nao::DPipelinePtr pipeline = nao::DPipelineFactory::create();
     nao::DElementPtr  a, b_cluster, c, d_region, e = nullptr;
 
-    b_cluster = pipeline->createDGroup<nao::DCluster>(
-        {pipeline->createDNode<MyNode1>(nao::DNodeInfo("nodeB1", 1)),   // 创建名为nodeB1的node信息，并将其放入b_cluster中
-         pipeline->createDNode<MyNode1>(nao::DNodeInfo("nodeB2", 3)),   // 创建名为nodeB2且自循环3次的node信息，并将其放入b_cluster中
-         pipeline->createDNode<MyNode2>(nao::DNodeInfo("nodeB3", 1))});
+    b_cluster = pipeline->createDGroup<nao::DCluster>({pipeline->createDNode<MyNode1>(nao::DNodeInfo("nodeB1", 1)),   // 创建名为nodeB1的node信息，并将其放入b_cluster中
+                                                       pipeline->createDNode<MyNode1>(nao::DNodeInfo("nodeB2", 3)),   // 创建名为nodeB2且自循环3次的node信息，并将其放入b_cluster中
+                                                       pipeline->createDNode<MyNode2>(nao::DNodeInfo("nodeB3", 1))});
 
     nao::DElementPtr d1, d2, d3, d4, d23_cluster = nullptr;
     d1          = pipeline->createDNode<MyNode1>(nao::DNodeInfo({}, "nodeD1", 1));
@@ -150,13 +146,12 @@ void test_complex()
     d3          = pipeline->createDNode<MyNode1>(nao::DNodeInfo("nodeD3", 1));
     d23_cluster = pipeline->createDGroup<nao::DCluster>({d2, d3}, {d1}, "clusterD23", 1);
     d4          = pipeline->createDNode<MyNode2>(nao::DNodeInfo({d1}, "nodeD4", 1));
-    d_region = pipeline->createDGroup<nao::DRegion>({d1, d23_cluster, d4});   // 创建名为d_region的region信息，并将{d1,d23_cluster,d4}放入其中
+    d_region    = pipeline->createDGroup<nao::DRegion>({d1, d23_cluster, d4});   // 创建名为d_region的region信息，并将{d1,d23_cluster,d4}放入其中
 
     status += pipeline->registerDElement<MyNode1>(&a, {}, "nodeA", 1);
     status += pipeline->registerDElement<nao::DCluster>(&b_cluster, {}, "clusterB", 1);
     status += pipeline->registerDElement<MyNode1>(&c, {a, b_cluster}, "nodeC", 1);
-    status += pipeline->registerDElement<nao::DRegion>(
-        &d_region, {a, b_cluster}, "regionD", 2);   // 将名为regionD，依赖{a,b_cluster}执行且自循环2次的region信息，注册入pipeline中
+    status += pipeline->registerDElement<nao::DRegion>(&d_region, {a, b_cluster}, "regionD", 2);   // 将名为regionD，依赖{a,b_cluster}执行且自循环2次的region信息，注册入pipeline中
     status += pipeline->registerDElement<MyNode1>(&e, {c, d_region}, "nodeE", 1);
     if (!status.isOK()) {
         return;

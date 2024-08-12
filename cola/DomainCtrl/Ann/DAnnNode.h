@@ -93,7 +93,7 @@ protected:
 
 private:
     typedef NStatus (DAnnNode::*DAnnNodeFuncPtr)();
-    DAnnNodeFuncPtr ann_func_arr_[static_cast<NUint>(DAnnFuncType::ANN_MAX_SIZE)]{};   // ann函数映射关系
+    DAnnNodeFuncPtr ann_func_arr_[static_cast<NUInt>(DAnnFuncType::ANN_MAX_SIZE)]{};   // ann函数映射关系
 };
 
 NAO_NAMESPACE_END

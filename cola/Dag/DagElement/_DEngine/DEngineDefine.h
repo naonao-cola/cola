@@ -18,6 +18,7 @@ enum class DEngineType
 {
     DYNAMIC = 0, /** 动态图运行 */
     TOPO    = 1, /** 拓扑运行 */
+    STATIC  = 2, /** 静态图运行 */
 };
 
 NAO_INTERNAL_NAMESPACE_BEGIN

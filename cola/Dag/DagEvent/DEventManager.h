@@ -12,6 +12,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <future>
 
 #include "../DagManager.h"
 #include "DEvent.h"
@@ -45,6 +46,14 @@ public:
      * @return
      */
     NStatus trigger(const std::string& key, DEventType type, DEventAsyncStrategy strategy);
+
+     /**
+     * 异步事件触发
+     * @param key
+     * @param strategy
+     * @return
+     */
+    std::shared_future<NVoid> asyncTrigger(const std::string &key, DEventAsyncStrategy strategy);
 
 protected:
     NStatus init() final;

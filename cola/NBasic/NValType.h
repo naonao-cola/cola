@@ -17,7 +17,7 @@
 
 using NChar      = nao::internal::NCHAR;
 using NCharPtr   = nao::internal::NCHAR*;
-using NUint      = nao::internal::NUINT;
+using NUInt      = nao::internal::NUINT;
 using NSize      = nao::internal::NSIZE;
 using NVoid      = nao::internal::NVOID;
 using NVoidPtr   = nao::internal::NVOID*;
