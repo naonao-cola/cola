@@ -5,7 +5,7 @@
  * @Date         : 2024-07-15 17:32:06
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-09 21:47:02
+ * @LastEditTime : 2024-08-19 15:54:50
  **/
 
 #include "VThreshold.h"
@@ -13,33 +13,33 @@
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
-void VThreshold::get_histogram(const cv::Mat& src, int* dst)
+NVoid VThreshold::get_histogram(const cv::Mat& src, int* dst)
 {
     cv::Mat      hist;
-    int          channels[1] = {0};
-    int          histSize[1] = {256};
-    float        hranges[2]  = {0, 256.0};
+    NInt          channels[1] = {0};
+    NInt          histSize[1] = {256};
+    NFloat         hranges[2]  = {0, 256.0};
     const float* ranges[1]   = {hranges};
     cv::calcHist(&src, 1, channels, cv::Mat(), hist, 1, histSize, ranges);
-    for (int i = 0; i < 256; i++) {
-        float binVal = hist.at<float>(i);
+    for (NInt i = 0; i < 256; i++) {
+        NFloat  binVal = hist.at<float>(i);
         dst[i]       = int(binVal);
     }
 }
 
-int VThreshold::exec_threshold(cv::Mat& src, THRESHOLD_TYPE type, int doIblack, int doIwhite, bool reset)
+NInt VThreshold::exec_threshold(cv::Mat& src, THRESHOLD_TYPE type, NInt doIblack, NInt doIwhite, bool reset)
 {
-    int threshold = -1;
+    NInt threshold = -1;
     if (src.empty() || src.channels() != 1)
         return threshold;
 
-    const int gray_scale       = 256;
-    int       data[gray_scale] = {0};
+    const NInt gray_scale       = 256;
+    NInt       data[gray_scale] = {0};
     get_histogram(src, data);
 
-    int minbin = -1, maxbin = -1;
-    int range_max = gray_scale;
-    int rang_min  = 0;
+    NInt minbin = -1, maxbin = -1;
+    NInt range_max = gray_scale;
+    NInt rang_min  = 0;
 
     if (std::abs(doIblack + 1) > 1)
         rang_min = doIblack;
@@ -47,20 +47,20 @@ int VThreshold::exec_threshold(cv::Mat& src, THRESHOLD_TYPE type, int doIblack, 
     if (std::abs(doIwhite + 1) > 1)
         range_max = doIwhite;
 
-    for (int i = 0; i < range_max; i++) {
+    for (NInt i = 0; i < range_max; i++) {
         if (data[i] > 0)
             maxbin = i;
     }
-    for (int i = gray_scale - 1; i >= rang_min; i--) {
+    for (NInt i = gray_scale - 1; i >= rang_min; i--) {
         if (data[i] > 0)
             minbin = i;
     }
-    int scale_range = maxbin - minbin + 1;
+    NInt scale_range = maxbin - minbin + 1;
     if (scale_range < 2)
         return 0;
 
     std::vector<int> data2(scale_range, {0});
-    for (int i = minbin; i <= maxbin; i++) {
+    for (NInt i = minbin; i <= maxbin; i++) {
         data2[i - minbin] = data[i];
     }
 
@@ -133,21 +133,21 @@ int VThreshold::exec_threshold(cv::Mat& src, THRESHOLD_TYPE type, int doIblack, 
     return threshold;
 }
 
-int VThreshold::select(cv::Mat& src, int type)
+NInt VThreshold::select(cv::Mat& src, NInt type)
 {
     if (type != -1) {
         cv::Mat img = src.clone();
         cv::Mat dst;
-        int     th = exec_threshold(img, static_cast<THRESHOLD_TYPE>(type));
+        NInt     th = exec_threshold(img, static_cast<THRESHOLD_TYPE>(type));
         cv::threshold(img, dst, th, 255, cv::THRESH_BINARY);
         src = dst.clone();
         return 0;
     }
-    for (int i = 0; i < 19; i++) {
+    for (NInt i = 0; i < 19; i++) {
         std::cout << "当前的阈值化类型的次序为： " << i << std::endl;
         cv::Mat img = src.clone();
         cv::Mat dst;
-        int     th = exec_threshold(img, static_cast<THRESHOLD_TYPE>(i));
+        NInt     th = exec_threshold(img, static_cast<THRESHOLD_TYPE>(i));
         if (i != 17 || i != 18) {
             cv::threshold(img, dst, th, 255, cv::THRESH_BINARY);
             cv::imshow("阈值化图像", dst);
@@ -161,16 +161,16 @@ int VThreshold::select(cv::Mat& src, int type)
     return 0;
 }
 
-int VThreshold::threshold_default(std::vector<int> data)
+NInt VThreshold::threshold_default(std::vector<int> data)
 {
     size_t level;
     size_t maxValue = data.size() - 1;
-    double result, sum1, sum2, sum3, sum4;
-    int    min = 0;
+    NDouble result, sum1, sum2, sum3, sum4;
+    NInt    min = 0;
     while ((data[min] == 0) && (min < maxValue)) {
         min++;
     }
-    int max = static_cast<int>(maxValue);
+    NInt max = static_cast<int>(maxValue);
     while ((data[max] == 0) && (max > 0)) {
         max--;
     }
@@ -178,15 +178,15 @@ int VThreshold::threshold_default(std::vector<int> data)
         level = data.size() / 2;
         return static_cast<int>(level);
     }
-    int movingIndex = min;
-    // int inc = std::max(max / 40, 1);
+    NInt movingIndex = min;
+    // NInt inc = std::max(max / 40, 1);
     do {
         sum1 = sum2 = sum3 = sum4 = 0.0;
-        for (int i = min; i <= movingIndex; i++) {
+        for (NInt i = min; i <= movingIndex; i++) {
             sum1 += i * data[i];
             sum2 += data[i];
         }
-        for (int i = (movingIndex + 1); i <= max; i++) {
+        for (NInt i = (movingIndex + 1); i <= max; i++) {
             sum3 += i * data[i];
             sum4 += data[i];
         }
@@ -198,19 +198,19 @@ int VThreshold::threshold_default(std::vector<int> data)
     return static_cast<int>(level);
 }
 
-int VThreshold::huang(std::vector<int> data)
+NInt VThreshold::huang(std::vector<int> data)
 {
-    int    threshold = -1;
-    int    ih;
-    int    it;
-    int    first_bin;
-    int    last_bin;
-    int    sum_pix;
-    int    num_pix;
-    double term;
-    double ent;       // entropy
-    double min_ent;   // min entropy
-    double mu_x;
+    NInt    threshold = -1;
+    NInt    ih;
+    NInt    it;
+    NInt    first_bin;
+    NInt    last_bin;
+    NInt    sum_pix;
+    NInt    num_pix;
+    NDouble term;
+    NDouble ent;       // entropy
+    NDouble min_ent;   // min entropy
+    NDouble mu_x;
 
     /* Determine the first non-zero bin */
     first_bin = 0;
@@ -280,10 +280,10 @@ int VThreshold::huang(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::huang2(std::vector<int> data)
+NInt VThreshold::huang2(std::vector<int> data)
 {
-    int first;
-    int last;
+    NInt first;
+    NInt last;
     for (first = 0; first < data.size() && data[first] == 0; first++) {
         ;   // do nothing
     }
@@ -299,31 +299,31 @@ int VThreshold::huang2(std::vector<int> data)
     std::vector<double> S(last + 1, {0.0});
     std::vector<double> W(last + 1, {0.0});
     S[0] = data[0];
-    for (int i = std::max(1, first); i <= last; i++) {
+    for (NInt i = std::max(1, first); i <= last; i++) {
         S[i] = S[i - 1] + data[i];
         W[i] = W[i - 1] + i * data[i];
     }
 
     // precalculate the summands of the entropy given the absolute difference x - mu (integral)
     // 给定绝对差x-mu（积分），预先计算熵的总和
-    double              C = last - first;
+    NDouble              C = last - first;
     std::vector<double> Smu(last + 1 - first, {0.0});
-    for (int i = 1; i < Smu.size(); i++) {
-        double mu = 1 / (1 + std::abs(i) / C);
+    for (NInt i = 1; i < Smu.size(); i++) {
+        NDouble mu = 1 / (1 + std::abs(i) / C);
         Smu[i]    = -mu * std::log(mu) - (1 - mu) * std::log(1 - mu);
     }
 
     // calculate the threshold
-    int    bestThreshold = 0;
-    double bestEntropy   = DBL_MAX;
-    for (int threshold = first; threshold <= last; threshold++) {
-        double entropy = 0;
-        int    mu      = static_cast<int>(std::round(W[threshold] / S[threshold]));
-        for (int i = first; i <= threshold; i++) {
+    NInt    bestThreshold = 0;
+    NDouble bestEntropy   = DBL_MAX;
+    for (NInt threshold = first; threshold <= last; threshold++) {
+        NDouble entropy = 0;
+        NInt    mu      = static_cast<int>(std::round(W[threshold] / S[threshold]));
+        for (NInt i = first; i <= threshold; i++) {
             entropy += Smu[std::abs(i - mu)] * data[i];
         }
         mu = static_cast<int>(std::round((W[last] - W[threshold]) / (S[last] - S[threshold])));
-        for (int i = threshold + 1; i <= last; i++) {
+        for (NInt i = threshold + 1; i <= last; i++) {
             entropy += Smu[std::abs(i - mu)] * data[i];
         }
 
@@ -337,10 +337,10 @@ int VThreshold::huang2(std::vector<int> data)
 
 bool bimodalTest(std::vector<double> y)
 {
-    int  len   = static_cast<double>(y.size());
+    NInt  len   = static_cast<double>(y.size());
     bool b     = false;
-    int  modes = 0;
-    for (int k = 1; k < len - 1; k++) {
+    NInt  modes = 0;
+    for (NInt k = 1; k < len - 1; k++) {
         if (y[k - 1] < y[k] && y[k + 1] < y[k]) {
             modes++;
             if (modes > 2) {
@@ -354,21 +354,21 @@ bool bimodalTest(std::vector<double> y)
     return b;
 }
 
-int VThreshold::intermodes(std::vector<int> data)
+NInt VThreshold::intermodes(std::vector<int> data)
 {
     std::vector<double> iHisto(data.size(), {0.0});
-    int                 iter      = 0;
-    int                 threshold = -1;
-    for (int i = 0; i < data.size(); i++) {
+    NInt                 iter      = 0;
+    NInt                 threshold = -1;
+    for (NInt i = 0; i < data.size(); i++) {
         iHisto[i] = static_cast<double>(data[i]);
     }
 
     while (!bimodalTest(iHisto)) {
         // smooth with a 3 point running mean filter
-        double previous = 0;
-        double current  = 0;
-        double next     = iHisto[0];
-        for (int i = 0; i < data.size() - 1; i++) {
+        NDouble previous = 0;
+        NDouble current  = 0;
+        NDouble next     = iHisto[0];
+        for (NInt i = 0; i < data.size() - 1; i++) {
             previous  = current;
             current   = next;
             next      = iHisto[i + 1];
@@ -383,8 +383,8 @@ int VThreshold::intermodes(std::vector<int> data)
     }
 
     // The threshold is the mean between the two peaks.
-    int tt = 0;
-    for (int i = 1; i < data.size() - 1; i++) {
+    NInt tt = 0;
+    for (NInt i = 1; i < data.size() - 1; i++) {
         if (iHisto[i - 1] < iHisto[i] && iHisto[i + 1] < iHisto[i]) {
             tt += i;
         }
@@ -393,14 +393,14 @@ int VThreshold::intermodes(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::iso_data(std::vector<int> data)
+NInt VThreshold::iso_data(std::vector<int> data)
 {
-    int i;
-    int l;
-    int toth;
-    int totl;
-    int h;
-    int g = 0;
+    NInt i;
+    NInt l;
+    NInt toth;
+    NInt totl;
+    NInt h;
+    NInt g = 0;
     for (i = 1; i < data.size(); i++) {
         if (data[i] > 0) {
             g = i + 1;
@@ -435,22 +435,22 @@ int VThreshold::iso_data(std::vector<int> data)
     return g;
 }
 
-int VThreshold::li(std::vector<int> data)
+NInt VThreshold::li(std::vector<int> data)
 {
-    int    threshold;
-    int    ih;
-    int    num_pixels;
-    int    sum_back;   ///< 给定阈值下背景像素的总和
-    int    sum_obj;    ///< 给定阈值下对象像素的总和
-    int    num_back;   ///< 给定阈值下的背景像素数
-    int    num_obj;    ///< 给定阈值下的对象像素数
-    double old_thresh;
-    double new_thresh;
-    double mean_back;   ///< 给定阈值下背景像素的平均值
-    double mean_obj;    ///< 给定阈值下对象像素的平均值
-    double mean;        ///< 图像中的平均灰度
-    double tolerance;   ///< 阈值公差
-    double temp;
+    NInt    threshold;
+    NInt    ih;
+    NInt    num_pixels;
+    NInt    sum_back;   ///< 给定阈值下背景像素的总和
+    NInt    sum_obj;    ///< 给定阈值下对象像素的总和
+    NInt    num_back;   ///< 给定阈值下的背景像素数
+    NInt    num_obj;    ///< 给定阈值下的对象像素数
+    NDouble old_thresh;
+    NDouble new_thresh;
+    NDouble mean_back;   ///< 给定阈值下背景像素的平均值
+    NDouble mean_obj;    ///< 给定阈值下对象像素的平均值
+    NDouble mean;        ///< 图像中的平均灰度
+    NDouble tolerance;   ///< 阈值公差
+    NDouble temp;
 
     tolerance  = 0.5;
     num_pixels = 0;
@@ -490,8 +490,8 @@ int VThreshold::li(std::vector<int> data)
 
         /* Calculate the new threshold: Equation (7) in Ref. 2 */
         // new_thresh = simple_round ( ( mean_back - mean_obj ) / ( Math.log ( mean_back ) - Math.log ( mean_obj ) ) );
-        // simple_round ( double x ) {
-        //  return ( int ) ( IS_NEG ( x ) ? x - .5 : x + .5 );
+        // simple_round ( NDouble x ) {
+        //  return ( NInt ) ( IS_NEG ( x ) ? x - .5 : x + .5 );
         // }
         //
         // #define IS_NEG( x ) ( ( x ) < -DBL_EPSILON )
@@ -510,23 +510,23 @@ int VThreshold::li(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::max_entropy(std::vector<int> data)
+NInt VThreshold::max_entropy(std::vector<int> data)
 {
-    int    threshold = -1;
-    int    ih;
-    int    it;
-    int    first_bin;
-    int    last_bin;
-    double tot_ent;    ///< 总熵
-    double max_ent;    ///< 最大熵
-    double ent_back;   ///< 给定阈值下背景像素的熵
-    double ent_obj;    ///< 给定阈值下对象像素的熵
+    NInt    threshold = -1;
+    NInt    ih;
+    NInt    it;
+    NInt    first_bin;
+    NInt    last_bin;
+    NDouble tot_ent;    ///< 总熵
+    NDouble max_ent;    ///< 最大熵
+    NDouble ent_back;   ///< 给定阈值下背景像素的熵
+    NDouble ent_obj;    ///< 给定阈值下对象像素的熵
 
     std::vector<double> norm_histo(data.size(), {0.0});   ///< 归一化直方图
     std::vector<double> P1(data.size(), {0.0});           ///< 累积归一化直方图
     std::vector<double> P2(data.size(), {0.0});
 
-    int total = 0;
+    NInt total = 0;
     for (ih = 0; ih < data.size(); ih++) {
         total += data[ih];
     }
@@ -585,61 +585,61 @@ int VThreshold::max_entropy(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::mean(std::vector<int> data)
+NInt VThreshold::mean(std::vector<int> data)
 {
-    int  threshold = -1;
+    NInt  threshold = -1;
     long tot       = 0;
     long sum       = 0;
-    for (int i = 0; i < data.size(); i++) {
+    for (NInt i = 0; i < data.size(); i++) {
         tot += data[i];
         sum += (static_cast<long>(i) * static_cast<long>(data[i]));
     }
     threshold = static_cast<int>(std::floor(sum / tot));
     return threshold;
 }
-static double A(std::vector<int> y, int j)
+static NDouble A(std::vector<int> y, NInt j)
 {
-    double x = 0;
-    for (int i = 0; i <= j; i++) {
+    NDouble x = 0;
+    for (NInt i = 0; i <= j; i++) {
         x += y[i];
     }
     return x;
 }
 
-static double B(std::vector<int> y, int j)
+static NDouble B(std::vector<int> y, NInt j)
 {
-    double x = 0;
-    for (int i = 0; i <= j; i++) {
+    NDouble x = 0;
+    for (NInt i = 0; i <= j; i++) {
         x += i * y[i];
     }
     return x;
 }
 
-static double C(std::vector<int> y, int j)
+static NDouble C(std::vector<int> y, NInt j)
 {
-    double x = 0;
-    for (int i = 0; i <= j; i++) {
+    NDouble x = 0;
+    for (NInt i = 0; i <= j; i++) {
         x += i * i * y[i];
     }
     return x;
 }
 
-int VThreshold::min_errorI(std::vector<int> data)
+NInt VThreshold::min_errorI(std::vector<int> data)
 {
-    int    threshold = mean(data);   // 用均值算法得到阈值的初始估计。
-    int    Tprev     = -2;
-    double mu;
-    double nu;
-    double p;
-    double q;
-    double sigma2;
-    double tau2;
-    double w0;
-    double w1;
-    double w2;
-    double sqterm;
-    double temp;
-    // int counter=1;
+    NInt    threshold = mean(data);   // 用均值算法得到阈值的初始估计。
+    NInt    Tprev     = -2;
+    NDouble mu;
+    NDouble nu;
+    NDouble p;
+    NDouble q;
+    NDouble sigma2;
+    NDouble tau2;
+    NDouble w0;
+    NDouble w1;
+    NDouble w2;
+    NDouble sqterm;
+    NDouble temp;
+    // NInt counter=1;
     while (threshold != Tprev) {
         // 计算一些统计数据。
         mu     = B(data, threshold) / A(data, threshold);
@@ -676,15 +676,15 @@ int VThreshold::min_errorI(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::minimum(std::vector<int> data)
+NInt VThreshold::minimum(std::vector<int> data)
 {
-    int                 iter      = 0;
-    int                 threshold = -1;
-    int                 max       = -1;
+    NInt                 iter      = 0;
+    NInt                 threshold = -1;
+    NInt                 max       = -1;
     std::vector<double> iHisto(data.size(), {0.0});
 
 
-    for (int i = 0; i < data.size(); i++) {
+    for (NInt i = 0; i < data.size(); i++) {
         iHisto[i] = static_cast<double>(data[i]);
         if (data[i] > 0) {
             max = i;
@@ -693,7 +693,7 @@ int VThreshold::minimum(std::vector<int> data)
     std::vector<double> tHisto(iHisto.size(), {0.0});   // Instead of double[] tHisto = iHisto ;
     while (!bimodalTest(iHisto)) {
         // 使用3点运行平均值过滤器平滑
-        for (int i = 1; i < data.size() - 1; i++) {
+        for (NInt i = 1; i < data.size() - 1; i++) {
             tHisto[i] = (iHisto[i - 1] + iHisto[i] + iHisto[i + 1]) / 3;
         }
         tHisto[0]               = (iHisto[0] + iHisto[1]) / 3;                               // 0 outside
@@ -709,7 +709,7 @@ int VThreshold::minimum(std::vector<int> data)
     }
     // 阈值是两个峰值之间的最小值。修改为16位
 
-    for (int i = 1; i < max; i++) {
+    for (NInt i = 1; i < max; i++) {
         // IJ.log(" "+i+"  "+iHisto[i]);
         if (iHisto[i - 1] > iHisto[i] && iHisto[i + 1] >= iHisto[i]) {
             threshold = i;
@@ -719,35 +719,35 @@ int VThreshold::minimum(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::moments(std::vector<int> data)
+NInt VThreshold::moments(std::vector<int> data)
 {
-    double total = 0;
-    double m0    = 1.0;
-    double m1    = 0.0;
-    double m2    = 0.0;
-    double m3    = 0.0;
-    double sum   = 0.0;
-    double p0    = 0.0;
-    double cd;
-    double c0;
-    double c1;
-    double z0;
-    double z1;   ///< 辅助变量
-    int    threshold = -1;
+    NDouble total = 0;
+    NDouble m0    = 1.0;
+    NDouble m1    = 0.0;
+    NDouble m2    = 0.0;
+    NDouble m3    = 0.0;
+    NDouble sum   = 0.0;
+    NDouble p0    = 0.0;
+    NDouble cd;
+    NDouble c0;
+    NDouble c1;
+    NDouble z0;
+    NDouble z1;   ///< 辅助变量
+    NInt    threshold = -1;
 
 
     std::vector<double> histo(data.size(), {0.0});
 
-    for (int i = 0; i < data.size(); i++) {
+    for (NInt i = 0; i < data.size(); i++) {
         total += data[i];
     }
 
-    for (int i = 0; i < data.size(); i++) {
+    for (NInt i = 0; i < data.size(); i++) {
         histo[i] = (data[i] / total);   ///< 归一化直方图
     }
 
     /* 计算一阶、二阶和三阶矩 */
-    for (int i = 0; i < data.size(); i++) {
+    for (NInt i = 0; i < data.size(); i++) {
         m1 += i * histo[i];
         m2 += i * i * histo[i];
         m3 += i * i * i * histo[i];
@@ -764,7 +764,7 @@ int VThreshold::moments(std::vector<int> data)
 
     // 阈值是最接近归一化直方图p0分片的灰度级
     sum = 0;
-    for (int i = 0; i < data.size(); i++) {
+    for (NInt i = 0; i < data.size(); i++) {
         sum += histo[i];
         if (sum > p0) {
             threshold = i;
@@ -774,14 +774,14 @@ int VThreshold::moments(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::otsu(std::vector<int> data)
+NInt VThreshold::otsu(std::vector<int> data)
 {
-    int    ih;
-    int    threshold  = -1;
-    int    num_pixels = 0;
-    double total_mean;   ///< 整个图像的平均灰度
-    double bcv, term;    ///< 类间方差，缩放系数
-    double max_bcv;      ///< max BCV
+    NInt    ih;
+    NInt    threshold  = -1;
+    NInt    num_pixels = 0;
+    NDouble total_mean;   ///< 整个图像的平均灰度
+    NDouble bcv, term;    ///< 类间方差，缩放系数
+    NDouble max_bcv;      ///< max BCV
 
     std::vector<double> cnh(data.size(), {0.0});     ///< 累积归一化直方图
     std::vector<double> mean(data.size(), {0.0});    ///< 平均灰度
@@ -818,14 +818,14 @@ int VThreshold::otsu(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::percentile(std::vector<int> data, double ptile)
+NInt VThreshold::percentile(std::vector<int> data, NDouble ptile)
 {
-    int threshold = -1;
-    // double ptile = 0.5; ///< 前景像素的默认百分比数
+    NInt threshold = -1;
+    // NDouble ptile = 0.5; ///< 前景像素的默认百分比数
     std::vector<double> avec(data.size(), {0.0});
-    double              total = partialSum(data, static_cast<int>(data.size() - 1));
-    double              temp  = 1.0;
-    for (int i = 0; i < data.size(); i++) {
+    NDouble              total = partialSum(data, static_cast<int>(data.size() - 1));
+    NDouble              temp  = 1.0;
+    for (NInt i = 0; i < data.size(); i++) {
         avec[i] = std::fabs((partialSum(data, i) / total) - ptile);
         if (avec[i] < temp) {
             temp      = avec[i];
@@ -835,25 +835,25 @@ int VThreshold::percentile(std::vector<int> data, double ptile)
     return threshold;
 }
 
-int VThreshold::renyi_entropy(std::vector<int> data)
+NInt VThreshold::renyi_entropy(std::vector<int> data)
 {
-    int threshold;
-    int opt_threshold;
+    NInt threshold;
+    NInt opt_threshold;
 
-    int    ih;
-    int    it;
-    int    first_bin;
-    int    last_bin;
-    int    tmp_var;
-    int    t_star1, t_star2, t_star3;
-    int    beta1, beta2, beta3;
-    double alpha; /* alpha parameter of the method */
-    double term;
-    double tot_ent;  /* total entropy */
-    double max_ent;  /* max entropy */
-    double ent_back; /* entropy of the background pixels at a given threshold */
-    double ent_obj;  /* entropy of the object pixels at a given threshold */
-    double omega;
+    NInt    ih;
+    NInt    it;
+    NInt    first_bin;
+    NInt    last_bin;
+    NInt    tmp_var;
+    NInt    t_star1, t_star2, t_star3;
+    NInt    beta1, beta2, beta3;
+    NDouble alpha; /* alpha parameter of the method */
+    NDouble term;
+    NDouble tot_ent;  /* total entropy */
+    NDouble max_ent;  /* max entropy */
+    NDouble ent_back; /* entropy of the background pixels at a given threshold */
+    NDouble ent_obj;  /* entropy of the object pixels at a given threshold */
+    NDouble omega;
 
     std::vector<double> norm_histo(data.size(), {0.0}); /* normalized histogram */
 
@@ -861,7 +861,7 @@ int VThreshold::renyi_entropy(std::vector<int> data)
     std::vector<double> P2(data.size(), {0.0});
 
 
-    int total = 0;
+    NInt total = 0;
     for (ih = 0; ih < data.size(); ih++) {
         total += data[ih];
     }
@@ -1039,24 +1039,24 @@ int VThreshold::renyi_entropy(std::vector<int> data)
     return opt_threshold;
 }
 
-int VThreshold::shanbhag(std::vector<int> data)
+NInt VThreshold::shanbhag(std::vector<int> data)
 {
-    int    threshold;
-    int    ih, it;
-    int    first_bin;
-    int    last_bin;
-    double term;
-    double tot_ent;  /* total entropy */
-    double min_ent;  /* max entropy */
-    double ent_back; /* entropy of the background pixels at a given threshold */
-    double ent_obj;  /* entropy of the object pixels at a given threshold */
+    NInt    threshold;
+    NInt    ih, it;
+    NInt    first_bin;
+    NInt    last_bin;
+    NDouble term;
+    NDouble tot_ent;  /* total entropy */
+    NDouble min_ent;  /* max entropy */
+    NDouble ent_back; /* entropy of the background pixels at a given threshold */
+    NDouble ent_obj;  /* entropy of the object pixels at a given threshold */
 
     std::vector<double> norm_histo(data.size(), {0.0}); /* normalized histogram */
     std::vector<double> P1(data.size(), {0.0});         /* cumulative normalized histogram */
     std::vector<double> P2(data.size(), {0.0});
 
 
-    int total = 0;
+    NInt total = 0;
     for (ih = 0; ih < data.size(); ih++) {
         total += data[ih];
     }
@@ -1123,13 +1123,13 @@ int VThreshold::shanbhag(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::triangle(std::vector<int> data)
+NInt VThreshold::triangle(std::vector<int> data)
 {
-    int min  = 0;
-    int dmax = 0;
-    int max  = 0;
-    int min2 = 0;
-    for (int i = 0; i < data.size(); i++) {
+    NInt min  = 0;
+    NInt dmax = 0;
+    NInt max  = 0;
+    NInt min2 = 0;
+    for (NInt i = 0; i < data.size(); i++) {
         if (data[i] > 0) {
             min = i;
             break;
@@ -1144,7 +1144,7 @@ int VThreshold::triangle(std::vector<int> data)
     // of the histogram.
     // Here I propose to find out to which side of the max point the data is furthest, and use that as
     //  the other extreme. Note that this is not done in the original method. GL
-    for (int i = data.size() - 1; i > 0; i--) {
+    for (NInt i = data.size() - 1; i > 0; i--) {
         if (data[i] > 0) {
             min2 = i;
             break;
@@ -1154,7 +1154,7 @@ int VThreshold::triangle(std::vector<int> data)
         min2++;   // line to the (p==0) point, not to data[min]
     }
 
-    for (int i = 0; i < data.size(); i++) {
+    for (NInt i = 0; i < data.size(); i++) {
         if (data[i] > dmax) {
             max  = i;
             dmax = data[i];
@@ -1167,11 +1167,11 @@ int VThreshold::triangle(std::vector<int> data)
         // reverse the histogram
         // IJ.log("Reversing histogram.");
         inverted  = true;
-        int left  = 0;                 // index of leftmost element
-        int right = data.size() - 1;   // index of rightmost element
+        NInt left  = 0;                 // index of leftmost element
+        NInt right = data.size() - 1;   // index of rightmost element
         while (left < right) {
             // exchange the left and right elements
-            int temp    = data[left];
+            NInt temp    = data[left];
             data[left]  = data[right];
             data[right] = temp;
             // move the bounds toward the center
@@ -1188,9 +1188,9 @@ int VThreshold::triangle(std::vector<int> data)
     }
 
     // describe line by nx * x + ny * y - d = 0
-    double nx;
-    double ny;
-    double d;
+    NDouble nx;
+    NDouble ny;
+    NDouble d;
     // nx is just the max frequency as the other point has freq=0
     nx = data[max];   //-min; // data[min]; //  lowest value bmin = (p=0)% in the image
     ny = min - max;
@@ -1200,10 +1200,10 @@ int VThreshold::triangle(std::vector<int> data)
     d = nx * min + ny * data[min];
 
     // find split point
-    int    split         = min;
-    double splitDistance = 0;
-    for (int i = min + 1; i <= max; i++) {
-        double newDistance = nx * i + ny * data[i] - d;
+    NInt    split         = min;
+    NDouble splitDistance = 0;
+    for (NInt i = min + 1; i <= max; i++) {
+        NDouble newDistance = nx * i + ny * data[i] - d;
         if (newDistance > splitDistance) {
             split         = i;
             splitDistance = newDistance;
@@ -1213,10 +1213,10 @@ int VThreshold::triangle(std::vector<int> data)
 
     if (inverted) {
         // The histogram might be used for something else, so let's reverse it back
-        int left  = 0;
-        int right = data.size() - 1;
+        NInt left  = 0;
+        NInt right = data.size() - 1;
         while (left < right) {
-            int temp    = data[left];
+            NInt temp    = data[left];
             data[left]  = data[right];
             data[right] = temp;
             left++;
@@ -1229,12 +1229,12 @@ int VThreshold::triangle(std::vector<int> data)
     }
 }
 
-int VThreshold::yen(std::vector<int> data)
+NInt VThreshold::yen(std::vector<int> data)
 {
-    int    threshold;
-    int    ih, it;
-    double crit;
-    double max_crit;
+    NInt    threshold;
+    NInt    ih, it;
+    NDouble crit;
+    NDouble max_crit;
 
     std::vector<double> norm_histo(data.size(), {0.0}); /* normalized histogram */
     std::vector<double> P1(data.size(), {0.0});         /* cumulative normalized histogram */
@@ -1242,7 +1242,7 @@ int VThreshold::yen(std::vector<int> data)
     std::vector<double> P2_sq(data.size(), {0.0});
 
 
-    int total = 0;
+    NInt total = 0;
     for (ih = 0; ih < data.size(); ih++) {
         total += data[ih];
     }
@@ -1278,7 +1278,7 @@ int VThreshold::yen(std::vector<int> data)
     return threshold;
 }
 
-int VThreshold::jubu(cv::Mat& src, METHOD type, int radius, float ratio)
+NInt VThreshold::jubu(cv::Mat& src, METHOD type, NInt radius, NFloat  ratio)
 {
     // 对图像矩阵进行平滑处理
     cv::Mat smooth;
@@ -1303,8 +1303,8 @@ int VThreshold::jubu(cv::Mat& src, METHOD type, int radius, float ratio)
     cv::Mat diff = src - (1.0 - ratio) * smooth;
     // 阈值处理，当大于或等于0时，输出值为 255，反之输出为0
     cv::Mat out = cv::Mat::zeros(diff.size(), CV_8UC1);
-    for (int r = 0; r < out.rows; r++) {
-        for (int c = 0; c < out.cols; c++) {
+    for (NInt r = 0; r < out.rows; r++) {
+        for (NInt c = 0; c < out.cols; c++) {
             if (diff.at<float>(r, c) >= 0) {
                 out.at<uchar>(r, c) = 255;
             }
@@ -1313,7 +1313,7 @@ int VThreshold::jubu(cv::Mat& src, METHOD type, int radius, float ratio)
     src = out.clone();
     return 1;
 }
-int VThreshold::sauvola(const cv::Mat& src, cv::Mat& dst, const double& k, const int& wnd_size)
+NInt VThreshold::sauvola(const cv::Mat& src, cv::Mat& dst, const double& k, const int& wnd_size)
 {
     cv::Mat local;
     src.convertTo(local, CV_32F);

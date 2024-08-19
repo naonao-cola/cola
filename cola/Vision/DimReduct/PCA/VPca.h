@@ -21,7 +21,7 @@ class VPCA : public VisionObject
 public:
     VPCA()           = default;
     ~VPCA() override = default;
-    cv::Mat reduce(const cv::Mat& data, int dimension = 0, double Retained = 0.9);
+    cv::Mat reduce(const cv::Mat& data, NInt dimension = 0, NDouble Retained = 0.9);
     void    write(std::string path);
     void    read(std::string path);
     cv::Mat reduce_single(const cv::Mat& data);
@@ -33,7 +33,7 @@ public:
     cv::Mat back_mat_;
     struct Eigenvector
     {
-        float   eigenvalue;
+        NFloat   eigenvalue;
         cv::Mat eigenvector;
     };
     std::vector<Eigenvector> eigenvecWithVal_;

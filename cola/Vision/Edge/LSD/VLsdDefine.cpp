@@ -19,12 +19,12 @@ void error(const char* msg)
     exit(EXIT_FAILURE);
 }
 
-int double_equal(double a, double b)
+NInt double_equal(NDouble a, NDouble b)
 {
-    double abs_diff;
-    double aa;
-    double bb;
-    double abs_max;
+    NDouble abs_diff;
+    NDouble aa;
+    NDouble bb;
+    NDouble abs_max;
     /* trivial case */
     if (a == b) {
         return TRUE;
@@ -41,10 +41,10 @@ int double_equal(double a, double b)
         abs_max = DBL_MIN;
     }
     /* equal if relative error <= factor x eps */
-    return static_cast<int>((abs_diff / abs_max) <= (RELATIVE_ERROR_FACTOR * DBL_EPSILON));
+    return static_cast<NInt>((abs_diff / abs_max) <= (RELATIVE_ERROR_FACTOR * DBL_EPSILON));
 }
 
-double dist(double x1, double y1, double x2, double y2)
+NDouble dist(NDouble x1, NDouble y1, NDouble x2, NDouble y2)
 {
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
@@ -58,7 +58,7 @@ void free_ntuple_list(ntuple_list input)
     free((void*)input);
 }
 
-ntuple_list new_ntuple_list(unsigned int dim)
+ntuple_list new_ntuple_list(NUInt dim)
 {
     ntuple_list n_tuple = nullptr;
     /* check parameters */
@@ -78,7 +78,7 @@ ntuple_list new_ntuple_list(unsigned int dim)
     n_tuple->dim      = dim;
 
     /* get memory for tuples */
-    n_tuple->values = static_cast<double*>(malloc(dim * n_tuple->max_size * sizeof(double)));
+    n_tuple->values = static_cast<NDouble*>(malloc(dim * n_tuple->max_size * sizeof(NDouble)));
     if (n_tuple->values == nullptr) {
         error("not enough memory.");
     }
@@ -96,13 +96,13 @@ void enlarge_ntuple_list(ntuple_list n_tuple)
     n_tuple->max_size *= 2;
 
     /* realloc memory */
-    n_tuple->values = (double*)realloc((void*)n_tuple->values, n_tuple->dim * n_tuple->max_size * sizeof(double));
+    n_tuple->values = (NDouble*)realloc((void*)n_tuple->values, n_tuple->dim * n_tuple->max_size * sizeof(NDouble));
     if (n_tuple->values == nullptr) {
         error("not enough memory.");
     }
 }
 
-void add_7tuple(ntuple_list out, double v1, double v2, double v3, double v4, double v5, double v6, double v7)
+void add_7tuple(ntuple_list out, NDouble v1, NDouble v2, NDouble v3, NDouble v4, NDouble v5, NDouble v6, NDouble v7)
 {
     /* check parameters */
     if (out == nullptr) {
@@ -140,7 +140,7 @@ void free_image_char(image_char i)
     free((void*)i);
 }
 
-image_char new_image_char(unsigned int xsize, unsigned int ysize)
+image_char new_image_char(NUInt xsize, NUInt ysize)
 {
     image_char image = nullptr;
     /* check parameters */
@@ -164,11 +164,11 @@ image_char new_image_char(unsigned int xsize, unsigned int ysize)
     return image;
 }
 
-image_char new_image_char_ini(unsigned int xsize, unsigned int ysize, unsigned char fill_value)
+image_char new_image_char_ini(NUInt xsize, NUInt ysize, unsigned char fill_value)
 {
-    image_char   image = new_image_char(xsize, ysize);
-    unsigned int N     = xsize * ysize;
-    unsigned int i;
+    image_char image = new_image_char(xsize, ysize);
+    NUInt      N     = xsize * ysize;
+    NUInt      i;
     /* check parameters */
     if (image == nullptr || image->data == nullptr) {
         error("new_image_char_ini: invalid image.");
@@ -181,7 +181,7 @@ image_char new_image_char_ini(unsigned int xsize, unsigned int ysize, unsigned c
     return image;
 }
 
-image_int new_image_int(unsigned int xsize, unsigned int ysize)
+image_int new_image_int(NUInt xsize, NUInt ysize)
 {
     image_int image = nullptr;
     /* check parameters */
@@ -193,7 +193,7 @@ image_int new_image_int(unsigned int xsize, unsigned int ysize)
     if (image == nullptr) {
         error("not enough memory.");
     }
-    image->data = (int*)calloc((size_t)(xsize * ysize), sizeof(int));
+    image->data = (NInt*)calloc((size_t)(xsize * ysize), sizeof(NInt));
     if (image->data == nullptr) {
         error("not enough memory.");
     }
@@ -203,11 +203,11 @@ image_int new_image_int(unsigned int xsize, unsigned int ysize)
     return image;
 }
 
-image_int new_image_int_ini(unsigned int xsize, unsigned int ysize, int fill_value)
+image_int new_image_int_ini(NUInt xsize, NUInt ysize, NInt fill_value)
 {
-    image_int    image = new_image_int(xsize, ysize); /* create image */
-    unsigned int N     = xsize * ysize;
-    unsigned int i;
+    image_int image = new_image_int(xsize, ysize); /* create image */
+    NUInt     N     = xsize * ysize;
+    NUInt     i;
     /* initialize */
     for (i = 0; i < N; i++) {
         image->data[i] = fill_value;
@@ -224,7 +224,7 @@ void free_image_double(image_double i)
     free((void*)i);
 }
 
-image_double new_image_double(unsigned int xsize, unsigned int ysize)
+image_double new_image_double(NUInt xsize, NUInt ysize)
 {
     image_double image = nullptr;
     if (xsize == 0 || ysize == 0) {
@@ -234,7 +234,7 @@ image_double new_image_double(unsigned int xsize, unsigned int ysize)
     if (image == nullptr) {
         error("not enough memory.");
     }
-    image->data = (double*)calloc((size_t)(xsize * ysize), sizeof(double));
+    image->data = (NDouble*)calloc((size_t)(xsize * ysize), sizeof(NDouble));
     if (image->data == nullptr) {
         error("not enough memory.");
     }
@@ -243,7 +243,7 @@ image_double new_image_double(unsigned int xsize, unsigned int ysize)
     return image;
 }
 
-image_double new_image_double_ptr(unsigned int xsize, unsigned int ysize, double* data)
+image_double new_image_double_ptr(NUInt xsize, NUInt ysize, NDouble* data)
 {
     image_double image = nullptr;
     if (xsize == 0 || ysize == 0) {

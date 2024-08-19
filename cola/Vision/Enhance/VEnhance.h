@@ -5,7 +5,7 @@
  * @Date         : 2024-07-26 23:33:56
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-27 22:29:26
+ * @LastEditTime : 2024-08-19 15:36:15
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VENHANCE_H
@@ -35,12 +35,12 @@ public:
         if (!scr.data) {              //判断图像是否被正确读取；
             return;
         }
-        const int WINSIZE = 15;      //WINSIZE表示求均值与方差的窗口大小，应该是单数
-        const int MAXCG = 10;        //设定最大的增强比例
+        const NInt WINSIZE = 15;      //WINSIZE表示求均值与方差的窗口大小，应该是单数
+        const NInt MAXCG = 10;        //设定最大的增强比例
         Mat dst = scr.clone();
         adaptContrastEnhancement(scr, dst, WINSIZE,MAXCG);
      */
-    static cv::Mat adapt_contrast_enhancement(cv::Mat scr, int win_size = 15, int maxCg = 10);
+    static cv::Mat adapt_contrast_enhancement(cv::Mat scr, NInt win_size = 15, NInt maxCg = 10);
 
 
     /**
@@ -51,15 +51,15 @@ public:
         * @param offset		类似于增益的偏移量。
         * https://blog.csdn.net/yl_best/article/details/89048980
         * example:
-        *  int scales = 3;
-        double weight[3] = { 1.0 / 3.0,1.0 / 3.0,1.0 / 3.0 };
-        double sigmas[3] = { 1,100,200 };
+        *  NInt scales = 3;
+        NDouble weight[3] = { 1.0 / 3.0,1.0 / 3.0,1.0 / 3.0 };
+        NDouble sigmas[3] = { 1,100,200 };
         nao::img_pre::Enhance en;
         en.retinex(src1, 100);
         en.multi_scale_retinex(src2, scales, weight, sigmas);
         en.multi_scale_retinex_CR(src3, scales, weight, sigmas);
     */
-    static cv::Mat retinex(cv::Mat img, double sigma, int gain = 128, int offset = 128);
+    static cv::Mat retinex(cv::Mat img, NDouble sigma, NInt gain = 128, NInt offset = 128);
 
     /**
      * @brief				多尺度retinex恢复。图像和一组过滤后的图像被转换为对数域，并从原始图像中减去一些权重。
@@ -71,7 +71,7 @@ public:
      * @param gain
      * @param offset
      */
-    static cv::Mat multi_scale_retinex(cv::Mat img, int scales, double* weights, double* sigmas, int gain = 128, int offset = 128);
+    static cv::Mat multi_scale_retinex(cv::Mat img, NInt scales, NDouble* weights, NDouble* sigmas, NInt gain = 128, NInt offset = 128);
 
     /**
      * @brief				具有颜色恢复的多尺度retinex恢复。图像和一组过滤后的图像被转换为对数域，并从原始图像
@@ -86,7 +86,7 @@ public:
      * @param restoration_factor
      * @param color_gain
      */
-    static cv::Mat multi_scale_retinex_CR(cv::Mat img, int scales, double* weights, double* sigmas, int gain = 128, int offset = 128, double restoration_factor = 6, double color_gain = 2);
+    static cv::Mat multi_scale_retinex_CR(cv::Mat img, NInt scales, NDouble* weights, NDouble* sigmas, NInt gain = 128, NInt offset = 128, NDouble restoration_factor = 6, NDouble color_gain = 2);
 
     /**
      * @brief				自适应高低阈值，根据中位数求得，可用于candy边缘检测
@@ -95,7 +95,7 @@ public:
      * @param max_val
      * @param sigma
      */
-    static void adapt_min_max_threshold_median(cv::Mat img, int& min_val, int& max_val, float sigma = 0.3);
+    static void adapt_min_max_threshold_median(cv::Mat img, NInt& min_val, NInt& max_val, NFloat sigma = 0.3);
 
     /**
      * @brief				自适应找高低阈值matlab版本，主要是在边缘强度的直方图上，进行截断。
@@ -106,7 +106,7 @@ public:
      * @param aperture_size
      * https://www.zybuluo.com/johntian/note/593072
      */
-    static void adapt_find_threshold_matlab(const cv::Mat image, double& low, double& high, double percent_of_pix_is_not_edges = 0.7, int aperture_size = 3);
+    static void adapt_find_threshold_matlab(const cv::Mat image, NDouble& low, NDouble& high, NDouble percent_of_pix_is_not_edges = 0.7, NInt aperture_size = 3);
 
     /**
      * @brief			非极大值抑制函数，可以进一步消除非边缘的噪点，更重要的是，可以细化边缘。
@@ -115,10 +115,10 @@ public:
      * @param dst
      * @param win_size
      */
-    static void non_maximum_suppression(cv::Mat& src, cv::Mat& dst, int win_size = 3);
+    static void non_maximum_suppression(cv::Mat& src, cv::Mat& dst, NInt win_size = 3);
 
     // 分段增强
-    static cv::Mat segmented_enhancement(const cv::Mat& img, double r1, double r2, double s1 = 0, double s2 = 255);
+    static cv::Mat segmented_enhancement(const cv::Mat& img, NDouble r1, NDouble r2, NDouble s1 = 0, NDouble s2 = 255);
 
     /**
      * spline function
@@ -130,7 +130,7 @@ public:
      * @param m [in]  count of output points
      * @param z [out] array of y-coordinate of output points
      */
-    static double spline(double* x, double* y, int n, double* t, int m, double* z);
+    static NDouble spline(NDouble* x, NDouble* y, NInt n, NDouble* t, NInt m, NDouble* z);
 
     //= = = = = = = = = = = = = = = = = = = =
     // @FuncName:
@@ -140,7 +140,7 @@ public:
     // @Returns:
     // @Others:
     //= = = = = = = = = = = = = = = = = = = =
-    static void dot_line(cv::Mat& mat, const cv::Point& p1, const cv::Point& p2, const cv::Scalar& color, int thickness = 1, int lineType = 8, int line_step = 6, int blank_step = 6);
+    static void dot_line(cv::Mat& mat, const cv::Point& p1, const cv::Point& p2, const cv::Scalar& color, NInt thickness = 1, NInt lineType = 8, NInt line_step = 6, NInt blank_step = 6);
 
     /**
      * @brief gamma变换
@@ -149,7 +149,7 @@ public:
      * @param n_c
      * @return
      */
-    static cv::Mat gamma_trans(const cv::Mat& img, double gamma, int n_c = 1);
+    static cv::Mat gamma_trans(const cv::Mat& img, NDouble gamma, NInt n_c = 1);
 
     /**
      * @brief
@@ -162,7 +162,7 @@ public:
      * @return
      * @see https://blog.csdn.net/youcans/article/details/125373625
      */
-    static cv::Mat gray_stairs(const cv::Mat& img, double sin = 0.0, double hin = 255.0, double mt = 1.0, double sout = 0.0, double hout = 255.0);
+    static cv::Mat gray_stairs(const cv::Mat& img, NDouble sin = 0.0, NDouble hin = 255.0, NDouble mt = 1.0, NDouble sout = 0.0, NDouble hout = 255.0);
 
     // 获取凸包
     static cv::Mat get_rect_img(const cv::Mat& img, std::vector<cv::Point2i>& vecPt);

@@ -32,7 +32,7 @@ Curve::Curve()
 
 Curve::~Curve() = default;
 
-std::vector<cv::Point>::iterator Curve::find(int x)
+std::vector<cv::Point>::iterator Curve::find(NInt x)
 {
     std::vector<cv::Point>::iterator iter;
     for (iter = _points.begin(); iter != _points.end(); ++iter) {
@@ -43,7 +43,7 @@ std::vector<cv::Point>::iterator Curve::find(int x)
     return _points.end();
 }
 
-std::vector<cv::Point>::iterator Curve::find(int x, int y)
+std::vector<cv::Point>::iterator Curve::find(NInt x, NInt y)
 {
     std::vector<cv::Point>::iterator iter;
     for (iter = _points.begin(); iter != _points.end(); ++iter) {
@@ -54,7 +54,7 @@ std::vector<cv::Point>::iterator Curve::find(int x, int y)
     return _points.end();
 }
 
-std::vector<cv::Point>::iterator Curve::add(int x, int y)
+std::vector<cv::Point>::iterator Curve::add(NInt x, NInt y)
 {
     std::vector<cv::Point>::iterator it = find(x);
     if (it == _points.end()) {
@@ -77,11 +77,11 @@ std::vector<cv::Point>::iterator Curve::add(int x, int y)
     return it;
 }
 
-int Curve::calcCurve(double* output_y)
+NInt Curve::calcCurve(NDouble* output_y)
 {
     // if count of control points is less than 2, return linear output
     if (_points.size() < 2) {
-        for (int i = 0; i < 256; ++i) {
+        for (NInt i = 0; i < 256; ++i) {
             output_y[i] = 255 - i;
         }
         return 0;
@@ -92,13 +92,13 @@ int Curve::calcCurve(double* output_y)
         std::vector<cv::Point>::iterator point1 = _points.begin();
         std::vector<cv::Point>::iterator point2 = point1 + 1;
 
-        double delta_y = 0;
+        NDouble delta_y = 0;
         if (point2->x != point1->x) {
             delta_y = (point2->y - point1->y) * 1.0 / (point2->x - point1->x);
         }
 
         // create output
-        for (int i = 0; i < 256; ++i) {
+        for (NInt i = 0; i < 256; ++i) {
             if (i < point1->x) {
                 output_y[i] = point1->y;
             }
@@ -113,15 +113,15 @@ int Curve::calcCurve(double* output_y)
     }
 
     // the count of control points is greater than 2,  create spline line
-    int n = static_cast<int>(_points.size());   // count of points
+    NInt n = static_cast<NInt>(_points.size());   // count of points
 
     // create array of x-coordinate and y-coordinate of control points
-    double*                          x           = new double[n];
-    double*                          y           = new double[n];
+    NDouble*                         x           = new NDouble[n];
+    NDouble*                         y           = new NDouble[n];
     std::vector<cv::Point>::iterator start_point = _points.end();
     std::vector<cv::Point>::iterator end_point   = _points.end();
     std::vector<cv::Point>::iterator iter;
-    int                              k = 0;
+    NInt                             k = 0;
     for (iter = _points.begin(); iter != _points.end(); ++iter, ++k) {
         if (k == 0) {
             start_point = iter;
@@ -133,25 +133,25 @@ int Curve::calcCurve(double* output_y)
 
     // if start_point or end_point is invalid
     if (start_point == _points.end() || end_point == _points.end() || start_point == end_point) {
-        for (int i = 0; i < 256; ++i) {
+        for (NInt i = 0; i < 256; ++i) {
             output_y[i] = 255 - i;
         }
         return 1;
     }
 
     // create array of x-coordinate of output points
-    int     m = end_point->x - start_point->x;
-    double* t = new double[m];   // array of x-coordinate of output points
-    double* z = new double[m];   // array of y-coordinate of output points
-                                 // initialize array of x-coordinate
-    for (int i = 0; i < m; ++i) {
+    NInt     m = end_point->x - start_point->x;
+    NDouble* t = new NDouble[m];   // array of x-coordinate of output points
+    NDouble* z = new NDouble[m];   // array of y-coordinate of output points
+                                   // initialize array of x-coordinate
+    for (NInt i = 0; i < m; ++i) {
         t[i] = i;
     }
 
     // perform spline, output y-coordinate is stored in array z
     VEnhance::spline(x, y, n, t, m, z);
     // create output
-    for (int i = 0; i < 256; ++i) {
+    for (NInt i = 0; i < 256; ++i) {
         if (i < start_point->x) {
             output_y[i] = start_point->y;
         }
@@ -171,8 +171,8 @@ int Curve::calcCurve(double* output_y)
 
 void Curve::draw(cv::Mat& mat)
 {
-    int       thinkness = 1;
-    int       n         = 0;
+    NInt      thinkness = 1;
+    NInt      n         = 0;
     cv::Point lastPoint;
     // clear background
     mat.setTo(_back_color);
@@ -193,10 +193,10 @@ void Curve::draw(cv::Mat& mat)
     VEnhance::dot_line(mat, cv::Point(0, 255 - 191), cv::Point(255, 255 - 191), _color, 1, 8, 4, 4);
 
     // create curve
-    double z[256];
+    NDouble z[256];
     calcCurve(z);
-    for (int i = 1; i < 256; ++i) {
-        cv::line(mat, cv::Point(i - 1, static_cast<int>(255 - z[i - 1])), cv::Point(i, static_cast<int>(255 - z[i])), _color, 1, 8);
+    for (NInt i = 1; i < 256; ++i) {
+        cv::line(mat, cv::Point(i - 1, static_cast<NInt>(255 - z[i - 1])), cv::Point(i, static_cast<NInt>(255 - z[i])), _color, 1, 8);
     }
     // draw control points
     std::vector<cv::Point>::iterator iter, iter_next;
@@ -206,24 +206,24 @@ void Curve::draw(cv::Mat& mat)
     }
 }
 
-void Curve::mouseDown(int x, int y)
+void Curve::mouseDown(NInt x, NInt y)
 {
     y              = 255 - y;
     _current       = add(x, y);
     _is_mouse_down = true;
 }
 
-bool Curve::mouseMove(int x, int y)
+bool Curve::mouseMove(NInt x, NInt y)
 {
     y = 255 - y;
     if (_is_mouse_down) {
         if (_current != _points.end()) {
-            int prev_x = 0;
-            int next_x = 255;
+            NInt prev_x = 0;
+            NInt next_x = 255;
 
             if (_current != _points.begin()) {
-                int prev_y = (_current - 1)->y;
-                prev_x     = (_current - 1)->x;
+                NInt prev_y = (_current - 1)->y;
+                prev_x      = (_current - 1)->x;
 
                 // match the previous point
                 if (_points.size() > 2 && ::abs(x - prev_x) <= _tolerance && ::abs(y - prev_y) <= _tolerance) {
@@ -240,8 +240,8 @@ bool Curve::mouseMove(int x, int y)
                 }
             }
             if ((_current + 1) != _points.end()) {
-                int next_y = (_current + 1)->y;
-                next_x     = (_current + 1)->x;
+                NInt next_y = (_current + 1)->y;
+                next_x      = (_current + 1)->x;
 
                 // match the next point
                 if (_points.size() > 2 && ::abs(x - next_x) <= _tolerance && ::abs(y - next_y) <= _tolerance) {
@@ -265,7 +265,7 @@ bool Curve::mouseMove(int x, int y)
     return false;
 }
 
-void Curve::mouseUp(int x, int y)
+void Curve::mouseUp(NInt x, NInt y)
 {
     y              = 255 - y;
     _is_mouse_down = false;
@@ -276,7 +276,7 @@ void Curve::clearPoints()
     _points.clear();
 }
 
-int Curve::addPoint(const cv::Point& p)
+NInt Curve::addPoint(const cv::Point& p)
 {
     std::vector<cv::Point>::iterator iter = add(p.x, p.y);
     if (iter != _points.end())
@@ -285,7 +285,7 @@ int Curve::addPoint(const cv::Point& p)
         return 0;
 }
 
-int Curve::deletePoint(const cv::Point& p)
+NInt Curve::deletePoint(const cv::Point& p)
 {
     std::vector<cv::Point>::iterator iter;
     iter = find(p.x, p.y);
@@ -298,7 +298,7 @@ int Curve::deletePoint(const cv::Point& p)
     return 0;
 }
 
-int Curve::movePoint(const cv::Point& p, int x, int y)
+NInt Curve::movePoint(const cv::Point& p, NInt x, NInt y)
 {
     std::vector<cv::Point>::iterator iter;
     iter = find(p.x, p.y);
@@ -325,20 +325,20 @@ void Curves::draw(cv::Mat& mat)
         _CurrentChannel->draw(mat);
 }
 
-void Curves::mouseDown(int x, int y)
+void Curves::mouseDown(NInt x, NInt y)
 {
     if (_CurrentChannel)
         _CurrentChannel->mouseDown(x, y);
 }
 
-bool Curves::mouseMove(int x, int y)
+bool Curves::mouseMove(NInt x, NInt y)
 {
     if (_CurrentChannel)
         return _CurrentChannel->mouseMove(x, y);
     return false;
 }
 
-void Curves::mouseUp(int x, int y)
+void Curves::mouseUp(NInt x, NInt y)
 {
     if (_CurrentChannel)
         _CurrentChannel->mouseUp(x, y);
@@ -346,29 +346,29 @@ void Curves::mouseUp(int x, int y)
 
 void Curves::createColorTables(uchar colorTables[][256])
 {
-    double z[256];
+    NDouble z[256];
     _BlueChannel.calcCurve(z);
-    for (int i = 0; i < 256; ++i) {
+    for (NInt i = 0; i < 256; ++i) {
         colorTables[0][i] = static_cast<uchar>(z[i]);
     }
     _GreenChannel.calcCurve(z);
-    for (int i = 0; i < 256; ++i)
+    for (NInt i = 0; i < 256; ++i)
         colorTables[1][i] = static_cast<uchar>(z[i]);
     _RedChannel.calcCurve(z);
-    for (int i = 0; i < 256; ++i) {
+    for (NInt i = 0; i < 256; ++i) {
         colorTables[2][i] = static_cast<uchar>(z[i]);
     }
     uchar value;
     _RGBChannel.calcCurve(z);
-    for (int i = 0; i < 256; ++i) {
-        for (int c = 0; c < 3; c++) {
+    for (NInt i = 0; i < 256; ++i) {
+        for (NInt c = 0; c < 3; c++) {
             value             = colorTables[c][i];
             colorTables[c][i] = static_cast<uchar>(z[value]);
         }
     }
 }
 
-int Curves::adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask)
+NInt Curves::adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask)
 {
     cv::Mat input = src.getMat();
     if (input.empty()) {
@@ -385,9 +385,9 @@ int Curves::adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask)
     const uchar* in;
     const uchar* pmask;
     uchar*       out;
-    int          width    = input.cols;
-    int          height   = input.rows;
-    int          channels = input.channels();
+    NInt         width    = input.cols;
+    NInt         height   = input.rows;
+    NInt         channels = input.channels();
 
     uchar colorTables[3][256];
     // create color tables
@@ -397,17 +397,17 @@ int Curves::adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask)
 #ifdef HAVE_OPENMP
 #    pragma omp parallel for
 #endif
-        for (int y = 0; y < height; y++) {
+        for (NInt y = 0; y < height; y++) {
             in    = input.ptr<uchar>(y);
             out   = output.ptr<uchar>(y);
             pmask = msk.ptr<uchar>(y);
-            for (int x = 0; x < width; x++) {
-                for (int c = 0; c < 3; c++) {
+            for (NInt x = 0; x < width; x++) {
+                for (NInt c = 0; c < 3; c++) {
                     *out = static_cast<uchar>((colorTables[c][*in] * pmask[x] / 255.0) + (*in) * (255 - pmask[x]) / 255.0);
                     out++;
                     in++;
                 }
-                for (int c = 0; c < channels - 3; c++) {
+                for (NInt c = 0; c < channels - 3; c++) {
                     *out++ = *in++;
                 }
             }
@@ -417,14 +417,14 @@ int Curves::adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask)
 #ifdef HAVE_OPENMP
 #    pragma omp parallel for
 #endif
-        for (int y = 0; y < height; y++) {
+        for (NInt y = 0; y < height; y++) {
             in  = input.ptr<uchar>(y);
             out = output.ptr<uchar>(y);
-            for (int x = 0; x < width; x++) {
-                for (int c = 0; c < 3; c++) {
+            for (NInt x = 0; x < width; x++) {
+                for (NInt c = 0; c < 3; c++) {
                     *out++ = colorTables[c][*in++];
                 }
-                for (int c = 0; c < channels - 3; c++) {
+                for (NInt c = 0; c < channels - 3; c++) {
                     *out++ = *in++;
                 }
             }
@@ -433,14 +433,14 @@ int Curves::adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask)
     return 0;
 }
 
-Saturation::Saturation(int param)
+Saturation::Saturation(NInt param)
 {
     _nParameter = param;
 }
 
 Saturation::~Saturation() = default;
 
-int Saturation::adjust(cv::InputArray input, cv::OutputArray output)
+NInt Saturation::adjust(cv::InputArray input, cv::OutputArray output)
 {
     cv::Mat src = input.getMat();
     if (input.empty()) {
@@ -448,31 +448,31 @@ int Saturation::adjust(cv::InputArray input, cv::OutputArray output)
     }
     output.create(src.size(), src.type());
     cv::Mat dst = output.getMat();
-    for (int row = 0; row < src.rows; row++) {
-        for (int col = 0; col < src.cols; col++) {
-            uchar  B      = src.at<cv::Vec3b>(row, col)[0];
-            uchar  G      = src.at<cv::Vec3b>(row, col)[1];
-            uchar  R      = src.at<cv::Vec3b>(row, col)[2];
-            uchar  rgbMax = std::max(std::max(R, G), B);
-            uchar  rgbMin = std::min(std::min(R, G), B);
-            double dDelta = static_cast<double>(rgbMax - rgbMin) / 255;
-            double dValue = static_cast<double>(rgbMax + rgbMin) / 255;
+    for (NInt row = 0; row < src.rows; row++) {
+        for (NInt col = 0; col < src.cols; col++) {
+            uchar   B      = src.at<cv::Vec3b>(row, col)[0];
+            uchar   G      = src.at<cv::Vec3b>(row, col)[1];
+            uchar   R      = src.at<cv::Vec3b>(row, col)[2];
+            uchar   rgbMax = std::max(std::max(R, G), B);
+            uchar   rgbMin = std::min(std::min(R, G), B);
+            NDouble dDelta = static_cast<NDouble>(rgbMax - rgbMin) / 255;
+            NDouble dValue = static_cast<NDouble>(rgbMax + rgbMin) / 255;
             if (0 == dDelta) {
                 dst.at<cv::Vec3b>(row, col)[0] = B;
                 dst.at<cv::Vec3b>(row, col)[1] = G;
                 dst.at<cv::Vec3b>(row, col)[2] = R;
                 continue;   // 如果该像素点是灰色 不处理
             }
-            double dL = dValue / 2;   // 按照公式计算明度L   [0,1]
-            double dS;                // 饱和度S
+            NDouble dL = dValue / 2;   // 按照公式计算明度L   [0,1]
+            NDouble dS;                // 饱和度S
             if (dL < 0.5) {
                 dS = dDelta / dValue;
             }
             else {
                 dS = dDelta / (2 - dValue);
             }
-            double dPercent = static_cast<double>(_nParameter) / 100;
-            double dAlpha;
+            NDouble dPercent = static_cast<NDouble>(_nParameter) / 100;
+            NDouble dAlpha;
             if (dPercent >= 0) {
                 if (dPercent + dS >= 1) {
                     dAlpha = dS;

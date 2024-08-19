@@ -22,22 +22,22 @@ class VBlob : public VisionObject
 public:
     VBlob();
     ~VBlob() override;
-    void Release();
+    NVoid Release();
 
     // 运行Blob算法
-    bool DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Mat GrayBuffer = cv::Mat(), int nMaxDefectCount = 99999);
-    bool DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat GrayBuffer = cv::Mat(), int nMaxDefectCount = 99999);
+    NBool DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Mat GrayBuffer = cv::Mat(), NInt nMaxDefectCount = 99999);
+    NBool DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat GrayBuffer = cv::Mat(), NInt nMaxDefectCount = 99999);
     // 坐标校正
-    void CoordApply(cv::Rect rectROI, int nTotalLabel);
-    bool DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, int nTotalLabel);
-    bool DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, int nTotalLabel);
+    NVoid CoordApply(cv::Rect rectROI, NInt nTotalLabel);
+    NBool DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, NInt nTotalLabel);
+    NBool DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, NInt nTotalLabel);
 
     std::vector<tBLOB_FEATURE> DoDefectBlobSingleJudgment(const std::vector<STRU_DEFECT_ITEM>& EngineerBlockDefectJudge);
-    bool                       DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, double dValue);
-    bool                       Compare(double dFeatureValue, int nSign, double dValue);
+    NBool                       DoFiltering(tBLOB_FEATURE& tBlobResult, NInt nBlobFilter, NInt nSign, NDouble dValue);
+    NBool                       Compare(NDouble dFeatureValue, NInt nSign, NDouble dValue);
 
 protected:
-    bool                       bComplete_;    // 确认Blob是否已完成。
+    NBool                       bComplete_;    // 确认Blob是否已完成。
     std::vector<tBLOB_FEATURE> BlobResult_;   // Blob结果列表
 };   // class VBlob
 

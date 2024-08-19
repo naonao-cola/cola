@@ -26,7 +26,7 @@ public:
      * @return
      * 半径D0越小，模糊越大；半径D0越大，模糊越小
      */
-    static cv::Mat ideal_low_pass_filter(cv::Mat& src, float sigma);
+    static cv::Mat ideal_low_pass_filter(cv::Mat& src, NFloat sigma);
 
 
     /**
@@ -35,7 +35,7 @@ public:
      * @param sigma
      * @return
      */
-    static cv::Mat ideal_high_pass_filter(cv::Mat& src, float sigma);
+    static cv::Mat ideal_high_pass_filter(cv::Mat& src, NFloat sigma);
 
     /**
      * @brief		巴特沃斯低通滤波器
@@ -47,7 +47,7 @@ public:
      * 阶数n=1 无振铃和负值    阶数n=2 轻微振铃和负值  阶数n=5 明显振铃和负值   阶数n=20 与ILPF相似
      * 半径D0越小，模糊越大；半径D0越大，模糊越小
      */
-    static cv::Mat butterworth_low_paass_filter(cv::Mat& src, float d0, int n);
+    static cv::Mat butterworth_low_paass_filter(cv::Mat& src, NFloat d0, NInt n);
 
     /**
      * @brief		巴特沃斯高通滤波器
@@ -56,7 +56,7 @@ public:
      * @param n
      * @return
      */
-    static cv::Mat butterworth_high_paass_filter(cv::Mat& src, float d0, int n);
+    static cv::Mat butterworth_high_paass_filter(cv::Mat& src, NFloat d0, NInt n);
 
     /**
      * @brief			 高斯低通滤波器
@@ -65,7 +65,7 @@ public:
      * @return
      *  高斯函数参数，越小，频率高斯滤波器越窄，滤除高频成分越多，图像就越平滑
      */
-    static cv::Mat gaussian_low_pass_filter(cv::Mat& src, float d0);
+    static cv::Mat gaussian_low_pass_filter(cv::Mat& src, NFloat d0);
 
 
     /**
@@ -74,7 +74,7 @@ public:
      * @param d0
      * @return
      */
-    static cv::Mat gaussian_high_pass_filter(cv::Mat& src, float d0);
+    static cv::Mat gaussian_high_pass_filter(cv::Mat& src, NFloat d0);
 
     /**
      * @brief			 级联滤波器，用于边缘检测（中值滤波与双边滤波结合）
@@ -84,7 +84,7 @@ public:
      * @return
      * 可以用峰值信噪比比较滤波器的去燥效果，公式 PSNR = 10* log(255 * 255 / MES)
      */
-    static cv::Mat cascade_filter(const cv::Mat& src, int K, int ksize = 3);
+    static cv::Mat cascade_filter(const cv::Mat& src, NInt K, NInt ksize = 3);
 
     /**
      * @brief: O(1) time implementation of guided filter
@@ -95,7 +95,7 @@ public:
      * @return
      * @note : https://blog.csdn.net/weixin_40647819/article/details/89763505
      **/
-    static cv::Mat guided_filter(cv::Mat& I, cv::Mat& p, int r = 9, double eps = 0.1 * 0.1);
+    static cv::Mat guided_filter(cv::Mat& I, cv::Mat& p, NInt r = 9, NDouble eps = 0.1 * 0.1);
 
     /**
      * @brief			非局部均值的滤波
@@ -107,7 +107,7 @@ public:
      * @return
      * 参考链接  https://mp.weixin.qq.com/s/7ul1plr_6RyNGRN766Nt8Q
      */
-    static void nl_filter(cv::Mat src, cv::Mat& dst, int ds, int Ds, float h);
+    static void nl_filter(cv::Mat src, cv::Mat& dst, NInt ds, NInt Ds, NFloat h);
 
     /**
      * @brief			计算信噪比，用于图像质量评价
@@ -116,7 +116,7 @@ public:
      * @return
      * 参考链接 https://www.jianshu.com/p/08b1b5014ce7
      */
-    static double compute_PSNR(const cv::Mat& Mat1, const cv::Mat& Mat2);
+    static NDouble compute_PSNR(const cv::Mat& Mat1, const cv::Mat& Mat2);
 
     /**
      * @brief			SSIM是一个广泛使用的图像质量评价指标，
@@ -135,7 +135,7 @@ public:
      * @return
      * 参考链接  https://zhuanlan.zhihu.com/p/248275907
      */
-    static double variance_laplacian(const cv::Mat& src);
+    static NDouble variance_laplacian(const cv::Mat& src);
 };
 
 NAO_VISION_NAMESPACE_END

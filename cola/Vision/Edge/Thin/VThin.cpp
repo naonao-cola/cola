@@ -5,7 +5,7 @@
  * @Date         : 2024-07-23 18:21:39
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-23 18:26:54
+ * @LastEditTime : 2024-08-19 15:53:05
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "VThin.h"
@@ -13,7 +13,7 @@
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
-cv::Mat VThin::thin_line(cv::Mat& src, int intera /*= 2*/)
+cv::Mat VThin::thin_line(cv::Mat& src, NInt intera /*= 2*/)
 {
     cv::Mat dst;
     if (src.type() != CV_8UC1) {
@@ -25,26 +25,26 @@ cv::Mat VThin::thin_line(cv::Mat& src, int intera /*= 2*/)
     if (dst.data != src.data) {
         src.copyTo(dst);
     }
-    int i;
-    int j;
-    int n;
-    int width;
-    int height;
+    NInt i;
+    NInt j;
+    NInt n;
+    NInt width;
+    NInt height;
     // 减一是为了方便处理8邻域，防止越界
     width        = src.cols - 1;
     height       = src.rows - 1;
-    int     step = (int)src.step;
-    int     p2;
-    int     p3;
-    int     p4;
-    int     p5;
-    int     p6;
-    int     p7;
-    int     p8;
-    int     p9;
+    NInt     step = (NInt)src.step;
+    NInt     p2;
+    NInt     p3;
+    NInt     p4;
+    NInt     p5;
+    NInt     p6;
+    NInt     p7;
+    NInt     p8;
+    NInt     p9;
     uchar*  img;
     bool    ifEnd;
-    int     Al;
+    NInt     Al;
     cv::Mat tmp_img;
     // n表示迭代次数
     for (n = 0; n < intera; n++) {

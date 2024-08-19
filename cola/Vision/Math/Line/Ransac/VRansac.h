@@ -42,7 +42,7 @@ public:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    static void compute(Eigen::VectorXd& param, std::vector<T> X, std::vector<T> Y, uint8_t orders, double error);
+    static void compute(Eigen::VectorXd& param, std::vector<T> X, std::vector<T> Y, uint8_t orders, NDouble error);
 
 private:
     /*--------------------------------------------------------------------------------------------------
@@ -56,8 +56,8 @@ private:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    static void computeAllChoices(Eigen::VectorXd& param, std::vector<T>& X, std::vector<T>& Y, uint8_t orders, short* bestVotes, short* curVotes, int& numVotesForBest, int startIndex, int n, int k,
-                                  int arrIndex, int* arr, double error);
+    static void computeAllChoices(Eigen::VectorXd& param, std::vector<T>& X, std::vector<T>& Y, uint8_t orders, short* bestVotes, short* curVotes, NInt& numVotesForBest, NInt startIndex, NInt n, NInt k,
+                                  NInt arrIndex, NInt* arr, NDouble error);
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
     * @Author:    闹闹
@@ -69,23 +69,23 @@ private:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    static void estimate(Eigen::VectorXd& param, std::vector<T>& X, std::vector<T>& Y, uint8_t orders, short* bestVotes, short* curVotes, int& numVotesForBest, int* arr, double error);
+    static void estimate(Eigen::VectorXd& param, std::vector<T>& X, std::vector<T>& Y, uint8_t orders, short* bestVotes, short* curVotes, NInt& numVotesForBest, NInt* arr, NDouble error);
 
     /*--------------------------------------------------------------------------------------------------
         --------------------------------------------------------------------------------------------------*/
     class SubSetIndexComparator
     {   // 子集序列比较器
     private:
-        int length_;
+        NInt length_;
 
     public:
-        explicit SubSetIndexComparator(int arrayLength)
+        explicit SubSetIndexComparator(NInt arrayLength)
             : length_(arrayLength)
         {
         }
-        bool operator()(const int* arr1, const int* arr2) const
+        bool operator()(const NInt* arr1, const NInt* arr2) const
         {
-            for (int i = 0; i < length_; i++) {
+            for (NInt i = 0; i < length_; i++) {
                 if (arr1[i] < arr2[i]) {
                     return true;
                 }

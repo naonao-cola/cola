@@ -16,12 +16,12 @@ struct TRigidTrans3D
 {
     cv::Mat matR;
 
-    float X;
-    float Y;
-    float Z;
+    NFloat X;
+    NFloat Y;
+    NFloat Z;
 };
 
-cv::Mat VTransform::affine_img_flip(const cv::Mat src, int flip_type)
+cv::Mat VTransform::affine_img_flip(const cv::Mat src, NInt flip_type)
 {
     cv::Mat ret;
     cv::flip(src, ret, flip_type);
@@ -31,8 +31,8 @@ cv::Mat VTransform::affine_img_flip(const cv::Mat src, int flip_type)
 cv::Mat cvMat6_to_cvMat9(const cv::Mat& mtx6)
 {
     cv::Mat       mtx9(3, 3, CV_64FC1);
-    double*       M9 = mtx9.ptr<double>();
-    const double* M6 = mtx6.ptr<double>();
+    NDouble*       M9 = mtx9.ptr<NDouble>();
+    const NDouble* M6 = mtx6.ptr<NDouble>();
     M9[0]            = M6[0];
     M9[1]            = M6[1];
     M9[2]            = M6[2];
@@ -45,10 +45,10 @@ cv::Mat cvMat6_to_cvMat9(const cv::Mat& mtx6)
     return mtx9;
 }
 
-cv::Mat d6_to_cvMat(double d0, double d1, double d2, double d3, double d4, double d5)
+cv::Mat d6_to_cvMat(NDouble d0, NDouble d1, NDouble d2, NDouble d3, NDouble d4, NDouble d5)
 {
     cv::Mat mtx(3, 3, CV_64FC1);
-    double* M = mtx.ptr<double>();
+    NDouble* M = mtx.ptr<NDouble>();
     M[0]      = d0;
     M[1]      = d1;
     M[2]      = d2;
@@ -62,10 +62,10 @@ cv::Mat d6_to_cvMat(double d0, double d1, double d2, double d3, double d4, doubl
 }
 
 
-cv::Mat VTransform::vector_angle_to_M(double x1, double y1, double d1, double x2, double y2, double d2)
+cv::Mat VTransform::vector_angle_to_M(NDouble x1, NDouble y1, NDouble d1, NDouble x2, NDouble y2, NDouble d2)
 {
     cv::Point2f center(x1, y1);
-    double      angle = d2 - d1;
+    NDouble      angle = d2 - d1;
     cv::Mat     rot_M = cv::getRotationMatrix2D(center, angle, 1.0);
     rot_M             = cvMat6_to_cvMat9(rot_M);
     cv::Mat trans_M   = d6_to_cvMat(1, 0, x2 - x1, 0, 1, y2 - y1);
@@ -75,13 +75,13 @@ cv::Mat VTransform::vector_angle_to_M(double x1, double y1, double d1, double x2
 
 cv::Point2f VTransform::TransPoint(const cv::Mat& M, const cv::Point2f& point)
 {
-    std::vector<double> values = {point.x, point.y};
+    std::vector<NDouble> values = {point.x, point.y};
     cv::Mat             mat    = cv::Mat(values).clone();   // 将vector变成单列的mat，这里需要clone(),因为这里的赋值操作是浅拷贝
     cv::Mat             dest   = mat.reshape(1, 1);
 
-    cv::Mat homogeneousPoint = (cv::Mat_<double>(3, 1) << point.x, point.y, 1.0);
+    cv::Mat homogeneousPoint = (cv::Mat_<NDouble>(3, 1) << point.x, point.y, 1.0);
     cv::Mat transformed      = M * homogeneousPoint;
-    return cv::Point2f(transformed.at<double>(0, 0), transformed.at<double>(0, 1));
+    return cv::Point2f(transformed.at<NDouble>(0, 0), transformed.at<NDouble>(0, 1));
 }
 
 cv::Mat VTransform::get_affine_3d_matrix(const std::vector<cv::Point3f>& src_point_vec, const std::vector<cv::Point3f>& dst_point_vec)
@@ -93,7 +93,7 @@ cv::Mat VTransform::get_affine_3d_matrix(const std::vector<cv::Point3f>& src_poi
     return aff;
 }
 
-TRigidTrans3D VTransform::get_affine_3d_matrix(const std::vector<cv::Point3f>& src_point_vec, const std::vector<cv::Point3f>& dst_point_vec, int pointsNum)
+TRigidTrans3D VTransform::get_affine_3d_matrix(const std::vector<cv::Point3f>& src_point_vec, const std::vector<cv::Point3f>& dst_point_vec, NInt pointsNum)
 {
     cv::Mat       src_avg;
     cv::Mat       dst_avg;
@@ -118,17 +118,17 @@ TRigidTrans3D VTransform::get_affine_3d_matrix(const std::vector<cv::Point3f>& s
     cv::SVDecomp(matS, matW, matU, matV);
 
     cv::Mat matTemp = matU * matV;
-    float   det     = cv::determinant(matTemp);   // 计算矩阵的行列式
+    NFloat   det     = cv::determinant(matTemp);   // 计算矩阵的行列式
 
-    float   datM[] = {1, 0, 0, 0, 1, 0, 0, 0, det};
+    NFloat   datM[] = {1, 0, 0, 0, 1, 0, 0, 0, det};
     cv::Mat matM(3, 3, CV_32FC1, datM);
     cv::Mat matR = matV.t() * matM * matU.t();
 
     transform.matR = matR.clone();
-    float* datR    = reinterpret_cast<float*>(matR.data);
-    transform.X    = dst_avg.at<float>(0, 0) - (src_avg.at<float>(0, 0) * datR[0] + src_avg.at<float>(0, 1) * datR[1] + src_avg.at<float>(0, 2) * datR[2]);
-    transform.Y    = dst_avg.at<float>(0, 1) - (src_avg.at<float>(0, 0) * datR[3] + src_avg.at<float>(0, 1) * datR[4] + src_avg.at<float>(0, 2) * datR[5]);
-    transform.Z    = dst_avg.at<float>(0, 2) - (src_avg.at<float>(0, 0) * datR[6] + src_avg.at<float>(0, 1) * datR[7] + src_avg.at<float>(0, 2) * datR[8]);
+    NFloat* datR    = reinterpret_cast<NFloat*>(matR.data);
+    transform.X    = dst_avg.at<NFloat>(0, 0) - (src_avg.at<NFloat>(0, 0) * datR[0] + src_avg.at<NFloat>(0, 1) * datR[1] + src_avg.at<NFloat>(0, 2) * datR[2]);
+    transform.Y    = dst_avg.at<NFloat>(0, 1) - (src_avg.at<NFloat>(0, 0) * datR[3] + src_avg.at<NFloat>(0, 1) * datR[4] + src_avg.at<NFloat>(0, 2) * datR[5]);
+    transform.Z    = dst_avg.at<NFloat>(0, 2) - (src_avg.at<NFloat>(0, 0) * datR[6] + src_avg.at<NFloat>(0, 1) * datR[7] + src_avg.at<NFloat>(0, 2) * datR[8]);
     return transform;
 }
 

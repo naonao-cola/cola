@@ -7,7 +7,6 @@
  * @LastEditors  : naonao
  * @LastEditTime : 2024-07-20 12:13:37
  **/
-
 #ifndef NAO_VISIONDEFINE_H
 #define NAO_VISIONDEFINE_H
 
@@ -25,7 +24,6 @@ NAO_NAMESPACE_BEGIN
 
 NAO_VISION_NAMESPACE_BEGIN
 
-
 #define pdata(image, x, y, c) image.data[y * image.step + x * image.channels() + c]
 #define SWAP(a, b, t) \
     do {              \
@@ -40,4 +38,5 @@ NAO_VISION_NAMESPACE_BEGIN
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
+
 #endif   // NAO_VISIONDEFINE_H

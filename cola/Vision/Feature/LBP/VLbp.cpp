@@ -30,45 +30,45 @@ cv::Mat getELBPfeature(const cv::Mat& img, const int& radius = 3, const int& nei
         cv::cvtColor(img, gray_img, cv::COLOR_RGB2GRAY);
     else
         gray_img = img;
-    int     width   = gray_img.cols;
-    int     height  = gray_img.rows;
+    NInt     width   = gray_img.cols;
+    NInt     height  = gray_img.rows;
     cv::Mat RLBPImg = cv::Mat::zeros(height - 2 * radius, width - 2 * radius, CV_8UC1);
-    for (int n = 0; n < neighbors; n++) {
+    for (NInt n = 0; n < neighbors; n++) {
         // 计算采样点对于中心点坐标的偏移量rx，ry,计算方式结合圆形编码理解
-        float rx = static_cast<float>(radius * cos(2.0 * CV_PI * n / static_cast<float>(neighbors)));
-        float ry = -static_cast<float>(radius * sin(2.0 * CV_PI * n / static_cast<float>(neighbors)));
+        NFloat  rx = static_cast<NFloat >(radius * cos(2.0 * CV_PI * n / static_cast<NFloat >(neighbors)));
+        NFloat  ry = -static_cast<NFloat >(radius * sin(2.0 * CV_PI * n / static_cast<NFloat >(neighbors)));
         // 为双线性插值做准备
         // 对采样点偏移量分别进行上下取整
-        int x1 = static_cast<int>(floor(rx));
-        int x2 = static_cast<int>(ceil(rx));
-        int y1 = static_cast<int>(floor(ry));
-        int y2 = static_cast<int>(ceil(ry));
+        NInt x1 = static_cast<int>(floor(rx));
+        NInt x2 = static_cast<int>(ceil(rx));
+        NInt y1 = static_cast<int>(floor(ry));
+        NInt y2 = static_cast<int>(ceil(ry));
         // 将坐标偏移量映射到0-1之间
-        float tx = rx - x1;
-        float ty = ry - y1;
+        NFloat  tx = rx - x1;
+        NFloat  ty = ry - y1;
         // 根据0-1之间的x，y的权重计算公式计算权重，权重与坐标具体位置无关，与坐标间的差值有关
-        float w1 = (1 - tx) * (1 - ty);
-        float w2 = tx * (1 - ty);
-        float w3 = (1 - tx) * ty;
-        float w4 = tx * ty;
+        NFloat  w1 = (1 - tx) * (1 - ty);
+        NFloat  w2 = tx * (1 - ty);
+        NFloat  w3 = (1 - tx) * ty;
+        NFloat  w4 = tx * ty;
         // 循环处理每个像素
-        for (int i = radius; i < height - radius; i++) {
-            for (int j = radius; j < width - radius; j++) {
+        for (NInt i = radius; i < height - radius; i++) {
+            for (NInt j = radius; j < width - radius; j++) {
                 // 获得中心像素点的灰度值
                 uchar centerPix = gray_img.at<uchar>(i, j);
                 // 根据双线性插值公式计算第k个采样点的灰度值
-                float neighbor = gray_img.at<uchar>(i + x1, j + y1) * w1 + gray_img.at<uchar>(i + x1, j + y2) * w2 + gray_img.at<uchar>(i + x2, j + y1) * w3 + gray_img.at<uchar>(i + x2, j + y2) * w4;
+                NFloat  neighbor = gray_img.at<uchar>(i + x1, j + y1) * w1 + gray_img.at<uchar>(i + x1, j + y2) * w2 + gray_img.at<uchar>(i + x2, j + y1) * w3 + gray_img.at<uchar>(i + x2, j + y2) * w4;
                 // LBP特征图像的每个邻居的LBP值累加，累加通过或操作完成，对应的LBP值通过移位取得
                 RLBPImg.at<uchar>(i - radius, j - radius) |= (neighbor > centerPix) << (neighbors - n - 1);
             }
         }
     }
     // 进行旋转不变处理
-    for (int i = 0; i < RLBPImg.rows; i++) {
-        for (int j = 0; j < RLBPImg.cols; j++) {
+    for (NInt i = 0; i < RLBPImg.rows; i++) {
+        for (NInt j = 0; j < RLBPImg.cols; j++) {
             unsigned char currentValue = RLBPImg.at<uchar>(i, j);
             unsigned char minValue     = currentValue;
-            for (int k = 1; k < neighbors; k++) {
+            for (NInt k = 1; k < neighbors; k++) {
                 // 循环左移
                 unsigned char temp = (currentValue >> (neighbors - k)) | (currentValue << k);
                 if (temp < minValue) {
@@ -101,11 +101,11 @@ cv::Mat getRegionLBPH(const cv::Mat& src, const int& minValue, const int& maxVal
     // 定义存储直方图的矩阵
     cv::Mat result;
     // 计算得到直方图bin的数目，直方图数组的大小
-    int histSize = maxValue - minValue + 1;
+    NInt histSize = maxValue - minValue + 1;
     // 定义直方图每一维的bin的变化范围
-    float range[] = {static_cast<float>(minValue), static_cast<float>(maxValue + 1)};
+    NFloat  range[] = {static_cast<NFloat >(minValue), static_cast<NFloat >(maxValue + 1)};
     // 定义直方图所有bin的变化范围
-    const float* ranges = {range};
+    const NFloat * ranges = {range};
     // 计算直方图，src是要计算直方图的图像，1是要计算直方图的图像数目，0是计算直方图所用的图像的通道序号，从0索引
     // Mat()是要用的掩模，result为输出的直方图，1为输出的直方图的维度，histSize直方图在每一维的变化范围
     // ranges，所有直方图的变化范围（起点和终点）
@@ -131,17 +131,17 @@ cv::Mat getRegionLBPH(const cv::Mat& src, const int& minValue, const int& maxVal
  */
 cv::Mat getLBPH(cv::Mat src, const int& numPatterns = 256, const int& grid_x = 8, const int& grid_y = 8, const bool& normed = true)
 {
-    int width  = src.cols / grid_x;
-    int height = src.rows / grid_y;
+    NInt width  = src.cols / grid_x;
+    NInt height = src.rows / grid_y;
     // 定义LBPH的行和列，grid_x*grid_y表示将图像分割成这么些块，numPatterns表示LBP值的模式种类
     cv::Mat result = cv::Mat::zeros(grid_x * grid_y, numPatterns, CV_32FC1);
     if (src.empty()) {
         return result.reshape(1, 1);
     }
-    int resultRowIndex = 0;
+    NInt resultRowIndex = 0;
     // 对图像进行分割，分割成grid_x*grid_y块，grid_x，grid_y默认为8
-    for (int i = 0; i < grid_x; i++) {
-        for (int j = 0; j < grid_y; j++) {
+    for (NInt i = 0; i < grid_x; i++) {
+        for (NInt j = 0; j < grid_y; j++) {
             // 图像分块
             cv::Mat src_cell = cv::Mat(src, cv::Range(i * height, (i + 1) * height), cv::Range(j * width, (j + 1) * width));
             // 计算直方图
@@ -164,7 +164,7 @@ cv::Mat VLbp::operator()()
         throw std::runtime_error("设置的图像宽度或者高度太小");
         exit(0);
     }
-    for (int training_index = 0; training_index < images_.size(); training_index++) {
+    for (NInt training_index = 0; training_index < images_.size(); training_index++) {
         if (images_[training_index].channels() == 3) {
             cv::cvtColor(images_[training_index], gray_img, cv::COLOR_RGB2GRAY);
         }

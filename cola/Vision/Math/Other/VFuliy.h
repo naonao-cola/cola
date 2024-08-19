@@ -25,11 +25,11 @@ class VFuliy : public VisionObject
 public:
     cv::Mat FuLiY(const cv::Mat src)
     {
-        int     w = cv::getOptimalDFTSize(src.cols);
-        int     h = cv::getOptimalDFTSize(src.rows);
+        NInt    w = cv::getOptimalDFTSize(src.cols);
+        NInt    h = cv::getOptimalDFTSize(src.rows);
         cv::Mat padded;
         cv::copyMakeBorder(src, padded, 0, h - src.rows, 0, w - src.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
-        cv::Mat plane[] = {cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F)};
+        cv::Mat plane[] = {cv::Mat_<NFloat>(padded), cv::Mat::zeros(padded.size(), CV_32F)};
         cv::Mat complexIm;
         cv::merge(plane, 2, complexIm);   // 为延扩后的图像增添一个初始化为0的通道
         cv::dft(complexIm, complexIm);
@@ -41,14 +41,13 @@ public:
         cv::log(magnitudeImage, magnitudeImage);   // 自然对数
 
         magnitudeImage = magnitudeImage(cv::Rect(0, 0, magnitudeImage.cols & -2, magnitudeImage.rows & -2));
-        int cx         = magnitudeImage.cols / 2;
-        int cy         = magnitudeImage.rows / 2;
+        NInt cx        = magnitudeImage.cols / 2;
+        NInt cy        = magnitudeImage.rows / 2;
 
         cv::Mat q0(magnitudeImage, cv::Rect(0, 0, cx, cy));
         cv::Mat q1(magnitudeImage, cv::Rect(cx, 0, cx, cy));
         cv::Mat q2(magnitudeImage, cv::Rect(0, cy, cx, cy));
         cv::Mat q3(magnitudeImage, cv::Rect(cx, cy, cx, cy));
-
 
         cv::Mat temp;
         q0.copyTo(temp);
@@ -65,8 +64,7 @@ public:
     }
 };
 
-
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
 
-#endif
+#endif   // NAONAO_VFULIY_H

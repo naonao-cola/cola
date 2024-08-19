@@ -42,7 +42,7 @@ public:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    double* lsd_scale_region(int* n_out, double* img, int X, int Y, double scale, int** reg_img, int* reg_x, int* reg_y);
+    NDouble* lsd_scale_region(int* n_out, NDouble* img, int X, int Y, NDouble scale, int** reg_img, int* reg_x, int* reg_y);
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -55,7 +55,7 @@ public:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    double* lsd_scale(int* n_out, double* img, int X, int Y, double scale);
+    NDouble* lsd_scale(int* n_out, NDouble* img, int X, int Y, NDouble scale);
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -70,7 +70,7 @@ public:
     //返回为7个数的double的数组指针，个数为n_out个。 - x1,y1,x2,y2,width,p,-log10(NFA)
     //'out[7*n+0]' to 'out[7*n+6]'.
     --------------------------------------------------------------------------------------------------*/
-    double* lsd(int* n_out, double* img, int X, int Y);
+    NDouble* lsd(int* n_out, NDouble* img, int X, int Y);
 };
 
 NAO_VISION_NAMESPACE_END

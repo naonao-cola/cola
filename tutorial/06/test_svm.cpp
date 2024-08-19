@@ -40,8 +40,11 @@ void test_svm()
         ng_img_vec.push_back(tmp);
     }
 
-    VHog             ok_hog_transform(ok_img_vec, 11, 8, 4, cv::Size(88, 34), 1);
-    VHog             ng_hog_transform(ng_img_vec, 11, 8, 4, cv::Size(88, 34), 1);
+    VHog ok_hog_transform(ok_img_vec, 11, 8, 4, cv::Size(88, 34), 1);
+    VHog ng_hog_transform(ng_img_vec, 11, 8, 4, cv::Size(88, 34), 1);
+    ok_hog_transform.img_type_ = VHog::IMG_TYPE::RGB;
+    ng_hog_transform.img_type_ = VHog::IMG_TYPE::RGB;
+
     cv::Mat          ok_feature = ok_hog_transform();
     cv::Mat          ng_feature = ng_hog_transform();
     std::vector<int> ok_label(ok_img_vec.size(), 1);

@@ -17,14 +17,14 @@ bool compareEigenvectors(const VPCA::Eigenvector& a, const VPCA::Eigenvector& b)
     return a.eigenvalue > b.eigenvalue;   // 降序排序
 }
 
-cv::Mat VPCA::reduce(const cv::Mat& data, int dimension, double Retained)
+cv::Mat VPCA::reduce(const cv::Mat& data, NInt dimension, NDouble Retained)
 {
     // 1. 计算均值
     cv::Mat mean;
     cv::reduce(data, mean, 0, cv::REDUCE_AVG);
     // 2. 数据准备：数据中心化
     // cv::Mat data_mean = data.clone();
-    // for (int i = 0; i < data.rows; i++) {
+    // for (NInti = 0; i < data.rows; i++) {
     //    data_mean.row(i) -= mean;
     //}
     // 3. PCA计算，构建pca的时候使用中心化数据，投影的时候不需要
@@ -34,12 +34,12 @@ cv::Mat VPCA::reduce(const cv::Mat& data, int dimension, double Retained)
     eigenvectors_ = pca.eigenvectors;
     eigenmean_    = pca.mean;
     // 5. 计算信息保留的比例
-    float totalVariance    = cv::sum(eigenvalues_)[0];
-    float varianceRetained = 0.0f;
-    int   k                = 0;   // 保留的主成分数量
-    for (int i = 0; i < eigenvalues_.rows; i++) {
-        eigenvecWithVal_.push_back({eigenvalues_.at<float>(i), eigenvectors_.row(i)});
-        varianceRetained += eigenvalues_.at<float>(i);
+    NFloat totalVariance    = cv::sum(eigenvalues_)[0];
+    NFloat varianceRetained = 0.0f;
+    NInt  k                = 0;   // 保留的主成分数量
+    for (NInt i = 0; i < eigenvalues_.rows; i++) {
+        eigenvecWithVal_.push_back({eigenvalues_.at<NFloat>(i), eigenvectors_.row(i)});
+        varianceRetained += eigenvalues_.at<NFloat>(i);
         if (varianceRetained / totalVariance >= Retained) {   // 保留90%的信息
             k = i + 1;
             break;

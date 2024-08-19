@@ -27,11 +27,11 @@ template<typename T>
 class VFit : public VisionObject
 {
 
-    std::vector<double> factor_;    /// 拟合后的方程系数
-    double              ssr_;       /// 回归平方和
-    double              sse_;       /// 剩余平方和
-    double              rmse_;      /// RMSE均方根误差
-    std::vector<double> fitedYs_;   /// 存放拟合后的y值，在拟合时可设置为不保存节省内存
+    std::vector<NDouble> factor_;    /// 拟合后的方程系数
+    NDouble              ssr_;       /// 回归平方和
+    NDouble              sse_;       /// 剩余平方和
+    NDouble              rmse_;      /// RMSE均方根误差
+    std::vector<NDouble> fitedYs_;   /// 存放拟合后的y值，在拟合时可设置为不保存节省内存
 public:
     VFit()
         : ssr_(0)
@@ -54,8 +54,8 @@ public:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
 
-    bool linearFit(const std::vector<T>& x, const std::vector<T>& y, bool isSaveFitYs = false);
-    bool linearFit(const T* x, const T* y, size_t length, bool isSaveFitYs = false);
+    NBool linearFit(const std::vector<T>& x, const std::vector<T>& y, NBool isSaveFitYs = false);
+    NBool linearFit(const T* x, const T* y, size_t length, NBool isSaveFitYs = false);
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -69,8 +69,8 @@ public:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
 
-    void polyfit(const std::vector<T>& x, const std::vector<T>& y, int poly_n, bool isSaveFitYs = true);
-    void polyfit(const T* x, const T* y, size_t length, int poly_n, bool isSaveFitYs = true);
+    NVoid polyfit(const std::vector<T>& x, const std::vector<T>& y, NInt poly_n, NBool isSaveFitYs = true);
+    NVoid polyfit(const T* x, const T* y, NSize length, NInt poly_n, NBool isSaveFitYs = true);
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -83,7 +83,7 @@ public:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    void getFactor(std::vector<double>& factor) { factor = this->factor_; };
+    NVoid getFactor(std::vector<NDouble>& factor) { factor = this->factor_; };
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -96,7 +96,7 @@ public:
     * @Returns:
     * @Others:    前提是拟合时设置isSaveFitYs为true
     --------------------------------------------------------------------------------------------------*/
-    void getFitedYs(std::vector<double>& fitedYs) { fitedYs = this->fitedYs_; };
+    NVoid getFitedYs(std::vector<NDouble>& fitedYs) { fitedYs = this->fitedYs_; };
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -110,7 +110,7 @@ public:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
 
-    double getY(const T x) const;
+    NDouble getY(const T x) const;
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -123,7 +123,7 @@ public:
     * @Returns:    斜率值
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    double getSlope() { return factor_[1]; };
+    NDouble getSlope() { return factor_[1]; };
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -136,7 +136,7 @@ public:
     * @Returns:   截距值
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    double getIntercept() { return factor_[0]; };
+    NDouble getIntercept() { return factor_[0]; };
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -149,10 +149,10 @@ public:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    double getSSE() { return sse_; };
-    double getSSR() { return ssr_; };
-    double getRMSE() { return rmse_; };
-    double getR_square() { return 1 - (sse_ / (ssr_ + sse_)); };
+    NDouble getSSE() { return sse_; };
+    NDouble getSSR() { return ssr_; };
+    NDouble getRMSE() { return rmse_; };
+    NDouble getR_square() { return 1 - (sse_ / (ssr_ + sse_)); };
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -165,7 +165,7 @@ public:
     * @Returns:   最小的一个长度
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    size_t getSeriesLength(const std::vector<T>& x, const std::vector<T>& y);
+    NSize getSeriesLength(const std::vector<T>& x, const std::vector<T>& y);
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -180,7 +180,7 @@ public:
     --------------------------------------------------------------------------------------------------*/
 
     static T Mean(const std::vector<T>& v);
-    static T Mean(const T* v, size_t length);
+    static T Mean(const T* v, NSize length);
 
     /*--------------------------------------------------------------------------------------------------
     * @FuncName:
@@ -193,13 +193,13 @@ public:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    size_t getFactorSize() { return factor_.size(); };
-    double getFactor(size_t i) { return factor_.at(i); };
+    NSize getFactorSize() { return factor_.size(); };
+    NDouble getFactor(size_t i) { return factor_.at(i); };
 
 private:
-    void calcError(const T* x, const T* y, size_t length, double& r_ssr, double& r_sse, double& r_rmse, bool isSaveFitYs = true);
-    void gauss_solve(int n, std::vector<T>& A, std::vector<T>& x, std::vector<T>& b);
-    void gauss_solve(int n, T* A, T* x, T* b);
+    void calcError(const T* x, const T* y, size_t length, NDouble& r_ssr, NDouble& r_sse, NDouble& r_rmse, NBool isSaveFitYs = true);
+    void gauss_solve(NInt n, std::vector<T>& A, std::vector<T>& x, std::vector<T>& b);
+    void gauss_solve(NInt n, T* A, T* x, T* b);
 };
 
 NAO_VISION_NAMESPACE_END
