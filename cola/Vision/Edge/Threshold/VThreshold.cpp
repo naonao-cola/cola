@@ -5,7 +5,7 @@
  * @Date         : 2024-07-15 17:32:06
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-19 15:54:50
+ * @LastEditTime : 2024-08-21 19:47:30
  **/
 
 #include "VThreshold.h"
@@ -16,14 +16,14 @@ NAO_VISION_NAMESPACE_BEGIN
 NVoid VThreshold::get_histogram(const cv::Mat& src, int* dst)
 {
     cv::Mat      hist;
-    NInt          channels[1] = {0};
-    NInt          histSize[1] = {256};
-    NFloat         hranges[2]  = {0, 256.0};
+    NInt         channels[1] = {0};
+    NInt         histSize[1] = {256};
+    NFloat       hranges[2]  = {0, 256.0};
     const float* ranges[1]   = {hranges};
     cv::calcHist(&src, 1, channels, cv::Mat(), hist, 1, histSize, ranges);
     for (NInt i = 0; i < 256; i++) {
-        NFloat  binVal = hist.at<float>(i);
-        dst[i]       = int(binVal);
+        NFloat binVal = hist.at<float>(i);
+        dst[i]        = int(binVal);
     }
 }
 
@@ -117,12 +117,14 @@ NInt VThreshold::exec_threshold(cv::Mat& src, THRESHOLD_TYPE type, NInt doIblack
     }
     else if (type == THRESHOLD_TYPE::JUBU) {
         // 局部自适应阈值返回-1
-        jubu(src);
+        cv::Mat dst = jubu(src);
+        src         = dst.clone();
         return -1;
     }
     else if (type == THRESHOLD_TYPE::SAUVOLA) {
         cv::Mat dst;
         sauvola(src, dst);
+        src = dst.clone();
         return -1;
     }
     threshold += minbin;
@@ -138,7 +140,7 @@ NInt VThreshold::select(cv::Mat& src, NInt type)
     if (type != -1) {
         cv::Mat img = src.clone();
         cv::Mat dst;
-        NInt     th = exec_threshold(img, static_cast<THRESHOLD_TYPE>(type));
+        NInt    th = exec_threshold(img, static_cast<THRESHOLD_TYPE>(type));
         cv::threshold(img, dst, th, 255, cv::THRESH_BINARY);
         src = dst.clone();
         return 0;
@@ -147,7 +149,7 @@ NInt VThreshold::select(cv::Mat& src, NInt type)
         std::cout << "当前的阈值化类型的次序为： " << i << std::endl;
         cv::Mat img = src.clone();
         cv::Mat dst;
-        NInt     th = exec_threshold(img, static_cast<THRESHOLD_TYPE>(i));
+        NInt    th = exec_threshold(img, static_cast<THRESHOLD_TYPE>(i));
         if (i != 17 || i != 18) {
             cv::threshold(img, dst, th, 255, cv::THRESH_BINARY);
             cv::imshow("阈值化图像", dst);
@@ -163,8 +165,8 @@ NInt VThreshold::select(cv::Mat& src, NInt type)
 
 NInt VThreshold::threshold_default(std::vector<int> data)
 {
-    size_t level;
-    size_t maxValue = data.size() - 1;
+    size_t  level;
+    size_t  maxValue = data.size() - 1;
     NDouble result, sum1, sum2, sum3, sum4;
     NInt    min = 0;
     while ((data[min] == 0) && (min < maxValue)) {
@@ -306,11 +308,11 @@ NInt VThreshold::huang2(std::vector<int> data)
 
     // precalculate the summands of the entropy given the absolute difference x - mu (integral)
     // 给定绝对差x-mu（积分），预先计算熵的总和
-    NDouble              C = last - first;
+    NDouble             C = last - first;
     std::vector<double> Smu(last + 1 - first, {0.0});
     for (NInt i = 1; i < Smu.size(); i++) {
         NDouble mu = 1 / (1 + std::abs(i) / C);
-        Smu[i]    = -mu * std::log(mu) - (1 - mu) * std::log(1 - mu);
+        Smu[i]     = -mu * std::log(mu) - (1 - mu) * std::log(1 - mu);
     }
 
     // calculate the threshold
@@ -337,9 +339,9 @@ NInt VThreshold::huang2(std::vector<int> data)
 
 bool bimodalTest(std::vector<double> y)
 {
-    NInt  len   = static_cast<double>(y.size());
+    NInt len   = static_cast<double>(y.size());
     bool b     = false;
-    NInt  modes = 0;
+    NInt modes = 0;
     for (NInt k = 1; k < len - 1; k++) {
         if (y[k - 1] < y[k] && y[k + 1] < y[k]) {
             modes++;
@@ -357,8 +359,8 @@ bool bimodalTest(std::vector<double> y)
 NInt VThreshold::intermodes(std::vector<int> data)
 {
     std::vector<double> iHisto(data.size(), {0.0});
-    NInt                 iter      = 0;
-    NInt                 threshold = -1;
+    NInt                iter      = 0;
+    NInt                threshold = -1;
     for (NInt i = 0; i < data.size(); i++) {
         iHisto[i] = static_cast<double>(data[i]);
     }
@@ -587,7 +589,7 @@ NInt VThreshold::max_entropy(std::vector<int> data)
 
 NInt VThreshold::mean(std::vector<int> data)
 {
-    NInt  threshold = -1;
+    NInt threshold = -1;
     long tot       = 0;
     long sum       = 0;
     for (NInt i = 0; i < data.size(); i++) {
@@ -678,9 +680,9 @@ NInt VThreshold::min_errorI(std::vector<int> data)
 
 NInt VThreshold::minimum(std::vector<int> data)
 {
-    NInt                 iter      = 0;
-    NInt                 threshold = -1;
-    NInt                 max       = -1;
+    NInt                iter      = 0;
+    NInt                threshold = -1;
+    NInt                max       = -1;
     std::vector<double> iHisto(data.size(), {0.0});
 
 
@@ -823,8 +825,8 @@ NInt VThreshold::percentile(std::vector<int> data, NDouble ptile)
     NInt threshold = -1;
     // NDouble ptile = 0.5; ///< 前景像素的默认百分比数
     std::vector<double> avec(data.size(), {0.0});
-    NDouble              total = partialSum(data, static_cast<int>(data.size() - 1));
-    NDouble              temp  = 1.0;
+    NDouble             total = partialSum(data, static_cast<int>(data.size() - 1));
+    NDouble             temp  = 1.0;
     for (NInt i = 0; i < data.size(); i++) {
         avec[i] = std::fabs((partialSum(data, i) / total) - ptile);
         if (avec[i] < temp) {
@@ -1166,12 +1168,12 @@ NInt VThreshold::triangle(std::vector<int> data)
     if ((max - min) < (min2 - max)) {
         // reverse the histogram
         // IJ.log("Reversing histogram.");
-        inverted  = true;
+        inverted   = true;
         NInt left  = 0;                 // index of leftmost element
         NInt right = data.size() - 1;   // index of rightmost element
         while (left < right) {
             // exchange the left and right elements
-            NInt temp    = data[left];
+            NInt temp   = data[left];
             data[left]  = data[right];
             data[right] = temp;
             // move the bounds toward the center
@@ -1216,7 +1218,7 @@ NInt VThreshold::triangle(std::vector<int> data)
         NInt left  = 0;
         NInt right = data.size() - 1;
         while (left < right) {
-            NInt temp    = data[left];
+            NInt temp   = data[left];
             data[left]  = data[right];
             data[right] = temp;
             left++;
@@ -1278,9 +1280,8 @@ NInt VThreshold::yen(std::vector<int> data)
     return threshold;
 }
 
-NInt VThreshold::jubu(cv::Mat& src, METHOD type, NInt radius, NFloat  ratio)
+cv::Mat VThreshold::jubu(const cv::Mat& src, METHOD type, NInt radius, NFloat ratio)
 {
-    // 对图像矩阵进行平滑处理
     cv::Mat smooth;
     switch (type) {
     case METHOD::MEAN:
@@ -1296,22 +1297,15 @@ NInt VThreshold::jubu(cv::Mat& src, METHOD type, NInt radius, NFloat  ratio)
         break;
     }
     // 平滑结果乘以比例系数，然后图像矩阵与其做差
-    src.convertTo(src, CV_32FC1);
+    cv::Mat srcf;
+    src.convertTo(srcf, CV_32FC1);
     if (smooth.type() != CV_32FC1) {
         smooth.convertTo(smooth, CV_32FC1);
     }
-    cv::Mat diff = src - (1.0 - ratio) * smooth;
     // 阈值处理，当大于或等于0时，输出值为 255，反之输出为0
-    cv::Mat out = cv::Mat::zeros(diff.size(), CV_8UC1);
-    for (NInt r = 0; r < out.rows; r++) {
-        for (NInt c = 0; c < out.cols; c++) {
-            if (diff.at<float>(r, c) >= 0) {
-                out.at<uchar>(r, c) = 255;
-            }
-        }
-    }
-    src = out.clone();
-    return 1;
+    cv::Mat diff = srcf - (1.0 - ratio) * smooth;
+    cv::Mat out  = (diff > 0);
+    return out;
 }
 NInt VThreshold::sauvola(const cv::Mat& src, cv::Mat& dst, const double& k, const int& wnd_size)
 {
@@ -1346,5 +1340,34 @@ NInt VThreshold::sauvola(const cv::Mat& src, cv::Mat& dst, const double& k, cons
     return 0;
 }
 
+int VThreshold::sample_otsu(cv::Mat img, int min_value, int max_value)
+{
+    int data[256] = {0};
+    get_histogram(img, data);
+    int              scale_range = max_value - min_value + 1;
+    std::vector<int> data2(scale_range, {0});
+    for (int i = min_value; i <= max_value; i++) {
+        data2[i - min_value] = data[i];
+    }
+    int globalThresh = otsu(data2);
+    globalThresh     = globalThresh + min_value;
+    return globalThresh;
+}
+
+cv::Mat VThreshold::otsu_auto(const cv::Mat& src)
+{
+    int     globalThresh = sample_otsu(src);
+    cv::Mat brightmask, darkmask;
+    cv::threshold(src, brightmask, globalThresh, 255, cv::THRESH_TOZERO);
+    cv::threshold(src, darkmask, globalThresh, 255, cv::THRESH_TOZERO_INV);
+    // int brightThresh = sample_otsu(brightmask, globalThresh,255);
+    int darkThresh = sample_otsu(darkmask, 1, globalThresh);
+    // 明暗区域分别进行阈值处理
+    cv::Mat brightRegion, darkRegion;
+    cv::threshold(src, brightRegion, globalThresh, 255, cv::THRESH_BINARY);
+    cv::threshold(darkmask, darkRegion, darkThresh, 255, cv::THRESH_BINARY);
+    cv::Mat ret = brightRegion + darkRegion;
+    return ret;
+}
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

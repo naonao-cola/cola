@@ -205,7 +205,7 @@ public:
      * @return
      * @details 局部自适应阈值
      */
-    NInt jubu(cv::Mat& src, METHOD type = METHOD::GAUSS, NInt radius = 3, NFloat ratio = 0.15);
+    cv::Mat jubu(const cv::Mat& src, METHOD type = METHOD::GAUSS, NInt radius = 3, NFloat ratio = 0.15);
 
 
     /**
@@ -247,6 +247,16 @@ public:
         }
         return x;
     }
+
+    /**
+     * @brief: 自适应otsu，光照不均匀的问题
+     * @param src
+     * @return
+     * @note :
+    **/
+    cv::Mat otsu_auto(const cv::Mat& src);
+
+    int sample_otsu(cv::Mat img ,int min_value=0,int max_value=255);
 };
 
 NAO_VISION_NAMESPACE_END
