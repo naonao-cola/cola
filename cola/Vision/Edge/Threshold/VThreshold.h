@@ -5,10 +5,14 @@
  * @Date         : 2024-07-15 17:27:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-20 12:16:07
+ * @LastEditTime : 2024-08-22 10:39:16
  **/
 #ifndef NAONAO_VTHRESHOLD_H
 #define NAONAO_VTHRESHOLD_H
+
+/*
+https://harry.blog.csdn.net/article/details/54019994
+*/
 
 #include "../../VisionObject.h"
 
@@ -17,25 +21,27 @@ NAO_VISION_NAMESPACE_BEGIN
 
 enum class THRESHOLD_TYPE
 {
-    DEFAULT       = 0,
-    HUANG         = 1,
-    HUANG2        = 2,
-    INTERMODES    = 3,
-    ISO_DATA      = 4,
-    LI            = 5,
-    MAX_ENTROPY   = 6,
-    MEAN          = 7,
-    MIN_ERROR     = 8,
-    MINIMUM       = 9,
-    MOMENTS       = 10,
-    OTSU          = 11,
-    PERCENTILE    = 12,
-    RENYI_ENTROPY = 13,
-    SHANBHAG      = 14,
-    TRIANGLE      = 15,
-    YEN           = 16,
-    JUBU          = 17,
-    SAUVOLA       = 18
+    DEFAULT               = 0,
+    HUANG                 = 1,
+    HUANG2                = 2,
+    INTERMODES            = 3,
+    ISO_DATA              = 4,
+    LI                    = 5,
+    MAX_ENTROPY           = 6,
+    MEAN                  = 7,
+    MIN_ERROR             = 8,
+    MINIMUM               = 9,
+    MOMENTS               = 10,
+    OTSU                  = 11,
+    PERCENTILE            = 12,
+    RENYI_ENTROPY         = 13,
+    SHANBHAG              = 14,
+    TRIANGLE              = 15,
+    YEN                   = 16,
+    JUBU                  = 17,
+    SAUVOLA               = 18,
+    OTSU_AUTO             = 19,
+    UNEVENLIGHTCOMPENSATE = 20,
 };
 
 enum class METHOD
@@ -54,7 +60,7 @@ public:
      * @param src
      * @param dst
      */
-    static NVoid  get_histogram(const cv::Mat& src, int* dst);
+    static NVoid get_histogram(const cv::Mat& src, int* dst);
 
     /**
      * @brief
@@ -253,10 +259,20 @@ public:
      * @param src
      * @return
      * @note :
-    **/
+     **/
     cv::Mat otsu_auto(const cv::Mat& src);
 
-    int sample_otsu(cv::Mat img ,int min_value=0,int max_value=255);
+    int sample_otsu(cv::Mat img, int min_value = 0, int max_value = 255);
+
+    /**
+     * @brief:
+     * @param image
+     * @param blockSize
+     * @return
+     * @note : https://harry.blog.csdn.net/article/details/54019994
+     **/
+    cv::Mat unevenLightCompensate(cv::Mat image, int blockSize = 32);
+    cv::Mat unevenLightCompensate_2(cv::Mat image, int blockSize = 32);
 };
 
 NAO_VISION_NAMESPACE_END

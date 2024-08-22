@@ -5,7 +5,7 @@
  * @Date         : 2024-07-15 17:32:06
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-21 19:47:30
+ * @LastEditTime : 2024-08-22 10:46:39
  **/
 
 #include "VThreshold.h"
@@ -125,6 +125,16 @@ NInt VThreshold::exec_threshold(cv::Mat& src, THRESHOLD_TYPE type, NInt doIblack
         cv::Mat dst;
         sauvola(src, dst);
         src = dst.clone();
+        return -1;
+    }
+    else if (type == THRESHOLD_TYPE::OTSU_AUTO) {
+        cv::Mat dst = otsu_auto(src);
+        src         = dst.clone();
+        return -1;
+    }
+    else if (type == THRESHOLD_TYPE::UNEVENLIGHTCOMPENSATE) {
+        cv::Mat dst = unevenLightCompensate_2(src);
+        src         = dst.clone();
         return -1;
     }
     threshold += minbin;
@@ -1368,6 +1378,53 @@ cv::Mat VThreshold::otsu_auto(const cv::Mat& src)
     cv::threshold(darkmask, darkRegion, darkThresh, 255, cv::THRESH_BINARY);
     cv::Mat ret = brightRegion + darkRegion;
     return ret;
+}
+
+cv::Mat VThreshold::unevenLightCompensate(cv::Mat image, int blockSize)
+{
+    if (image.channels() == 3) {
+        cv::cvtColor(image, image, 7);
+    }
+    double  average  = cv::mean(image)[0];
+    int     rows_new = ceil(double(image.rows) / double(blockSize));
+    int     cols_new = ceil(double(image.cols) / double(blockSize));
+    cv::Mat blockImage;
+    blockImage = cv::Mat::zeros(rows_new, cols_new, CV_32FC1);
+    for (int i = 0; i < rows_new; i++) {
+        for (int j = 0; j < cols_new; j++) {
+            int rowmin = i * blockSize;
+            int rowmax = (i + 1) * blockSize;
+            if (rowmax > image.rows) {
+                rowmax = image.rows;
+            }
+            int colmin = j * blockSize;
+            int colmax = (j + 1) * blockSize;
+            if (colmax > image.cols) {
+                colmax = image.cols;
+            }
+            cv::Mat imageROI           = image(cv::Range(rowmin, rowmax), cv::Range(colmin, colmax));
+            double  temaver            = cv::mean(imageROI)[0];
+            blockImage.at<float>(i, j) = temaver;
+        }
+    }
+    blockImage = blockImage - average;
+    cv::Mat blockImage2;
+    cv::resize(blockImage, blockImage2, image.size(), (0, 0), (0, 0), cv::INTER_CUBIC);
+    cv::Mat image2;
+    image.convertTo(image2, CV_32FC1);
+    cv::Mat dst = image2 - blockImage2;
+    cv::Mat ret;
+    dst.convertTo(ret, CV_8UC1);
+    return ret;
+}
+
+cv::Mat VThreshold::unevenLightCompensate_2(cv::Mat image, int blockSize)
+{
+    cv::Mat ret          = unevenLightCompensate(image, blockSize);
+    int     globalThresh = sample_otsu(ret);
+    cv::Mat th;
+    cv::threshold(ret, th, globalThresh, 255, cv::THRESH_BINARY);
+    return th;
 }
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
