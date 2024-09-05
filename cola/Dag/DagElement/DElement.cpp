@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:32:29
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 11:33:08
+ * @LastEditTime : 2024-09-05 13:44:59
  **/
 #include <algorithm>
 
@@ -32,17 +32,14 @@ NVoid DElement::beforeRun()
 }
 
 
-// NVoid DElement::afterRun()
-// {
-//     for (auto& element : this->run_before_) {
-//         element->left_depend_--;
-//     }
-//     this->done_ = true;
-// }
 
-
+#ifdef _WIN32
+NVoidPtr DElement::setName(const std::string& name)
+{
+#else
 DElementPtr DElement::setName(const std::string& name)
 {
+#endif
     NAO_ASSERT_INIT_THROW_ERROR(false)
     this->name_ = name.empty() ? this->session_ : name;
     return this;

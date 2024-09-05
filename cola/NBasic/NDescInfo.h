@@ -1,16 +1,17 @@
 ﻿/**
- * @FilePath     : /cola/cola/NBasic/NDescinfo.h
+ * @FilePath     : /cola/cola/NBasic/NDescInfo.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 22:41:18
+ * @LastEditTime : 2024-09-05 13:41:38
  * @Copyright    :
  **/
 #ifndef NAO_DESCINFO_H
 #define NAO_DESCINFO_H
 
 #include "NBasicDefine.h"
+#include "NValType.h"
 #include <string>
 
 NAO_NAMESPACE_BEGIN
@@ -40,9 +41,13 @@ public:
      * 设置名称信息
      * @param name
      * @return
+     * @notice 部分windows编译器不支持函数继承改变返回值类型，故做此区分
      */
-    virtual auto setName(const std::string& name) -> decltype(this)
-    {
+#ifdef _WIN32
+    virtual NVoidPtr setName(const std::string& name) {
+#else
+    virtual auto setName(const std::string& name) -> decltype(this) {
+#endif
         name_ = name;
         return this;
     }
