@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:32:29
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 10:28:40
+ * @LastEditTime : 2024-09-05 11:33:08
  **/
 #include <algorithm>
 
@@ -197,12 +197,11 @@ NStatus DElement::addElementInfo(const DElementPtrSet& dependElements, const std
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT(false)
 
-
     // 添加依赖的时候，可能会出现异常情况。故在这里提前添加 && 做判定
     status = this->addDependDElements(dependElements);
     NAO_FUNCTION_CHECK_STATUS
-
-    this->setName(name)->setLoop(loop);
+    this->setLoop(loop);
+    this->setName(name);
     NAO_FUNCTION_END
 }
 

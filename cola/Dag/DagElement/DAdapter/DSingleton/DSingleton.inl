@@ -1,12 +1,14 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/DAdapter/DSingleton/DSingleton.inl
+ * @FilePath     : /cola/cola/Dag/DagElement/DAdapter/DSingleton/DSingleton.inl
  * @Description  :
  * @Author       : naonao
- * @Date         : 2024-06-26 13:51:34
+ * @Date         : 2024-06-28 18:19:48
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 13:54:49
+ * @LastEditTime : 2024-09-05 11:30:56
+ * Copyright (c) 2024 by G, All Rights Reserved.
  */
+
 #ifndef NAO_DSINGLETON_INL
 #define NAO_DSINGLETON_INL
 
@@ -88,7 +90,8 @@ NStatus DSingleton<T>::addElementInfo(const std::set<DElementPtr>& dependElement
     NAO_FUNCTION_CHECK_STATUS
 
     // 这里，内部和外部均需要设定name信息
-    this->setName(name)->setLoop(loop);
+    this->setName(name);
+    this->setLoop(loop);
     // 获取单例信息，然后将信息node中信息
     auto element   = dynamic_cast<T*>(s_singleton_.get());
     element->name_ = name;
