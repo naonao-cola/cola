@@ -5,7 +5,7 @@
  * @Date         : 2024-06-28 10:36:10
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 15:17:24
+ * @LastEditTime : 2024-09-05 11:53:38
  */
 #ifndef NAO_DPIPELINE_INL
 #define NAO_DPIPELINE_INL
@@ -102,12 +102,12 @@ NStatus DPipeline::registerDElement(DCoordinatorPPtr<SIZE> coordinatorRef, const
 }
 
 template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DNode, TNode>::value, int>>
-DNodePtr DPipeline::createDNode(const DNodeInfo& info, Args&&... args)
+TNode* DPipeline::createDNode(const DNodeInfo& info, Args&&... args)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT_THROW_ERROR(false)
 
-    DNodePtr node = new (std::nothrow) TNode(std::forward<Args&&>(args)...);
+    auto* node = new (std::nothrow) TNode(std::forward<Args&&>(args)...);
     NAO_ASSERT_NOT_NULL_THROW_ERROR(node)
     status = node->addElementInfo(info.dependence_, info.name_, info.loop_);
     NAO_THROW_EXCEPTION_BY_STATUS(status)
@@ -119,16 +119,16 @@ DNodePtr DPipeline::createDNode(const DNodeInfo& info, Args&&... args)
 
 
 
-template<typename T, typename... Args, c_enable_if_t<std::is_base_of<DNode, T>::value, int>>
-DNodePtr DPipeline::createDNode(const DElementPtrSet& dependence, const std::string& name, NSize loop, Args&&... args)
+template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DNode, TNode>::value, int>>
+TNode* DPipeline::createDNode(const DElementPtrSet& dependence, const std::string& name, NSize loop, Args&&... args)
 {
     const DNodeInfo& info = DNodeInfo(dependence, name, loop);
-    return createDNode<T>(info, std::forward<Args&&>(args)...);
+    return createDNode<TNode>(info, std::forward<Args&&>(args)...);
 }
 
 
-template<typename T, c_enable_if_t<std::is_base_of<DGroup, T>::value, int>>
-DGroupPtr DPipeline::createDGroup(const DElementPtrArr& elements, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+template<typename TGroup, c_enable_if_t<std::is_base_of<DGroup, TGroup>::value, int>>
+TGroup* DPipeline::createDGroup(const DElementPtrArr& elements, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT_THROW_ERROR(false)
@@ -137,7 +137,8 @@ DGroupPtr DPipeline::createDGroup(const DElementPtrArr& elements, const DElement
     NAO_THROW_EXCEPTION_BY_CONDITION(std::any_of(elements.begin(), elements.end(), [](DElementPtr element) { return (nullptr == element); }), "createGGroup elements have nullptr.")
     NAO_THROW_EXCEPTION_BY_CONDITION(std::any_of(dependElements.begin(), dependElements.end(), [](DElementPtr element) { return (nullptr == element); }), "createGGroup dependElements have nullptr.")
 
-    DGroupPtr group = NAO_SAFE_MALLOC_NOBJECT(T) for (DElementPtr element : elements)
+    auto* group = NAO_SAFE_MALLOC_NOBJECT(TGroup)
+    for (DElementPtr element : elements)
     {
         status += group->addElement(element);
         element->belong_ = group;   // 从属于这个group的信息
