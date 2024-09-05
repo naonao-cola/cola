@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:32:29
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 13:44:59
+ * @LastEditTime : 2024-09-05 14:07:34
  **/
 #include <algorithm>
 
@@ -220,7 +220,7 @@ NStatus DElement::addManagers(DParamManagerPtr paramManager, DEventManagerPtr ev
 }
 
 
-NStatus DElement::doAspect(const DAspectType& aspectType, const NStatus& curStatus)
+NStatus DElement::doAspect(const internal::DAspectType& aspectType, const NStatus& curStatus)
 {
     NAO_FUNCTION_BEGIN
 
@@ -258,7 +258,7 @@ NStatus DElement::fatProcessor(const NFunctionType& type)
 
             for (NSize i = 0; i < this->loop_ && status.isOK() && DElementState::NORMAL == this->getCurState(); i++) {
                 /** 执行带切面的run方法 */
-                status += doAspect(DAspectType::BEGIN_RUN);
+                status += doAspect(internal::DAspectType::BEGIN_RUN);
                 NAO_FUNCTION_CHECK_STATUS
                 do {
                     status += isAsync() ? asyncRun() : run();
@@ -269,7 +269,7 @@ NStatus DElement::fatProcessor(const NFunctionType& type)
                      * 可以根据需求，对任意element类型，添加特定的isHold条件
                      * */
                 } while (checkYield(), this->isHold() && status.isOK());
-                doAspect(DAspectType::FINISH_RUN, status);
+                doAspect(internal::DAspectType::FINISH_RUN, status);
             }
 
             NAO_THROW_EXCEPTION_BY_STATUS(checkRunResult())
@@ -279,18 +279,18 @@ NStatus DElement::fatProcessor(const NFunctionType& type)
         {
             concerned_params_.clear();   // 仅需要记录这一轮使用到的 GParam 信息
             is_prepared_ = false;
-            status       = doAspect(DAspectType::BEGIN_INIT);
+            status       = doAspect(internal::DAspectType::BEGIN_INIT);
             NAO_FUNCTION_CHECK_STATUS
             status = init();
-            doAspect(DAspectType::FINISH_INIT, status);
+            doAspect(internal::DAspectType::FINISH_INIT, status);
             break;
         }
         case NFunctionType::DESTROY:
         {
-            status = doAspect(DAspectType::BEGIN_DESTROY);
+            status = doAspect(internal::DAspectType::BEGIN_DESTROY);
             NAO_FUNCTION_CHECK_STATUS
             status = destroy();
-            doAspect(DAspectType::FINISH_DESTROY, status);
+            doAspect(internal::DAspectType::FINISH_DESTROY, status);
             break;
         }
         default:
@@ -298,7 +298,7 @@ NStatus DElement::fatProcessor(const NFunctionType& type)
         }
     }
     catch (const NException& ex) {
-        doAspect(DAspectType::ENTER_CRASHED);
+        doAspect(internal::DAspectType::ENTER_CRASHED);
         status = crashed(ex);
     }
 

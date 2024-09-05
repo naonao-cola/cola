@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagAspect/DAspectManager.h
+ * @FilePath     : /cola/cola/Dag/DagAspect/DAspectManager.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 20:02:33
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 20:02:33
+ * @LastEditTime : 2024-09-05 14:05:59
  **/
 #ifndef NAO_DASPECTMANAGER_H
 #define NAO_DASPECTMANAGER_H
@@ -30,7 +30,7 @@ protected:
      * @param curStatus
      * @return
      */
-    NStatus reflect(const DAspectType& type, const NStatus& curStatus = NStatus());
+    NStatus reflect(const internal::DAspectType& type, const NStatus& curStatus = NStatus());
 
     NStatus add(DAspectPtr aspect) final;
 

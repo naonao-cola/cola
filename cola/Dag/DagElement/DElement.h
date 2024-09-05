@@ -297,7 +297,7 @@ private:
      * @param curStatus
      * @return
      */
-    NStatus doAspect(const DAspectType& aspectType, const NStatus& curStatus = NStatus());
+    NStatus doAspect(const internal::DAspectType& aspectType, const NStatus& curStatus = NStatus());
 
     /**
      * 设置element信息
