@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:32:29
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 14:07:34
+ * @LastEditTime : 2024-09-05 14:42:56
  **/
 #include <algorithm>
 
@@ -364,6 +364,7 @@ NBool DElement::isMacro() const
 
 NStatus DElement::crashed(const NException& ex)
 {
+    (void)(this);
     return NStatus(internal::STATUS_CRASH, ex.what());
 }
 
@@ -398,6 +399,7 @@ NVoid DElement::dump(std::ostream& oss)
 
 NVoid DElement::dumpEdge(std::ostream& oss, DElementPtr src, DElementPtr dst, const std::string& label)
 {
+    (void)(this);
     if (src->isDGroup() && dst->isDGroup()) {
         // 在group的逻辑中，添加 cluster_ 的信息
         oss << 'p' << src << " -> p" << dst << label << "[ltail=cluster_p" << src << " lhead=cluster_p" << dst << "]";

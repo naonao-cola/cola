@@ -135,4 +135,12 @@ NBool DRegion::isSeparate(DElementCPtr a, DElementCPtr b) const
     return DSeparateOptimizer::checkSeparate(manager_->manager_elements_, a, b);
 }
 
+NSize DRegion::trim() const {
+    NSize result = 0;
+    if (manager_) {
+        result = DTrimOptimizer::trim(manager_->manager_elements_);
+    }
+    return result;
+}
+
 NAO_NAMESPACE_END

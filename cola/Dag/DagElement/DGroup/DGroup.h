@@ -63,6 +63,12 @@ private:
      */
     virtual NBool isSeparate(DElementCPtr a, DElementCPtr b) const;
 
+    /**
+     * 剪裁逻辑
+     * @return
+     */
+    virtual NSize trim() const;
+
 private:
     DElementPtrArr group_elements_arr_;   // 存放 element的数组
 
@@ -75,6 +81,7 @@ private:
     friend class DMultiCondition;
     template<NInt>
     friend class DSome;
+    friend class DTrimOptimizer;
 };
 
 using DGroupPtr = DGroup*;

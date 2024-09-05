@@ -15,7 +15,7 @@
 #include <iterator>
 
 #include "DOptimizer.h"
-
+#include "../DGroup/DGroupInclude.h"
 NAO_NAMESPACE_BEGIN
 
 class DTrimOptimizer : public DOptimizer
@@ -32,12 +32,13 @@ class DTrimOptimizer : public DOptimizer
         auto        graph   = buildGraph(elements, paths, 1, 0, 0);
 
         for (auto* cur : elements) {
-            int            idx = (int)std::distance(elements.begin(), elements.find(cur));
+            NSize            idx = std::distance(elements.begin(), elements.find(cur));
             DElementPtrArr candidates;
-            for (int i = 0; i < (int)cur->dependence_.size(); i++) {
-                int x = (int)std::distance(elements.begin(), elements.find(cur->dependence_[i]));
-                for (int j = i; j < (int)cur->dependence_.size(); j++) {
-                    int y = (int)std::distance(elements.begin(), elements.find(cur->dependence_[j]));
+            for (NSize i = 0; i < cur->dependence_.size(); i++) {
+                NSize x = std::distance(elements.begin(), elements.find(cur->dependence_[i]));
+                for (NSize j = i; j < cur->dependence_.size(); j++) {
+                    // 这里必须是 n^2 的循环
+                    NSize y = std::distance(elements.begin(), elements.find(cur->dependence_[j]));
                     if (1 == graph[x][y]) {
                         graph[x][idx] = 0;
                         candidates.push_back(cur->dependence_[i]);
@@ -50,12 +51,16 @@ class DTrimOptimizer : public DOptimizer
                     trimNum++;
                 }
             }
+             if (cur->isDGroup()) {
+                trimNum += ((DGroupPtr)cur)->trim();
+            }
         }
 
         return trimNum;
     }
 
     friend class DElementManager;
+    friend class DRegion;
 };
 
 NAO_NAMESPACE_END
