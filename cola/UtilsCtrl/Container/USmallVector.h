@@ -47,7 +47,7 @@ public:
         if (cur_index_ >= capacity_) {
             // 插入超限的时候，开始扩容
             const NSize curCapacity = capacity_ + CAPACITY;
-            T*    curData     = new T[curCapacity];
+            T*          curData     = new T[curCapacity];
             NAO_ASSERT_NOT_NULL_THROW_ERROR(curData)
 
             std::move(data_, data_ + capacity_, curData);
@@ -138,8 +138,8 @@ protected:
 public:
     UIter begin() const { return UIter(data_); }
     UIter end() const { return UIter(data_ + cur_index_); }
-    T     front() const { data_[0]; }
-    T     back() const { data_[cur_index_ - 1]; }
+    T     front() const { return data_[0]; }
+    T     back() const { return data_[cur_index_ - 1]; }
 
 private:
     T*    data_      = nullptr;   // 存放具体数据

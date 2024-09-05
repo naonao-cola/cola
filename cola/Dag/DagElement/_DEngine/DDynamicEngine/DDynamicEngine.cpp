@@ -32,23 +32,13 @@ NStatus DDynamicEngine::run()
     NAO_FUNCTION_BEGIN
     cur_status_.reset();
 
-    switch (dag_type_) {
-    case internal::DEngineDagType::COMMON:
-    {
+    if (internal::DEngineDagType::COMMON == dag_type_) {
         commonRunAll();
-        break;
-    }
-    case internal::DEngineDagType::ALL_SERIAL:
-    {
+    } else if (internal::DEngineDagType::ALL_SERIAL == dag_type_) {
         serialRunAll();
-        break;
-    }
-    case internal::DEngineDagType::ALL_PARALLEL:
-    {
+    } else if (internal::DEngineDagType::ALL_PARALLEL == dag_type_) {
         parallelRunAll();
-        break;
-    }
-    default:
+    } else {
         NAO_RETURN_ERROR_STATUS("unknown engine dag type")
     }
     status = cur_status_;
