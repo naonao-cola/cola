@@ -1,14 +1,16 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/_DOptimizer/DOptimizer.h
+ * @FilePath     : /cola/cola/Dag/DagElement/_DOptimizer/DOptimizer.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 11:51:25
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 12:00:16
+ * @LastEditTime : 2024-09-05 14:22:04
  **/
 #ifndef NAO_DOPTIMIZER_H
 #define NAO_DOPTIMIZER_H
+
+#include <vector>
 
 #include "../DElement.h"
 #include "../DElementObject.h"
@@ -58,6 +60,34 @@ protected:
         }
 
         return paths;
+    }
+
+     /**
+     * 构造对应的二维矩阵图
+     * @param elements
+     * @param paths
+     * @param father
+     * @param son
+     * @param unlink
+     * @return
+     */
+    static std::vector<std::vector<int>> buildGraph(const DSortedDElementPtrSet& elements,
+                            const std::vector<std::vector<DElementPtr>>& paths,
+                            int father, int son, int unlink) {
+        const NSize size = elements.size();
+        std::vector<std::vector<int>> graph(size, std::vector<int>(size, unlink));
+        for (auto& path : paths) {
+            for (int i = 0; i < path.size() - 1; i++) {
+                // 这里的 find是一定能找到的。因为path的数据，是从elements中记录的
+                int height = (int)std::distance(elements.begin(), elements.find(path[i]));
+                for (int j = i + 1; j < path.size(); j++) {
+                    int column = (int)std::distance(elements.begin(), elements.find(path[j]));
+                    graph[height][column] = father;
+                    graph[column][height] = son;
+                }
+            }
+        }
+        return graph;
     }
 
     friend class DPerf;

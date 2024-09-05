@@ -417,6 +417,13 @@ private:
      */
     NBool isDefaultBinding() const;
 
+    /**
+     * 删除一个依赖的节点信息
+     * @param element
+     * @return
+     */
+    NBool removeDepend(DElement* element);
+
 private:
     /** 状态相关信息 */
     NBool                      done_{false};                              // 判定被执行结束
@@ -479,6 +486,7 @@ private:
     friend class DAspectObject;
     friend class DOptimizer;
     friend class DMaxParaOptimizer;
+    friend class DTrimOptimizer;
     friend class DSeparateOptimizer;
     friend class DElementRepository;
     friend class DPerf;

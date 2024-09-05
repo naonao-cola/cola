@@ -334,6 +334,12 @@ public:
      */
     NSize getMaxPara();
 
+     /**
+     * 针对图结构，做多余边剪裁
+     * @return 返回值表示裁剪了多少条信息
+     */
+    NSize trim();
+
     /**
      * 将符合串行执行条件的pipeline，设定为串行执行的模式。可以大幅度提升运行性能。
      * @return

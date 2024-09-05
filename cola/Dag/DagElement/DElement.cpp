@@ -601,4 +601,17 @@ NBool DElement::isDefaultBinding() const
     return NAO_DEFAULT_BINDING_INDEX == binding_index_;
 }
 
+NBool DElement::removeDepend(DElementPtr element) {
+    NAO_ASSERT_NOT_NULL_THROW_ERROR(element)
+    NAO_ASSERT_INIT_THROW_ERROR(false)
+    if (!dependence_.hasValue(element)) {
+        return false;
+    }
+
+    dependence_.remove(element);
+    element->run_before_.remove(this);
+    left_depend_.store(dependence_.size(), std::memory_order_release);
+    return true;
+}
+
 NAO_NAMESPACE_END

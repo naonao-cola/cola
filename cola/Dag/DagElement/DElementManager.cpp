@@ -181,6 +181,9 @@ NBool DElementManager::checkSerializable()
     return (1 == frontSize) && (1 == tailSize);
 }
 
+NSize DElementManager::trim() {
+    return DTrimOptimizer::trim(manager_elements_);
+}
 
 NStatus DElementManager::process(const DSortedDElementPtrSet& elements)
 {

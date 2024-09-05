@@ -17,20 +17,13 @@ NAO_NAMESPACE_BEGIN
 DPipeline::DPipeline()
 {
     session_         = URandom<>::generateSession(NAO_STR_PIPELINE);
-    element_manager_ = NAO_SAFE_MALLOC_NOBJECT(DElementManager)
-    param_manager_   = NAO_SAFE_MALLOC_NOBJECT(DParamManager)
-    daemon_manager_  = NAO_SAFE_MALLOC_NOBJECT(DDaemonManager)
-    event_manager_   = NAO_SAFE_MALLOC_NOBJECT(DEventManager)
+    element_manager_ = NAO_SAFE_MALLOC_NOBJECT(DElementManager) param_manager_ = NAO_SAFE_MALLOC_NOBJECT(DParamManager) daemon_manager_ = NAO_SAFE_MALLOC_NOBJECT(DDaemonManager) event_manager_ =
+        NAO_SAFE_MALLOC_NOBJECT(DEventManager)
 }
 
 
-DPipeline::~DPipeline()
-{// 结束的时候，会自动释放所有的element信息
-    NAO_DELETE_PTR(daemon_manager_)
-    NAO_DELETE_PTR(element_manager_)
-    NAO_DELETE_PTR(param_manager_)
-    NAO_DELETE_PTR(event_manager_)
-}
+DPipeline::~DPipeline(){// 结束的时候，会自动释放所有的element信息
+                        NAO_DELETE_PTR(daemon_manager_) NAO_DELETE_PTR(element_manager_) NAO_DELETE_PTR(param_manager_) NAO_DELETE_PTR(event_manager_)}
 
 
 NStatus DPipeline::init()
@@ -132,8 +125,7 @@ NStatus DPipeline::registerDNode(DElementPPtr nodeRef, const DElementPtrSet& dep
 
     auto node = dynamic_cast<DNodePtr>(*nodeRef);
     NAO_RETURN_ERROR_STATUS_BY_CONDITION(nullptr == node, "[" + (*nodeRef)->getName() + "] is not based on GNode")
-    NAO_RETURN_ERROR_STATUS_BY_CONDITION(
-        nullptr != node->belong_, "[" + node->getName() + "] can not register to pipeline for its belong to [" + node->belong_->getName() + "]")
+    NAO_RETURN_ERROR_STATUS_BY_CONDITION(nullptr != node->belong_, "[" + node->getName() + "] can not register to pipeline for its belong to [" + node->belong_->getName() + "]")
     NAO_RETURN_ERROR_STATUS_BY_CONDITION(node->isRegistered(), "[" + node->getName() + "] register duplicate")
 
     status = innerRegister(node, dependElements, name, loop);
@@ -149,8 +141,7 @@ NStatus DPipeline::registerDGroup(DElementPPtr groupRef, const DElementPtrSet& d
 
     auto group = dynamic_cast<DGroupPtr>(*groupRef);
     NAO_RETURN_ERROR_STATUS_BY_CONDITION(nullptr == group, "[" + (*groupRef)->getName() + "] is not based on GGroup")
-    NAO_RETURN_ERROR_STATUS_BY_CONDITION(
-        nullptr != group->belong_, "[" + group->getName() + "] can not register to pipeline for its belong to [" + group->belong_->getName() + "]")
+    NAO_RETURN_ERROR_STATUS_BY_CONDITION(nullptr != group->belong_, "[" + group->getName() + "] can not register to pipeline for its belong to [" + group->belong_->getName() + "]")
     NAO_RETURN_ERROR_STATUS_BY_CONDITION(group->isRegistered(), "[" + group->getName() + "] register duplicate")
 
     status = innerRegister(group, dependElements, name, loop);
@@ -277,10 +268,17 @@ DPipelinePtr DPipeline::setAutoCheck(NBool enable)
 
 NSize DPipeline::getMaxPara()
 {
+    NAO_ASSERT_INIT_THROW_ERROR(false)
     NAO_ASSERT_NOT_NULL_THROW_ERROR(element_manager_)
     return element_manager_->calcMaxParaSize();
 }
 
+NSize DPipeline::trim()
+{
+    NAO_ASSERT_INIT_THROW_ERROR(false)
+    NAO_ASSERT_NOT_NULL_THROW_ERROR(element_manager_)
+    return element_manager_->trim();
+}
 
 NStatus DPipeline::makeSerial()
 {

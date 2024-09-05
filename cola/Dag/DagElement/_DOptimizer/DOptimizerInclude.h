@@ -13,6 +13,6 @@
 #include "DMaxParaOptimizer.h"
 #include "DOptimizer.h"
 #include "DSeparateOptimizer.h"
-
+#include "DTrimOptimizer.h"
 
 #endif   // CGRAPH_GOPTIMIZERINCLUDE_H

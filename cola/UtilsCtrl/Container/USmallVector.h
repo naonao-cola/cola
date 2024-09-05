@@ -69,6 +69,23 @@ public:
         memset(data_, 0, sizeof(T) * capacity_);
     }
 
+
+    NBool remove(const T& val)
+    {
+        NBool result = false;
+        for (NSize i = 0; i < cur_index_; i++) {
+            if (data_[i] == val) {
+                for (NSize j = i; j < cur_index_ - 1; j++) {
+                    data_[j] = data_[j + 1];
+                }
+                cur_index_--;
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
     /**
      * 判断内部是否包含该值
      * @param val
@@ -136,10 +153,12 @@ protected:
     };
 
 public:
-    UIter begin() const { return UIter(data_); }
-    UIter end() const { return UIter(data_ + cur_index_); }
-    T     front() const { return data_[0]; }
-    T     back() const { return data_[cur_index_ - 1]; }
+    UIter    begin() const { return UIter(data_); }
+    UIter    end() const { return UIter(data_ + cur_index_); }
+    T        front() const { return data_[0]; }
+    T        back() const { return data_[cur_index_ - 1]; }
+    T&       operator[](NSize index) { return data_[index]; }
+    const T& operator[](NSize index) const { return data_[index]; }
 
 private:
     T*    data_      = nullptr;   // 存放具体数据
