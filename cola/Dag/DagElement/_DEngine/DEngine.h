@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/_DEngine/DEngine.h
+ * @FilePath     : /cola/cola/Dag/DagElement/_DEngine/DEngine.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 11:29:25
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 11:29:26
+ * @LastEditTime : 2024-09-05 11:15:28
  **/
 #ifndef NAO_DENGINE_H
 #define NAO_DENGINE_H
@@ -35,21 +35,6 @@ protected:
      */
     virtual NStatus afterRunCheck(){
         NAO_EMPTY_FUNCTION
-    }
-
-    /**
-     * 计算出来最终计算的index值
-     * @param element
-     * @return
-     */
-    NIndex calcIndex(DElementCPtr element) const {
-        /**
-         * 如果没有设定绑定线程的话，就用默认调度策略
-         * 否则的话，会走绑定的thread。
-         * 如果设定的 binding_index_ >= thread 总数，会在 threadpool 层做统一判定
-         */
-        return element->isDefaultBinding()
-               ? schedule_strategy_ : element->binding_index_;
     }
 
     /**

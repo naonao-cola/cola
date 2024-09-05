@@ -37,9 +37,6 @@ NStatus DRegion::init()
     this->manager_->setThreadPool(thread_pool_);
     status = this->manager_->init();
     NAO_FUNCTION_CHECK_STATUS
-    // 设置调度类型，需要在引擎初始化完成之后
-    this->manager_->setScheduleStrategy(NAO_POOL_TASK_STRATEGY);
-
     is_init_ = true;
     NAO_FUNCTION_END
 }

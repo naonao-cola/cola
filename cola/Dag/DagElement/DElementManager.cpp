@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 23:07:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 13:56:06
+ * @LastEditTime : 2024-09-05 11:17:05
  **/
 #include "DElementManager.h"
 #include "_DOptimizer/DOptimizerInclude.h"
@@ -110,19 +110,6 @@ NStatus DElementManager::clear()
     manager_elements_.clear();
     NAO_FUNCTION_END
 }
-
-
-DElementManagerPtr DElementManager::setScheduleStrategy(int strategy)
-{
-    NAO_ASSERT_NOT_NULL_THROW_ERROR(engine_)
-    /**
-     * 如果是 region中的 GElementManager，需要在init完成后，进行这一步赋值
-     * 否则会因为 engine_ 为空，而导致崩溃
-     */
-    engine_->schedule_strategy_ = strategy;
-    return this;
-}
-
 
 DElementManagerPtr DElementManager::setEngineType(DEngineType engineType)
 {
