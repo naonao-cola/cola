@@ -7,17 +7,18 @@
  * @LastEditors  : naonao
  * @LastEditTime : 2024-08-12 13:52:31
  * @Copyright (c) 2024 by G, All Rights Reserved.
-**/
+ **/
 #include "DStaticEngine.h"
 
 NAO_NAMESPACE_BEGIN
 
-NStatus DStaticEngine::setup(const DSortedDElementPtrSet& elements) {
+NStatus DStaticEngine::setup(const DSortedDElementPtrSet& elements)
+{
     NAO_FUNCTION_BEGIN
     element_mat_.clear();
 
     DElementPtrArr curArr;
-    NSize totalSize = 0;
+    NSize          totalSize = 0;
     for (auto element : elements) {
         NAO_ASSERT_NOT_NULL(element)
         element->beforeRun();
@@ -41,27 +42,25 @@ NStatus DStaticEngine::setup(const DSortedDElementPtrSet& elements) {
         }
     }
 
-    NAO_RETURN_ERROR_STATUS_BY_CONDITION(totalSize != elements.size(),
-                                            "static engine parse error");
+    NAO_RETURN_ERROR_STATUS_BY_CONDITION(totalSize != elements.size(), "static engine parse error");
     NAO_FUNCTION_END
 }
 
 
-NStatus DStaticEngine::run() {
+NStatus DStaticEngine::run()
+{
     NAO_FUNCTION_BEGIN
 
     for (const auto& arr : element_mat_) {
         std::vector<std::future<NStatus>> futures;
-        DElementPtrArr macros;
+        DElementPtrArr                    macros;
         for (auto* element : arr) {
-            if (element->isMacro()
-                && NAO_DEFAULT_BINDING_INDEX == element->getBindingIndex()) {
+            if (element->isMacro() && element->isDefaultBinding()) {
                 // 未绑定线程的微任务，直接放到 macros 中，减少线程切换
                 macros.emplace_back(element);
-            } else {
-                auto fut = thread_pool_->commit([element] {
-                    return element->fatProcessor(NFunctionType::RUN);
-                }, element->getBindingIndex());
+            }
+            else {
+                auto fut = thread_pool_->commit([element] { return element->fatProcessor(NFunctionType::RUN); }, element->binding_index_);
                 futures.emplace_back(std::move(fut));
             }
         }

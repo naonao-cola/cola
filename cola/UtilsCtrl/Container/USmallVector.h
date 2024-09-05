@@ -46,7 +46,7 @@ public:
 
         if (cur_index_ >= capacity_) {
             // 插入超限的时候，开始扩容
-            NSize curCapacity = capacity_ + CAPACITY;
+            const NSize curCapacity = capacity_ + CAPACITY;
             T*    curData     = new T[curCapacity];
             NAO_ASSERT_NOT_NULL_THROW_ERROR(curData)
 

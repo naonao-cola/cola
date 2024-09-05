@@ -587,7 +587,7 @@ NStatus DElement::checkSuitable()
 DElementPtrArr DElement::getDeepPath(NBool reverse) const
 {
     DElementPtrArr path;
-    auto*          cur = const_cast<DElementPtr>(this);   // 这个是肯定可以转移的
+    auto*          cur = const_cast<DElementPtr>(this);
     while (cur) {
         path.push_back(cur);
         cur = cur->belong_;
