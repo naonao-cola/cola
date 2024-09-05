@@ -5,7 +5,7 @@
  * @Date         : 2024-07-18 15:51:35
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-18 15:51:44
+ * @LastEditTime : 2024-08-19 15:57:46
  **/
 #ifndef NAONAO_VHOG_H
 #define NAONAO_VHOG_H
@@ -29,7 +29,7 @@ public:
      *
      * 当使用模型对新图像进行预测时，图像只能由1个图像组成。
      */
-    VHog(std::vector<cv::Mat> images, int num_cells, int cell_size, int num_bins, cv::Size train_size, int vlhog_variant = 1)
+    VHog(std::vector<cv::Mat> images, NInt num_cells, NInt cell_size, NInt num_bins, cv::Size train_size, NInt vlhog_variant = 1)
         : images_(std::move(images))
         , num_cells_(num_cells)
         , cell_size_(cell_size)
@@ -43,14 +43,25 @@ public:
      */
     cv::Mat operator()();
 
+    // 图像类型
+    enum class IMG_TYPE
+    {
+        GRAY = 0,
+        RGB  = 1,
+        HSV  = 2,
+    };
+    IMG_TYPE img_type_ = IMG_TYPE::GRAY;
+
 private:
     std::vector<cv::Mat> images_;
-    int                  vlhog_variant_;
+    NInt                  vlhog_variant_;
     cv::Size             train_size_;
     cv::Mat              hog_descriptors_;
-    int                  num_cells_;
-    int                  cell_size_;
-    int                  num_bins_;
+    NInt                  num_cells_;
+    NInt                  cell_size_;
+    NInt                  num_bins_;
+
+    cv::Mat extract_hog(const cv::Mat& img);
 };
 
 NAO_VISION_NAMESPACE_END

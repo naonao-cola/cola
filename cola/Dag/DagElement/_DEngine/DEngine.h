@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/_DEngine/DEngine.h
+ * @FilePath     : /cola/cola/Dag/DagElement/_DEngine/DEngine.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 11:29:25
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 11:29:26
+ * @LastEditTime : 2024-09-05 11:15:28
  **/
 #ifndef NAO_DENGINE_H
 #define NAO_DENGINE_H
@@ -38,22 +38,6 @@ protected:
     }
 
     /**
-     * 计算出来最终计算的index值
-     * @param element
-     * @return
-     */
-    inline NIndex calcIndex(DElementPtr element) const
-    {
-        /**
-         * 如果没有设定绑定线程的话，就用默认调度策略
-         * 否则的话，会走绑定的thread。
-         * 如果设定的 binding_index_ >= thread 总数，会在 threadpool 层做统一判定
-         */
-        auto bindingIndex = element->getBindingIndex();
-        return NAO_DEFAULT_BINDING_INDEX == bindingIndex ? schedule_strategy_ : bindingIndex;
-    }
-
-    /**
      * 分析所有的可以设置 linkable 的数据
      * @param elements
      * @return
@@ -62,18 +46,17 @@ protected:
     {
         /**
          * 认定图可以连通的判定条件：
-         * 1，当前元素仅有一个依赖
-         * 2，当前元素依赖的节点，只有一个后继
-         * 3，当前元素的依赖的后继，仍是当前节点
-         * 4，前后元素绑定机制是一样的
+         * 1，当前元素仅有一个后继
+         * 2，当前元素的唯一后继，仅有一个前驱
+         * 3，前后元素绑定机制是一样的
          */
         linked_size_ = 0;
         for (DElementPtr element : elements) {
-            element->linkable_ = false;   // 防止出现之前的留存逻辑。确保只有当前链接关系下，需要设置 linkable的，才会设置为 true
-             if (1 == element->dependence_.size()
-                && 1 == (*element->dependence_.begin())->run_before_.size()
-                && element->getBindingIndex() == (*(element->dependence_.begin()))->getBindingIndex()) {
-                element->linkable_ = true;
+            element->shape_ = internal::DElementShape::NORMAL;
+            if (1 == element->run_before_.size()
+                && 1 == (*element->run_before_.begin())->dependence_.size()
+                && element->binding_index_ == (*(element->run_before_.begin()))->binding_index_) {
+                element->shape_ = internal::DElementShape::LINKABLE;
                 linked_size_++;
             }
         }

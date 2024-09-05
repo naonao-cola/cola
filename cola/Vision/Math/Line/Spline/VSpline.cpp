@@ -15,7 +15,7 @@ NAO_VISION_NAMESPACE_BEGIN
 // VSpline implementation
 // -----------------------
 
-void VSpline::set_boundary(VSpline::bd_type left, double left_value, VSpline::bd_type right, double right_value, bool force_linear_extrapolation)
+void VSpline::set_boundary(VSpline::bd_type left, NDouble left_value, VSpline::bd_type right, NDouble right_value, bool force_linear_extrapolation)
 {
     assert(m_x.size() == 0);   // set_points() must not have happened yet
     m_left                       = left;
@@ -25,24 +25,24 @@ void VSpline::set_boundary(VSpline::bd_type left, double left_value, VSpline::bd
     m_force_linear_extrapolation = force_linear_extrapolation;
 }
 
-void VSpline::set_points(const std::vector<double>& x, const std::vector<double>& y, bool cubic_spline)
+void VSpline::set_points(const std::vector<NDouble>& x, const std::vector<NDouble>& y, bool cubic_spline)
 {
     assert(x.size() == y.size());
     assert(x.size() > 2);
-    m_x   = x;
-    m_y   = y;
-    int n = x.size();
+    m_x    = x;
+    m_y    = y;
+    NInt n = x.size();
     // TODO: maybe sort x and y, rather than returning an error
-    for (int i = 0; i < n - 1; i++) {
+    for (NInt i = 0; i < n - 1; i++) {
         assert(m_x[i] < m_x[i + 1]);
     }
 
     if (cubic_spline == true) {   // cubic spline interpolation
                                   // setting up the matrix and right hand side of the equation system
                                   // for the parameters b[]
-        Vband_matrix        A(n, 1, 1);
-        std::vector<double> rhs(n);
-        for (int i = 1; i < n - 1; i++) {
+        Vband_matrix         A(n, 1, 1);
+        std::vector<NDouble> rhs(n);
+        for (NInt i = 1; i < n - 1; i++) {
             A(i, i - 1) = 1.0 / 3.0 * (x[i] - x[i - 1]);
             A(i, i)     = 2.0 / 3.0 * (x[i + 1] - x[i - 1]);
             A(i, i + 1) = 1.0 / 3.0 * (x[i + 1] - x[i]);
@@ -82,14 +82,13 @@ void VSpline::set_points(const std::vector<double>& x, const std::vector<double>
         else {
             assert(false);
         }
-
         // solve the equation system to obtain the parameters b[]
         m_b = A.lu_solve(rhs);
 
         // calculate parameters a[] and c[] based on b[]
         m_a.resize(n);
         m_c.resize(n);
-        for (int i = 0; i < n - 1; i++) {
+        for (NInt i = 0; i < n - 1; i++) {
             m_a[i] = 1.0 / 3.0 * (m_b[i + 1] - m_b[i]) / (x[i + 1] - x[i]);
             m_c[i] = (y[i + 1] - y[i]) / (x[i + 1] - x[i]) - 1.0 / 3.0 * (2.0 * m_b[i] + m_b[i + 1]) * (x[i + 1] - x[i]);
         }
@@ -98,7 +97,7 @@ void VSpline::set_points(const std::vector<double>& x, const std::vector<double>
         m_a.resize(n);
         m_b.resize(n);
         m_c.resize(n);
-        for (int i = 0; i < n - 1; i++) {
+        for (NInt i = 0; i < n - 1; i++) {
             m_a[i] = 0.0;
             m_b[i] = 0.0;
             m_c[i] = (m_y[i + 1] - m_y[i]) / (m_x[i + 1] - m_x[i]);
@@ -111,7 +110,7 @@ void VSpline::set_points(const std::vector<double>& x, const std::vector<double>
 
     // for the right extrapolation coefficients
     // f_{n-1}(x) = b*(x-x_{n-1})^2 + c*(x-x_{n-1}) + y_{n-1}
-    double h = x[n - 1] - x[n - 2];
+    NDouble h = x[n - 1] - x[n - 2];
     // m_b[n-1] is determined by the boundary condition
     m_a[n - 1] = 0.0;
     m_c[n - 1] = 3.0 * m_a[n - 2] * h * h + 2.0 * m_b[n - 2] * h + m_c[n - 2];   // = f'_{n-2}(x_{n-1})
@@ -119,16 +118,16 @@ void VSpline::set_points(const std::vector<double>& x, const std::vector<double>
         m_b[n - 1] = 0.0;
 }
 
-double VSpline::operator()(double x) const
+NDouble VSpline::operator()(NDouble x) const
 {
     size_t n = m_x.size();
     // find the closest point m_x[idx] < x, idx=0 even if x<m_x[0]
-    std::vector<double>::const_iterator it;
-    it      = std::lower_bound(m_x.begin(), m_x.end(), x);
-    int idx = std::max(int(it - m_x.begin()) - 1, 0);
+    std::vector<NDouble>::const_iterator it;
+    it       = std::lower_bound(m_x.begin(), m_x.end(), x);
+    NInt idx = std::max(NInt(it - m_x.begin()) - 1, 0);
 
-    double h = x - m_x[idx];
-    double interpol;
+    NDouble h = x - m_x[idx];
+    NDouble interpol;
     if (x < m_x[0]) {
         // extrapolation to the left
         interpol = (m_b0 * h + m_c0) * h + m_y[0];
@@ -144,18 +143,17 @@ double VSpline::operator()(double x) const
     return interpol;
 }
 
-double VSpline::deriv(int order, double x) const
+NDouble VSpline::deriv(NInt order, NDouble x) const
 {
     assert(order > 0);
-
     size_t n = m_x.size();
     // find the closest point m_x[idx] < x, idx=0 even if x<m_x[0]
-    std::vector<double>::const_iterator it;
-    it      = std::lower_bound(m_x.begin(), m_x.end(), x);
-    int idx = std::max(int(it - m_x.begin()) - 1, 0);
+    std::vector<NDouble>::const_iterator it;
+    it       = std::lower_bound(m_x.begin(), m_x.end(), x);
+    NInt idx = std::max(NInt(it - m_x.begin()) - 1, 0);
 
-    double h = x - m_x[idx];
-    double interpol;
+    NDouble h = x - m_x[idx];
+    NDouble interpol;
     if (x < m_x[0]) {
         // extrapolation to the left
         switch (order) {

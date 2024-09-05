@@ -48,7 +48,7 @@ public:
         }
         else {
             // 创建一个 topic信息
-            auto message = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>, NUInt>(size);
+            auto message = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>>(size);
             send_recv_message_map_.insert(std::pair<const std::string&, DMessagePtr<T>>(innerTopic, DMessagePtr<T>(message)));
         }
 
@@ -188,8 +188,7 @@ public:
     NIndex bindTopic(const std::string& topic, NUInt size)
     {
         auto innerTopic = internal::PUB_SUB_PREFIX + topic;
-        auto message    = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>, NUInt>(size);
-
+        auto message = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>>(size);
         NAO_LOCK_GUARD lock(bind_mutex_);
         NIndex         connId = (++cur_conn_id_);
         auto           result = pub_sub_message_map_.find(innerTopic);

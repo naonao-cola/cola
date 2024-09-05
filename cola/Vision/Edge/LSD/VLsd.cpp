@@ -5,7 +5,7 @@
  * @Date         : 2024-07-15 18:46:19
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-15 19:30:56
+ * @LastEditTime : 2024-08-19 15:47:40
  **/
 #include "VLsd.h"
 #include "VLsdDefine.h"
@@ -27,11 +27,11 @@ NAO_VISION_NAMESPACE_BEGIN
 * @Returns:
 * @Others:    标准正太分布
 --------------------------------------------------------------------------------------------------*/
-static void gaussian_kernel(ntuple_list kernel, double sigma, double mean)
+static NVoid gaussian_kernel(ntuple_list kernel, NDouble sigma, NDouble mean)
 {
-    double       sum = 0.0;
-    double       val;
-    unsigned int i;
+    NDouble sum = 0.0;
+    NDouble val;
+    NUInt   i;
     if (kernel == NULL || kernel->values == NULL)
         error("gaussian_kernel: invalid n-tuple 'kernel'.");
     if (sigma <= 0.0)
@@ -40,7 +40,7 @@ static void gaussian_kernel(ntuple_list kernel, double sigma, double mean)
         enlarge_ntuple_list(kernel);
     kernel->size = 1;
     for (i = 0; i < kernel->dim; i++) {
-        val               = ((double)i - mean) / sigma;
+        val               = ((NDouble)i - mean) / sigma;
         kernel->values[i] = exp(-0.5 * val * val);
         sum += kernel->values[i];
     }
@@ -60,24 +60,28 @@ static void gaussian_kernel(ntuple_list kernel, double sigma, double mean)
 * @Returns:
 * @Others:
 --------------------------------------------------------------------------------------------------*/
-static image_double gaussian_sampler(image_double input, double scale, double sigma_scale)
+static image_double gaussian_sampler(image_double input, NDouble scale, NDouble sigma_scale)
 {
     image_double aux, out;
     ntuple_list  kernel;
-    unsigned int N, M, h, n, x, y, i;
-    int          xc, yc, j, double_x_size, double_y_size;
-    double       sigma, xx, yy, sum, prec;
-    if (input == NULL || input->data == NULL || input->xsize == 0 || input->ysize == 0)
+    NUInt        N, M, h, n, x, y, i;
+    NInt         xc, yc, j, double_x_size, double_y_size;
+    NDouble      sigma, xx, yy, sum, prec;
+    if (input == NULL || input->data == NULL || input->xsize == 0 || input->ysize == 0) {
         error("gaussian_sampler: invalid image.");   // 检查参数
-    if (scale <= 0.0)
+    }
+    if (scale <= 0.0) {
         error("gaussian_sampler: 'scale' must be positive.");
-    if (sigma_scale <= 0.0)
+    }
+    if (sigma_scale <= 0.0) {
         error("gaussian_sampler: 'sigma_scale' must be positive.");
-    if (input->xsize * scale > (double)UINT_MAX || input->ysize * scale > (double)UINT_MAX)
+    }
+    if (input->xsize * scale > (NDouble)UINT_MAX || input->ysize * scale > (NDouble)UINT_MAX) {
         error("gaussian_sampler: the output image size exceeds the handled size.");
+    }
 
-    N     = (unsigned int)ceil(input->xsize * scale);
-    M     = (unsigned int)ceil(input->ysize * scale);
+    N     = (NUInt)ceil(input->xsize * scale);
+    M     = (NUInt)ceil(input->ysize * scale);
     aux   = new_image_double(N, input->ysize);                 // 第一次采样x轴方向
     out   = new_image_double(N, M);                            // 计算新图像大小，并得到内存
     sigma = scale < 1.0 ? sigma_scale / scale : sigma_scale;   // 高斯核的sigma大小
@@ -87,16 +91,16 @@ static image_double gaussian_sampler(image_double input, double scale, double si
     x = sigma * sqrt( 2 * prec * ln(10) ). 根据对数公式计算得到
     */
     prec          = 3.0;
-    h             = (unsigned int)ceil(sigma * sqrt(2.0 * prec * log(10.0)));   // h计算出来为3
+    h             = (NUInt)ceil(sigma * sqrt(2.0 * prec * log(10.0)));   // h计算出来为3
     n             = 1 + 2 * h;
-    kernel        = new_ntuple_list(n);        // 核的大小为7
-    double_x_size = (int)(2 * input->xsize);   // 辅助图像大小变量
-    double_y_size = (int)(2 * input->ysize);
+    kernel        = new_ntuple_list(n);         // 核的大小为7
+    double_x_size = (NInt)(2 * input->xsize);   // 辅助图像大小变量
+    double_y_size = (NInt)(2 * input->ysize);
 
     for (x = 0; x < aux->xsize; x++) {   // 第一次采样x轴方向，x是新图像中的坐标。新图aux高度与原图一致，宽度缩放scale
-        xx = (double)x / scale;          // xx是原始尺寸图像中的相应x值。
-        xc = (int)floor(xx + 0.5);       // xc是整数值，即xx的像素坐标。坐标（0.0,0.0）在像素（0,0）的中心，因此xc = 0的像素的xx值从 - 0.5到0.5
-        gaussian_kernel(kernel, sigma, (double)h + xx - (double)xc);   // 必须为每个x计算内核，因为精细偏移xx - xc在每种情况下都不同
+        xx = (NDouble)x / scale;         // xx是原始尺寸图像中的相应x值。
+        xc = (NInt)floor(xx + 0.5);      // xc是整数值，即xx的像素坐标。坐标（0.0,0.0）在像素（0,0）的中心，因此xc = 0的像素的xx值从 - 0.5到0.5
+        gaussian_kernel(kernel, sigma, (NDouble)h + xx - (NDouble)xc);   // 必须为每个x计算内核，因为精细偏移xx - xc在每种情况下都不同
         for (y = 0; y < aux->ysize; y++) {
             sum = 0.0;
             for (i = 0; i < kernel->dim; i++) {
@@ -105,7 +109,7 @@ static image_double gaussian_sampler(image_double input, double scale, double si
                     j += double_x_size;   // 对称边界条件
                 while (j >= double_x_size)
                     j -= double_x_size;
-                if (j >= (int)input->xsize)
+                if (j >= (NInt)input->xsize)
                     j = double_x_size - 1 - j;
                 sum += input->data[j + y * input->xsize] * kernel->values[i];
             }
@@ -113,9 +117,9 @@ static image_double gaussian_sampler(image_double input, double scale, double si
         }
     }
     for (y = 0; y < out->ysize; y++) {   // y轴降采样，y是新图的y坐标
-        yy = (double)y / scale;          // yy是原始图像中对应的y值
-        yc = (int)floor(yy + 0.5);       // yc是整数值，与xc同理
-        gaussian_kernel(kernel, sigma, (double)h + yy - (double)yc);
+        yy = (NDouble)y / scale;         // yy是原始图像中对应的y值
+        yc = (NInt)floor(yy + 0.5);      // yc是整数值，与xc同理
+        gaussian_kernel(kernel, sigma, (NDouble)h + yy - (NDouble)yc);
         for (x = 0; x < out->xsize; x++) {
             sum = 0.0;
             for (i = 0; i < kernel->dim; i++) {
@@ -124,7 +128,7 @@ static image_double gaussian_sampler(image_double input, double scale, double si
                     j += double_y_size;
                 while (j >= double_y_size)
                     j -= double_y_size;
-                if (j >= (int)input->ysize)
+                if (j >= (NInt)input->ysize)
                     j = double_y_size - 1 - j;
 
                 sum += aux->data[x + j * aux->xsize] * kernel->values[i];
@@ -159,18 +163,18 @@ gx = B+D - (A+C)   垂直方向的差异
 gy = C+D - (A+B)   水平方向的差异
 com1 and com2 are just to avoid 2 additions.  只是为了避免加法算数
 --------------------------------------------------------------------------------------------------*/
-static image_double ll_angle(image_double input, double threshold, struct coorlist** list_p, void** mem_p, image_double* modgrad, unsigned int n_bins)
+static image_double ll_angle(image_double input, NDouble threshold, struct coorlist** list_p, NVoid** mem_p, image_double* modgrad, NUInt n_bins)
 {
     image_double      g;
-    unsigned int      n, p, x, y, adr, i;
-    double            com1, com2, gx, gy, norm, norm2;
-    int               list_count = 0;   // 其余变量用于伪排序梯度幅度值
+    NUInt             n, p, x, y, adr, i;
+    NDouble           com1, com2, gx, gy, norm, norm2;
+    NInt              list_count = 0;   // 其余变量用于伪排序梯度幅度值
     struct coorlist*  list;
     struct coorlist** range_l_s;   // 指向bin列表开始的指针数组
     struct coorlist** range_l_e;   // 指向bin列表开始的指针数组
     struct coorlist*  start;
     struct coorlist*  end;
-    double            max_grad = 0.0;
+    NDouble           max_grad = 0.0;
     if (input == NULL || input->data == NULL || input->xsize == 0 || input->ysize == 0)
         error("ll_angle: invalid image.");
     if (threshold < 0.0)
@@ -189,7 +193,7 @@ static image_double ll_angle(image_double input, double threshold, struct coorli
     *modgrad = new_image_double(input->xsize, input->ysize);   // 获取内存以存储梯度范数的图像
 
     list      = (struct coorlist*)calloc((size_t)(n * p), sizeof(struct coorlist));   // 获取“有序”像素列表的内存
-    *mem_p    = (void*)list;
+    *mem_p    = (NVoid*)list;
     range_l_s = (struct coorlist**)calloc((size_t)n_bins, sizeof(struct coorlist*));
     range_l_e = (struct coorlist**)calloc((size_t)n_bins, sizeof(struct coorlist*));
     if (list == NULL || range_l_s == NULL || range_l_e == NULL)
@@ -224,7 +228,7 @@ static image_double ll_angle(image_double input, double threshold, struct coorli
     for (x = 0; x < p - 1; x++)   // 计算梯度值的直方图
         for (y = 0; y < n - 1; y++) {
             norm = (*modgrad)->data[y * p + x];
-            i    = (unsigned int)(norm * (double)n_bins / max_grad);   // 根据范数，在正确的bins中存储点
+            i    = (NUInt)(norm * (NDouble)n_bins / max_grad);   // 根据范数，在正确的bins中存储点
             if (i >= n_bins)
                 i = n_bins - 1;
             if (range_l_e[i] == NULL)
@@ -233,8 +237,8 @@ static image_double ll_angle(image_double input, double threshold, struct coorli
                 range_l_e[i]->next = list + list_count;
                 range_l_e[i]       = list + list_count++;
             }
-            range_l_e[i]->x    = (int)x;
-            range_l_e[i]->y    = (int)y;
+            range_l_e[i]->x    = (NInt)x;
+            range_l_e[i]->y    = (NInt)y;
             range_l_e[i]->next = NULL;
         }
     for (i = n_bins - 1; i > 0 && range_l_s[i] == NULL; i--)
@@ -250,8 +254,8 @@ static image_double ll_angle(image_double input, double threshold, struct coorli
             }
         }
     *list_p = start;
-    free((void*)range_l_s);
-    free((void*)range_l_e);
+    free((NVoid*)range_l_s);
+    free((NVoid*)range_l_e);
     return g;
 }
 
@@ -267,13 +271,13 @@ static image_double ll_angle(image_double input, double threshold, struct coorli
 * @Others:
 Is point (x,y) aligned to angle theta, up to precision 'prec'?
 --------------------------------------------------------------------------------------------------*/
-static int isaligned(int x, int y, image_double angles, double theta, double prec)
+static NInt isaligned(NInt x, NInt y, image_double angles, NDouble theta, NDouble prec)
 {
-    double a;
+    NDouble a;
     /* check parameters */
     if (angles == NULL || angles->data == NULL)
         error("isaligned: invalid image 'angles'.");
-    if (x < 0 || y < 0 || x >= (int)angles->xsize || y >= (int)angles->ysize)
+    if (x < 0 || y < 0 || x >= (NInt)angles->xsize || y >= (NInt)angles->ysize)
         error("isaligned: (x,y) out of the image.");
     if (prec < 0.0)
         error("isaligned: 'prec' must be positive.");
@@ -306,7 +310,7 @@ static int isaligned(int x, int y, image_double angles, double theta, double pre
 /*----------------------------------------------------------------------------*/
 /** Absolute value angle difference. 绝对值角度差。
  */
-static double angle_diff(double a, double b)
+static NDouble angle_diff(NDouble a, NDouble b)
 {
     a -= b;
     while (a <= -M_PI)
@@ -321,7 +325,7 @@ static double angle_diff(double a, double b)
 /*----------------------------------------------------------------------------*/
 /** Signed angle difference.符号角度差。
  */
-static double angle_diff_signed(double a, double b)
+static NDouble angle_diff_signed(NDouble a, NDouble b)
 {
     a -= b;
     while (a <= -M_PI)
@@ -364,14 +368,14 @@ q4 = 1168.92649479,
 q5 = 83.8676043424,
 q6 = 2.50662827511.
 --------------------------------------------------------------------------------------------------*/
-static double log_gamma_lanczos(double x)
+static NDouble log_gamma_lanczos(NDouble x)
 {
-    static double q[7] = {75122.6331530, 80916.6278952, 36308.2951477, 8687.24529705, 1168.92649479, 83.8676043424, 2.50662827511};
-    double        a    = (x + 0.5) * log(x + 5.5) - (x + 5.5);
-    double        b    = 0.0;
-    for (int n = 0; n < 7; n++) {
-        a -= log(x + (double)n);
-        b += q[n] * pow(x, (double)n);
+    static NDouble q[7] = {75122.6331530, 80916.6278952, 36308.2951477, 8687.24529705, 1168.92649479, 83.8676043424, 2.50662827511};
+    NDouble        a    = (x + 0.5) * log(x + 5.5) - (x + 5.5);
+    NDouble        b    = 0.0;
+    for (NInt n = 0; n < 7; n++) {
+        a -= log(x + (NDouble)n);
+        b += q[n] * pow(x, (NDouble)n);
     }
     return a + log(b);
 }
@@ -402,7 +406,7 @@ so
 @f]
 This formula is a good approximation when x > 15.
 --------------------------------------------------------------------------------------------------*/
-static double log_gamma_windschitl(double x)
+static NDouble log_gamma_windschitl(NDouble x)
 {
     return 0.918938533204673 + (x - 0.5) * log(x) - x + 0.5 * x * log(x * sinh(1 / x) + 1 / (810.0 * pow(x, 6.0)));
 }
@@ -472,12 +476,12 @@ To make the computation faster, not all the sum is computed, part
 of the terms are neglected based on a bound to the error obtained
 (an error of 10% in the result is accepted).
 --------------------------------------------------------------------------------------------------*/
-static double nfa(int n, int k, double p, double logNT)
+static NDouble nfa(NInt n, NInt k, NDouble p, NDouble logNT)
 {
-    static double inv[TABSIZE];    /* table to keep computed inverse values */
-    double        tolerance = 0.1; /* an error of 10% in the result is accepted */
-    double        log1term, term, bin_term, mult_term, bin_tail, err, p_term;
-    int           i;
+    static NDouble inv[TABSIZE];    /* table to keep computed inverse values */
+    NDouble        tolerance = 0.1; /* an error of 10% in the result is accepted */
+    NDouble        log1term, term, bin_term, mult_term, bin_tail, err, p_term;
+    NInt           i;
 
     /* check parameters */
     if (n < 0 || k < 0 || k > n || p <= 0.0 || p >= 1.0)
@@ -487,7 +491,7 @@ static double nfa(int n, int k, double p, double logNT)
     if (n == 0 || k == 0)
         return -logNT;
     if (n == k)
-        return -logNT - (double)n * log10(p);
+        return -logNT - (NDouble)n * log10(p);
 
     /* probability term */
     p_term = p / (1.0 - p);
@@ -500,13 +504,13 @@ static double nfa(int n, int k, double p, double logNT)
     bincoef(n,k) = gamma(n+1) / ( gamma(k+1) * gamma(n-k+1) ).
     We use this to compute the first term. Actually the log of it.
     */
-    log1term = log_gamma((double)n + 1.0) - log_gamma((double)k + 1.0) - log_gamma((double)(n - k) + 1.0) + (double)k * log(p) + (double)(n - k) * log(1.0 - p);
+    log1term = log_gamma((NDouble)n + 1.0) - log_gamma((NDouble)k + 1.0) - log_gamma((NDouble)(n - k) + 1.0) + (NDouble)k * log(p) + (NDouble)(n - k) * log(1.0 - p);
     term     = exp(log1term);
 
     /* in some cases no more computations are needed */
     if (double_equal(term, 0.0)) /* the first term is almost zero */
     {
-        if ((double)k > (double)n * p)         /* at begin or end of the tail?  */
+        if ((NDouble)k > (NDouble)n * p)       /* at begin or end of the tail?  */
             return -log1term / M_LN10 - logNT; /* end: use just the first term  */
         else
             return -logNT; /* begin: the tail is roughly 1  */
@@ -528,7 +532,7 @@ static double nfa(int n, int k, double p, double logNT)
         because divisions are expensive.
         p/(1-p) is computed only once and stored in 'p_term'.
         */
-        bin_term = (double)(n - i + 1) * (i < TABSIZE ? (inv[i] != 0.0 ? inv[i] : (inv[i] = 1.0 / (double)i)) : 1.0 / (double)i);
+        bin_term = (NDouble)(n - i + 1) * (i < TABSIZE ? (inv[i] != 0.0 ? inv[i] : (inv[i] = 1.0 / (NDouble)i)) : 1.0 / (NDouble)i);
 
         mult_term = bin_term * p_term;
         term *= mult_term;
@@ -538,7 +542,7 @@ static double nfa(int n, int k, double p, double logNT)
             Then, the error on the binomial tail when truncated at
             the i term can be bounded by a geometric series of form
             term_i * sum mult_term_i^j.                            */
-            err = term * ((1.0 - pow(mult_term, (double)(n - i + 1))) / (1.0 - mult_term) - 1.0);
+            err = term * ((1.0 - pow(mult_term, (NDouble)(n - i + 1))) / (1.0 - mult_term) - 1.0);
 
             /* One wants an error at most of tolerance*final_result, or:
             tolerance * abs(-log10(bin_tail)-logNT).
@@ -569,17 +573,17 @@ static double nfa(int n, int k, double p, double logNT)
 --------------------------------------------------------------------------------------------------*/
 struct rect
 {
-    double x1, y1, x2, y2; /* first and second point of the line segment */
-    double width;          /* rectangle width */
-    double x, y;           /* center of the rectangle */
-    double theta;          /* angle */
-    double dx, dy;         /* (dx,dy) is vector oriented as the line segment */
-    double prec;           /* tolerance angle  公差角*/
-    double p;              // 角度在“精确”范围内的点的概率
+    NDouble x1, y1, x2, y2; /* first and second point of the line segment */
+    NDouble width;          /* rectangle width */
+    NDouble x, y;           /* center of the rectangle */
+    NDouble theta;          /* angle */
+    NDouble dx, dy;         /* (dx,dy) is vector oriented as the line segment */
+    NDouble prec;           /* tolerance angle  公差角*/
+    NDouble p;              // 角度在“精确”范围内的点的概率
 };
 
 /*---------------------------- 复制线段 ------------------------------------------------*/
-static void rect_copy(struct rect* input, struct rect* out)
+static NVoid rect_copy(struct rect* input, struct rect* out)
 {
     /* check parameters */
     if (input == NULL || out == NULL)
@@ -665,10 +669,10 @@ explored. So, 'ys' < 'ye'.
 --------------------------------------------------------------------------------------------------*/
 typedef struct
 {
-    double vx[4];  /* rectangle's corner X coordinates in circular order */
-    double vy[4];  /* rectangle's corner Y coordinates in circular order */
-    double ys, ye; /* start and end Y values of current 'column' */
-    int    x, y;   /* coordinates of currently explored pixel */
+    NDouble vx[4];  /* rectangle's corner X coordinates in circular order */
+    NDouble vy[4];  /* rectangle's corner Y coordinates in circular order */
+    NDouble ys, ye; /* start and end Y values of current 'column' */
+    NInt    x, y;   /* coordinates of currently explored pixel */
 } rect_iter;
 
 
@@ -682,17 +686,20 @@ The following restrictions are required:
 - x1 <= x
 - x  <= x2
 */
-static double inter_low(double x, double x1, double y1, double x2, double y2)
+static NDouble inter_low(NDouble x, NDouble x1, NDouble y1, NDouble x2, NDouble y2)
 {
     /* check parameters */
-    if (x1 > x2 || x < x1 || x > x2)
+    if (x1 > x2 || x < x1 || x > x2) {
         error("inter_low: unsuitable input, 'x1>x2' or 'x<x1' or 'x>x2'.");
+    }
 
     /* interpolation */
-    if (double_equal(x1, x2) && y1 < y2)
+    if (double_equal(x1, x2) && y1 < y2) {
         return y1;
-    if (double_equal(x1, x2) && y1 > y2)
+    }
+    if (double_equal(x1, x2) && y1 > y2) {
         return y2;
+    }
     return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
 }
 
@@ -706,7 +713,7 @@ The following restrictions are required:
 - x1 <= x
 - x  <= x2
 */
-static double inter_hi(double x, double x1, double y1, double x2, double y2)
+static NDouble inter_hi(NDouble x, NDouble x1, NDouble y1, NDouble x2, NDouble y2)
 {
     /* check parameters */
     if (x1 > x2 || x < x1 || x > x2)
@@ -723,18 +730,18 @@ static double inter_hi(double x, double x1, double y1, double x2, double y2)
 /*----------------------------------------------------------------------------*/
 /** Free memory used by a rectangle iterator.
  */
-static void ri_del(rect_iter* iter)
+static NVoid ri_del(rect_iter* iter)
 {
     if (iter == NULL)
         error("ri_del: NULL iterator.");
-    free((void*)iter);
+    free((NVoid*)iter);
 }
 
 /*----------------------------------------------------------------------------*/
 /** Check if the iterator finished the full iteration.
 See details in \ref rect_iter
 */
-static int ri_end(rect_iter* i)
+static NInt ri_end(rect_iter* i)
 {
     /* check input */
     if (i == NULL)
@@ -743,14 +750,14 @@ static int ri_end(rect_iter* i)
     /* if the current x value is larger than the largest
     x value in the rectangle (vx[2]), we know the full
     exploration of the rectangle is finished. */
-    return (double)(i->x) > i->vx[2];
+    return (NDouble)(i->x) > i->vx[2];
 }
 
 /*----------------------------------------------------------------------------*/
 /** Increment a rectangle iterator.
 See details in \ref rect_iter
 */
-static void ri_inc(rect_iter* i)
+static NVoid ri_inc(rect_iter* i)
 {
     /* check input */
     if (i == NULL)
@@ -764,7 +771,7 @@ static void ri_inc(rect_iter* i)
     /* if the end of the current 'column' is reached,
     and it is not the end of exploration,
     advance to the next 'column' */
-    while ((double)(i->y) > i->ye && !ri_end(i)) {
+    while ((NDouble)(i->y) > i->ye && !ri_end(i)) {
         /* increase x, next 'column' */
         i->x++;
 
@@ -787,10 +794,10 @@ static void ri_inc(rect_iter* i)
         or last 'columns') then we pick the lower value of the side
         by using 'inter_low'.
         */
-        if ((double)i->x < i->vx[3])
-            i->ys = inter_low((double)i->x, i->vx[0], i->vy[0], i->vx[3], i->vy[3]);
+        if ((NDouble)i->x < i->vx[3])
+            i->ys = inter_low((NDouble)i->x, i->vx[0], i->vy[0], i->vx[3], i->vy[3]);
         else
-            i->ys = inter_low((double)i->x, i->vx[3], i->vy[3], i->vx[2], i->vy[2]);
+            i->ys = inter_low((NDouble)i->x, i->vx[3], i->vy[3], i->vx[2], i->vy[2]);
 
         /* update upper y limit (end) for the new 'column'.
 
@@ -807,13 +814,13 @@ static void ri_inc(rect_iter* i)
         or last 'columns') then we pick the lower value of the side
         by using 'inter_low'.
         */
-        if ((double)i->x < i->vx[1])
-            i->ye = inter_hi((double)i->x, i->vx[0], i->vy[0], i->vx[1], i->vy[1]);
+        if ((NDouble)i->x < i->vx[1])
+            i->ye = inter_hi((NDouble)i->x, i->vx[0], i->vy[0], i->vx[1], i->vy[1]);
         else
-            i->ye = inter_hi((double)i->x, i->vx[1], i->vy[1], i->vx[2], i->vy[2]);
+            i->ye = inter_hi((NDouble)i->x, i->vx[1], i->vy[1], i->vx[2], i->vy[2]);
 
         /* new y */
-        i->y = (int)ceil(i->ys);
+        i->y = (NInt)ceil(i->ys);
     }
 }
 
@@ -823,8 +830,8 @@ See details in \ref rect_iter
 */
 static rect_iter* ri_ini(struct rect* r)
 {
-    double     vx[4], vy[4];
-    int        n, offset;
+    NDouble    vx[4], vy[4];
+    NInt       n, offset;
     rect_iter* i;
 
     /* check parameters */
@@ -884,8 +891,8 @@ static rect_iter* ri_ini(struct rect* r)
     one, so 'ri_inc' (that will increase x by one) will advance to
     the first 'column'.
     */
-    i->x  = (int)ceil(i->vx[0]) - 1;
-    i->y  = (int)ceil(i->vy[0]);
+    i->x  = (NInt)ceil(i->vx[0]) - 1;
+    i->y  = (NInt)ceil(i->vy[0]);
     i->ys = i->ye = -DBL_MAX;
 
     /* advance to the first pixel */
@@ -905,11 +912,11 @@ static rect_iter* ri_ini(struct rect* r)
 * @Returns:
 * @Others:
 --------------------------------------------------------------------------------------------------*/
-static double rect_nfa(struct rect* rec, image_double angles, double logNT)
+static NDouble rect_nfa(struct rect* rec, image_double angles, NDouble logNT)
 {
     rect_iter* i;
-    int        pts = 0;
-    int        alg = 0;
+    NInt       pts = 0;
+    NInt       alg = 0;
 
     /* check parameters */
     if (rec == NULL)
@@ -919,7 +926,7 @@ static double rect_nfa(struct rect* rec, image_double angles, double logNT)
 
     /* compute the total number of pixels and of aligned points in 'rec' */
     for (i = ri_ini(rec); !ri_end(i); ri_inc(i)) /* rectangle iterator */
-        if (i->x >= 0 && i->y >= 0 && i->x < (int)angles->xsize && i->y < (int)angles->ysize) {
+        if (i->x >= 0 && i->y >= 0 && i->x < (NInt)angles->xsize && i->y < (NInt)angles->ysize) {
             ++pts; /* total number of pixels counter */
             if (isaligned(i->x, i->y, angles, rec->theta, rec->prec))
                 ++alg; /* aligned points counter */
@@ -996,13 +1003,13 @@ theta = atan( Ixy / (lambda2-Iyy) )
 When |Ixx| > |Iyy| we use the first, otherwise the second (just to
 get better numeric precision).
 --------------------------------------------------------------------------------------------------*/
-static double get_theta(struct point* reg, int reg_size, double x, double y, image_double modgrad, double reg_angle, double prec)
+static NDouble get_theta(struct point* reg, NInt reg_size, NDouble x, NDouble y, image_double modgrad, NDouble reg_angle, NDouble prec)
 {
-    double lambda, theta, weight;
-    double Ixx = 0.0;
-    double Iyy = 0.0;
-    double Ixy = 0.0;
-    int    i;
+    NDouble lambda, theta, weight;
+    NDouble Ixx = 0.0;
+    NDouble Iyy = 0.0;
+    NDouble Ixy = 0.0;
+    NInt    i;
 
     /* check parameters */
     if (reg == NULL)
@@ -1017,9 +1024,9 @@ static double get_theta(struct point* reg, int reg_size, double x, double y, ima
     /* compute inertia matrix */
     for (i = 0; i < reg_size; i++) {
         weight = modgrad->data[reg[i].x + reg[i].y * modgrad->xsize];
-        Ixx += ((double)reg[i].y - y) * ((double)reg[i].y - y) * weight;
-        Iyy += ((double)reg[i].x - x) * ((double)reg[i].x - x) * weight;
-        Ixy -= ((double)reg[i].x - x) * ((double)reg[i].y - y) * weight;
+        Ixx += ((NDouble)reg[i].y - y) * ((NDouble)reg[i].y - y) * weight;
+        Iyy += ((NDouble)reg[i].x - x) * ((NDouble)reg[i].x - x) * weight;
+        Ixy -= ((NDouble)reg[i].x - x) * ((NDouble)reg[i].y - y) * weight;
     }
     if (double_equal(Ixx, 0.0) && double_equal(Iyy, 0.0) && double_equal(Ixy, 0.0))
         error("get_theta: null inertia matrix.");
@@ -1050,10 +1057,10 @@ static double get_theta(struct point* reg, int reg_size, double x, double y, ima
 * @Others:
 Computes a rectangle that covers a region of points.
 --------------------------------------------------------------------------------------------------*/
-static void region2rect(struct point* reg, int reg_size, image_double modgrad, double reg_angle, double prec, double p, struct rect* rec)
+static NVoid region2rect(struct point* reg, NInt reg_size, image_double modgrad, NDouble reg_angle, NDouble prec, NDouble p, struct rect* rec)
 {
-    double x, y, dx, dy, l, w, theta, weight, sum, l_min, l_max, w_min, w_max;
-    int    i;
+    NDouble x, y, dx, dy, l, w, theta, weight, sum, l_min, l_max, w_min, w_max;
+    NInt    i;
 
     /* check parameters */
     if (reg == NULL)
@@ -1078,8 +1085,8 @@ static void region2rect(struct point* reg, int reg_size, image_double modgrad, d
     x = y = sum = 0.0;
     for (i = 0; i < reg_size; i++) {
         weight = modgrad->data[reg[i].x + reg[i].y * modgrad->xsize];
-        x += (double)reg[i].x * weight;
-        y += (double)reg[i].y * weight;
+        x += (NDouble)reg[i].x * weight;
+        y += (NDouble)reg[i].y * weight;
         sum += weight;
     }
     if (sum <= 0.0)
@@ -1106,8 +1113,8 @@ static void region2rect(struct point* reg, int reg_size, image_double modgrad, d
     dy    = sin(theta);
     l_min = l_max = w_min = w_max = 0.0;
     for (i = 0; i < reg_size; i++) {
-        l = ((double)reg[i].x - x) * dx + ((double)reg[i].y - y) * dy;
-        w = -((double)reg[i].x - x) * dy + ((double)reg[i].y - y) * dx;
+        l = ((NDouble)reg[i].x - x) * dx + ((NDouble)reg[i].y - y) * dy;
+        w = -((NDouble)reg[i].x - x) * dy + ((NDouble)reg[i].y - y) * dx;
 
         if (l > l_max)
             l_max = l;
@@ -1157,13 +1164,13 @@ static void region2rect(struct point* reg, int reg_size, image_double modgrad, d
 Build a region of pixels that share the same angle, up to a
 tolerance 'prec', starting at point (x,y).
 --------------------------------------------------------------------------------------------------*/
-static void region_grow(int x, int y, image_double angles, struct point* reg, int* reg_size, double* reg_angle, image_char used, double prec)
+static NVoid region_grow(NInt x, NInt y, image_double angles, struct point* reg, NInt* reg_size, NDouble* reg_angle, image_char used, NDouble prec)
 {
-    double sumdx, sumdy;
-    int    xx, yy, i;
+    NDouble sumdx, sumdy;
+    NInt    xx, yy, i;
 
     /* check parameters */
-    if (x < 0 || y < 0 || x >= (int)angles->xsize || y >= (int)angles->ysize)
+    if (x < 0 || y < 0 || x >= (NInt)angles->xsize || y >= (NInt)angles->ysize)
         error("region_grow: (x,y) out of the image.");
     if (angles == NULL || angles->data == NULL)
         error("region_grow: invalid image 'angles'.");
@@ -1189,7 +1196,7 @@ static void region_grow(int x, int y, image_double angles, struct point* reg, in
     for (i = 0; i < *reg_size; i++)
         for (xx = reg[i].x - 1; xx <= reg[i].x + 1; xx++)
             for (yy = reg[i].y - 1; yy <= reg[i].y + 1; yy++)
-                if (xx >= 0 && yy >= 0 && xx < (int)used->xsize && yy < (int)used->ysize && used->data[xx + yy * used->xsize] != USED && isaligned(xx, yy, angles, *reg_angle, prec)) {
+                if (xx >= 0 && yy >= 0 && xx < (NInt)used->xsize && yy < (NInt)used->ysize && used->data[xx + yy * used->xsize] != USED && isaligned(xx, yy, angles, *reg_angle, prec)) {
                     /* add point */
                     used->data[xx + yy * used->xsize] = USED;
                     reg[*reg_size].x                  = xx;
@@ -1216,13 +1223,13 @@ static void region_grow(int x, int y, image_double angles, struct point* reg, in
 Try some rectangles variations to improve NFA value. Only if the
 rectangle is not meaningful (i.e., log_nfa <= log_eps).
 --------------------------------------------------------------------------------------------------*/
-static double rect_improve(struct rect* rec, image_double angles, double logNT, double log_eps)
+static NDouble rect_improve(struct rect* rec, image_double angles, NDouble logNT, NDouble log_eps)
 {
     struct rect r;
-    double      log_nfa, log_nfa_new;
-    double      delta   = 0.5;
-    double      delta_2 = delta / 2.0;
-    int         n;
+    NDouble     log_nfa, log_nfa_new;
+    NDouble     delta   = 0.5;
+    NDouble     delta_2 = delta / 2.0;
+    NInt        n;
 
     log_nfa = rect_nfa(rec, angles, logNT);
 
@@ -1329,17 +1336,17 @@ Reduce the region size, by elimination the points far from the
 starting point, until that leads to rectangle with the right
 density of region points or to discard the region if too small.
 --------------------------------------------------------------------------------------------------*/
-static int reduce_region_radius(struct point* reg, int* reg_size, image_double modgrad, double reg_angle, double prec, double p, struct rect* rec, image_char used, image_double angles,
-                                double density_th)
+static NInt reduce_region_radius(struct point* reg, NInt* reg_size, image_double modgrad, NDouble reg_angle, NDouble prec, NDouble p, struct rect* rec, image_char used, image_double angles,
+                                 NDouble density_th)
 {
-    // double density,rad1,rad2,rad,xc,yc;
-    double density;
-    double radistance1;
-    double radistance2;
-    double rad;
-    double xc;
-    double yc;
-    int    i;
+    // NDouble density,rad1,rad2,rad,xc,yc;
+    NDouble density;
+    NDouble radistance1;
+    NDouble radistance2;
+    NDouble rad;
+    NDouble xc;
+    NDouble yc;
+    NInt    i;
 
     /* check parameters */
     if (reg == NULL)
@@ -1356,15 +1363,15 @@ static int reduce_region_radius(struct point* reg, int* reg_size, image_double m
         error("reduce_region_radius: invalid image 'angles'.");
 
     /* compute region points density */
-    density = (double)*reg_size / (dist(rec->x1, rec->y1, rec->x2, rec->y2) * rec->width);
+    density = (NDouble)*reg_size / (dist(rec->x1, rec->y1, rec->x2, rec->y2) * rec->width);
 
     /* if the density criterion is satisfied there is nothing to do */
     if (density >= density_th)
         return TRUE;
 
     /* compute region's radius */
-    xc          = (double)reg[0].x;
-    yc          = (double)reg[0].y;
+    xc          = (NDouble)reg[0].x;
+    yc          = (NDouble)reg[0].y;
     radistance1 = dist(xc, yc, rec->x1, rec->y1);
     radistance2 = dist(xc, yc, rec->x2, rec->y2);
     rad         = radistance1 > radistance2 ? radistance1 : radistance2;
@@ -1375,7 +1382,7 @@ static int reduce_region_radius(struct point* reg, int* reg_size, image_double m
 
         /* remove points from the region and update 'used' map */
         for (i = 0; i < *reg_size; i++)
-            if (dist(xc, yc, (double)reg[i].x, (double)reg[i].y) > rad) {
+            if (dist(xc, yc, (NDouble)reg[i].x, (NDouble)reg[i].y) > rad) {
                 /* point not kept, mark it as NOTUSED */
                 used->data[reg[i].x + reg[i].y * used->xsize] = NOTUSED;
                 /* remove point from the region */
@@ -1394,7 +1401,7 @@ static int reduce_region_radius(struct point* reg, int* reg_size, image_double m
         region2rect(reg, *reg_size, modgrad, reg_angle, prec, p, rec);
 
         /* re-compute region points density */
-        density = (double)*reg_size / (dist(rec->x1, rec->y1, rec->x2, rec->y2) * rec->width);
+        density = (NDouble)*reg_size / (dist(rec->x1, rec->y1, rec->x2, rec->y2) * rec->width);
     }
 
     /* if this point is reached, the density criterion is satisfied */
@@ -1421,10 +1428,10 @@ point, but using the estimated angle tolerance. If this fails to
 produce a rectangle with the right density of region points,
 'reduce_region_radius' is called to try to satisfy this condition.
 --------------------------------------------------------------------------------------------------*/
-static int refine(struct point* reg, int* reg_size, image_double modgrad, double reg_angle, double prec, double p, struct rect* rec, image_char used, image_double angles, double density_th)
+static NInt refine(struct point* reg, NInt* reg_size, image_double modgrad, NDouble reg_angle, NDouble prec, NDouble p, struct rect* rec, image_char used, image_double angles, NDouble density_th)
 {
-    double angle, ang_d, mean_angle, tau, density, xc, yc, ang_c, sum, s_sum;
-    int    i, n;
+    NDouble angle, ang_d, mean_angle, tau, density, xc, yc, ang_c, sum, s_sum;
+    NInt    i, n;
 
     /* check parameters */
     if (reg == NULL)
@@ -1441,7 +1448,7 @@ static int refine(struct point* reg, int* reg_size, image_double modgrad, double
         error("refine: invalid image 'angles'.");
 
     /* compute region points density */
-    density = (double)*reg_size / (dist(rec->x1, rec->y1, rec->x2, rec->y2) * rec->width);
+    density = (NDouble)*reg_size / (dist(rec->x1, rec->y1, rec->x2, rec->y2) * rec->width);
 
     /* if the density criterion is satisfied there is nothing to do */
     if (density >= density_th)
@@ -1450,14 +1457,14 @@ static int refine(struct point* reg, int* reg_size, image_double modgrad, double
     /*------ First try: reduce angle tolerance ------*/
 
     /* compute the new mean angle and tolerance */
-    xc    = (double)reg[0].x;
-    yc    = (double)reg[0].y;
+    xc    = (NDouble)reg[0].x;
+    yc    = (NDouble)reg[0].y;
     ang_c = angles->data[reg[0].x + reg[0].y * angles->xsize];
     sum = s_sum = 0.0;
     n           = 0;
     for (i = 0; i < *reg_size; i++) {
         used->data[reg[i].x + reg[i].y * used->xsize] = NOTUSED;
-        if (dist(xc, yc, (double)reg[i].x, (double)reg[i].y) < rec->width) {
+        if (dist(xc, yc, (NDouble)reg[i].x, (NDouble)reg[i].y) < rec->width) {
             angle = angles->data[reg[i].x + reg[i].y * angles->xsize];
             ang_d = angle_diff_signed(angle, ang_c);
             sum += ang_d;
@@ -1465,8 +1472,8 @@ static int refine(struct point* reg, int* reg_size, image_double modgrad, double
             ++n;
         }
     }
-    mean_angle = sum / (double)n;
-    tau        = 2.0 * sqrt((s_sum - 2.0 * mean_angle * sum) / (double)n + mean_angle * mean_angle); /* 2 * standard deviation */
+    mean_angle = sum / (NDouble)n;
+    tau        = 2.0 * sqrt((s_sum - 2.0 * mean_angle * sum) / (NDouble)n + mean_angle * mean_angle); /* 2 * standard deviation */
 
     /* find a new region from the same starting point and new angle tolerance */
     region_grow(reg[0].x, reg[0].y, angles, reg, reg_size, &reg_angle, used, tau);
@@ -1479,7 +1486,7 @@ static int refine(struct point* reg, int* reg_size, image_double modgrad, double
     region2rect(reg, *reg_size, modgrad, reg_angle, prec, p, rec);
 
     /* re-compute region points density */
-    density = (double)*reg_size / (dist(rec->x1, rec->y1, rec->x2, rec->y2) * rec->width);
+    density = (NDouble)*reg_size / (dist(rec->x1, rec->y1, rec->x2, rec->y2) * rec->width);
 
     /*------ Second try: reduce region radius ------*/
     if (density < density_th)
@@ -1501,23 +1508,23 @@ static int refine(struct point* reg, int* reg_size, image_double modgrad, double
 * @Returns:
 * @Others:
 --------------------------------------------------------------------------------------------------*/
-double* LineSegmentDetection(int* n_out, double* img, int X, int Y, double scale, double sigma_scale, double quant, double ang_th, double log_eps, double density_th, int n_bins, int** reg_img,
-                             int* reg_x, int* reg_y)
+NDouble* LineSegmentDetection(NInt* n_out, NDouble* img, NInt X, NInt Y, NDouble scale, NDouble sigma_scale, NDouble quant, NDouble ang_th, NDouble log_eps, NDouble density_th, NInt n_bins,
+                              NInt** reg_img, NInt* reg_x, NInt* reg_y)
 {
     image_double     image;
     ntuple_list      out = new_ntuple_list(7);
-    double*          return_value;
+    NDouble*         return_value;
     image_double     scaled_image, angles, modgrad;
     image_char       used;
     image_int        region = NULL;
     struct coorlist* list_p;
-    void*            mem_p;
+    NVoid*           mem_p;
     struct rect      rec;
     struct point*    reg;
-    int              reg_size, min_reg_size, i;
-    unsigned int     xsize, ysize;
-    double           rho, reg_angle, prec, p, log_nfa, logNT;
-    int              ls_count = 0;   // 线段个数
+    NInt             reg_size, min_reg_size, i;
+    NUInt            xsize, ysize;
+    NDouble          rho, reg_angle, prec, p, log_nfa, logNT;
+    NInt             ls_count = 0;   // 线段个数
 
     if (img == NULL || X <= 0 || Y <= 0)
         error("invalid image input.");   // 检查参数
@@ -1535,17 +1542,17 @@ double* LineSegmentDetection(int* n_out, double* img, int X, int Y, double scale
         error("'n_bins' value must be positive.");
 
 
-    prec  = M_PI * ang_th / 180.0;                                         // 角度阈值
-    p     = ang_th / 180.0;                                                // contrario model中角度符合基线角度阈值的概率
-    rho   = quant / sin(prec);                                             // 梯度阈值
-    image = new_image_double_ptr((unsigned int)X, (unsigned int)Y, img);   // 创造图像
+    prec  = M_PI * ang_th / 180.0;                           // 角度阈值
+    p     = ang_th / 180.0;                                  // contrario model中角度符合基线角度阈值的概率
+    rho   = quant / sin(prec);                               // 梯度阈值
+    image = new_image_double_ptr((NUInt)X, (NUInt)Y, img);   // 创造图像
     if (scale != 1.0) {
-        scaled_image = gaussian_sampler(image, scale, sigma_scale);                                    // 对图像进行尺度变换
-        angles       = ll_angle(scaled_image, rho, &list_p, &mem_p, &modgrad, (unsigned int)n_bins);   // 计算每个点的方向
+        scaled_image = gaussian_sampler(image, scale, sigma_scale);                             // 对图像进行尺度变换
+        angles       = ll_angle(scaled_image, rho, &list_p, &mem_p, &modgrad, (NUInt)n_bins);   // 计算每个点的方向
         free_image_double(scaled_image);
     }
     else
-        angles = ll_angle(image, rho, &list_p, &mem_p, &modgrad, (unsigned int)n_bins);   // 计算每个点的方向
+        angles = ll_angle(image, rho, &list_p, &mem_p, &modgrad, (NUInt)n_bins);   // 计算每个点的方向
     xsize = angles->xsize;
     ysize = angles->ysize;
 
@@ -1562,9 +1569,9 @@ double* LineSegmentDetection(int* n_out, double* img, int X, int Y, double scale
     whose logarithm value is
     log10(11) + 5/2 * (log10(X) + log10(Y)).
     */
-    logNT        = 5.0 * (log10((double)xsize) + log10((double)ysize)) / 2.0 + log10(11.0);
-    min_reg_size = (int)(-logNT / log10(p)); /* minimal number of points in region
-                                             that can give a meaningful event */
+    logNT        = 5.0 * (log10((NDouble)xsize) + log10((NDouble)ysize)) / 2.0 + log10(11.0);
+    min_reg_size = (NInt)(-logNT / log10(p)); /* minimal number of points in region
+                                            that can give a meaningful event */
 
 
     /* initialize some structures */
@@ -1579,7 +1586,7 @@ double* LineSegmentDetection(int* n_out, double* img, int X, int Y, double scale
     /* search for line segments */
     for (; list_p != NULL; list_p = list_p->next)
         if (used->data[list_p->x + list_p->y * used->xsize] == NOTUSED && angles->data[list_p->x + list_p->y * angles->xsize] != NOTDEF)
-        /* there is no risk of double comparison problems here
+        /* there is no risk of NDouble comparison problems here
         because we are only interested in the exact NOTDEF value */
         {
             /* find the region of connected point and ~equal angle 找出位置相邻接且方向相近的点构成的区域*/
@@ -1642,36 +1649,36 @@ double* LineSegmentDetection(int* n_out, double* img, int X, int Y, double scale
 
 
     /* free memory */
-    free((void*)image); /* only the double_image structure should be freed,
+    free((NVoid*)image); /* only the double_image structure should be freed,
                         the data pointer was provided to this functions
                         and should not be destroyed.                 */
     free_image_double(angles);
     free_image_double(modgrad);
     free_image_char(used);
-    free((void*)reg);
-    free((void*)mem_p);
+    free((NVoid*)reg);
+    free((NVoid*)mem_p);
 
     /* return the result */
     if (reg_img != NULL && reg_x != NULL && reg_y != NULL) {
         if (region == NULL)
             error("'region' should be a valid image.");
         *reg_img = region->data;
-        if (region->xsize > (unsigned int)INT_MAX || region->xsize > (unsigned int)INT_MAX)
-            error("region image to big to fit in INT sizes.");
-        *reg_x = (int)(region->xsize);
-        *reg_y = (int)(region->ysize);
+        if (region->xsize > (NUInt)INT_MAX || region->xsize > (NUInt)INT_MAX)
+            error("region image to big to fit in NInt  sizes.");
+        *reg_x = (NInt)(region->xsize);
+        *reg_y = (NInt)(region->ysize);
 
         /* free the 'region' structure.
         we cannot use the function 'free_image_int' because we need to keep
         the memory with the image data to be returned by this function. */
-        free((void*)region);
+        free((NVoid*)region);
     }
-    if (out->size > (unsigned int)INT_MAX)
-        error("too many detections to fit in an INT.");
-    *n_out = (int)(out->size);
+    if (out->size > (NUInt)INT_MAX)
+        error("too many detections to fit in an NInt .");
+    *n_out = (NInt)(out->size);
 
     return_value = out->values;
-    free((void*)out); /* only the 'ntuple_list' structure must be freed,
+    free((NVoid*)out); /* only the 'ntuple_list' structure must be freed,
                       but the 'values' pointer must be keep to return
                       as a result. */
 
@@ -1689,14 +1696,14 @@ double* LineSegmentDetection(int* n_out, double* img, int X, int Y, double scale
 * @Returns:
 * @Others:
 --------------------------------------------------------------------------------------------------*/
-double* VLsd::lsd_scale_region(int* n_out, double* img, int X, int Y, double scale, int** reg_img, int* reg_x, int* reg_y)
+NDouble* VLsd::lsd_scale_region(NInt* n_out, NDouble* img, NInt X, NInt Y, NDouble scale, NInt** reg_img, NInt* reg_x, NInt* reg_y)
 {
-    double sigma_scale = 0.6;    // 高斯核的计算公式  sigma = sigma_scale/scale.
-    double quant       = 2.0;    // 与梯度范数上的量化误差有关。
-    double ang_th      = 22.5;   // 梯度角公差，用角度表示
-    double log_eps     = 0.0;    // 检测阈值 -log10(NFA) > log_eps
-    double density_th  = 0.7;    // 矩形中区域点的最小密度
-    int    n_bins      = 1024;   // 梯度模伪排序中的bins的个数
+    NDouble sigma_scale = 0.6;    // 高斯核的计算公式  sigma = sigma_scale/scale.
+    NDouble quant       = 2.0;    // 与梯度范数上的量化误差有关。
+    NDouble ang_th      = 22.5;   // 梯度角公差，用角度表示
+    NDouble log_eps     = 0.0;    // 检测阈值 -log10(NFA) > log_eps
+    NDouble density_th  = 0.7;    // 矩形中区域点的最小密度
+    NInt    n_bins      = 1024;   // 梯度模伪排序中的bins的个数
     return LineSegmentDetection(n_out, img, X, Y, scale, sigma_scale, quant, ang_th, log_eps, density_th, n_bins, reg_img, reg_x, reg_y);
 }
 
@@ -1711,7 +1718,7 @@ double* VLsd::lsd_scale_region(int* n_out, double* img, int X, int Y, double sca
 * @Returns:
 * @Others:
 --------------------------------------------------------------------------------------------------*/
-double* VLsd::lsd_scale(int* n_out, double* img, int X, int Y, double scale)
+NDouble* VLsd::lsd_scale(NInt* n_out, NDouble* img, NInt X, NInt Y, NDouble scale)
 {
     return lsd_scale_region(n_out, img, X, Y, scale, NULL, NULL, NULL);
 }
@@ -1727,9 +1734,9 @@ double* VLsd::lsd_scale(int* n_out, double* img, int X, int Y, double scale)
 * @Returns:
 * @Others:
 --------------------------------------------------------------------------------------------------*/
-double* VLsd::lsd(int* n_out, double* img, int X, int Y)
+NDouble* VLsd::lsd(NInt* n_out, NDouble* img, NInt X, NInt Y)
 {
-    double scale = 0.8;   // 高斯核缩放因子
+    NDouble scale = 0.8;   // 高斯核缩放因子
     return lsd_scale(n_out, img, X, Y, scale);
 }
 

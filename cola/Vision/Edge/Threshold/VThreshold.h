@@ -5,10 +5,14 @@
  * @Date         : 2024-07-15 17:27:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-20 12:16:07
+ * @LastEditTime : 2024-08-22 10:39:16
  **/
 #ifndef NAONAO_VTHRESHOLD_H
 #define NAONAO_VTHRESHOLD_H
+
+/*
+https://harry.blog.csdn.net/article/details/54019994
+*/
 
 #include "../../VisionObject.h"
 
@@ -17,25 +21,27 @@ NAO_VISION_NAMESPACE_BEGIN
 
 enum class THRESHOLD_TYPE
 {
-    DEFAULT       = 0,
-    HUANG         = 1,
-    HUANG2        = 2,
-    INTERMODES    = 3,
-    ISO_DATA      = 4,
-    LI            = 5,
-    MAX_ENTROPY   = 6,
-    MEAN          = 7,
-    MIN_ERROR     = 8,
-    MINIMUM       = 9,
-    MOMENTS       = 10,
-    OTSU          = 11,
-    PERCENTILE    = 12,
-    RENYI_ENTROPY = 13,
-    SHANBHAG      = 14,
-    TRIANGLE      = 15,
-    YEN           = 16,
-    JUBU          = 17,
-    SAUVOLA       = 18
+    DEFAULT               = 0,
+    HUANG                 = 1,
+    HUANG2                = 2,
+    INTERMODES            = 3,
+    ISO_DATA              = 4,
+    LI                    = 5,
+    MAX_ENTROPY           = 6,
+    MEAN                  = 7,
+    MIN_ERROR             = 8,
+    MINIMUM               = 9,
+    MOMENTS               = 10,
+    OTSU                  = 11,
+    PERCENTILE            = 12,
+    RENYI_ENTROPY         = 13,
+    SHANBHAG              = 14,
+    TRIANGLE              = 15,
+    YEN                   = 16,
+    JUBU                  = 17,
+    SAUVOLA               = 18,
+    OTSU_AUTO             = 19,
+    UNEVENLIGHTCOMPENSATE = 20,
 };
 
 enum class METHOD
@@ -54,7 +60,7 @@ public:
      * @param src
      * @param dst
      */
-    static void get_histogram(const cv::Mat& src, int* dst);
+    static NVoid get_histogram(const cv::Mat& src, int* dst);
 
     /**
      * @brief
@@ -63,7 +69,7 @@ public:
      * @details 该过程通过采用初始阈值将图像分为对象和背景，然后计算等于或低于阈值的像素和高于阈值的像素的平均值。
      * 计算这两个值的平均值，增加阈值并重复该过程，直到阈值大于复合平均值。与iso_data类似
      */
-    int threshold_default(std::vector<int> data);
+    NInt threshold_default(std::vector<int> data);
 
     /**
      * @brief
@@ -71,7 +77,7 @@ public:
      * @return
      * @details 实现Huang的模糊阈值方法,使用香农熵函数（也可以使用Yager熵函数）
      */
-    int huang(std::vector<int> data);
+    NInt huang(std::vector<int> data);
 
     /**
      * @brief
@@ -79,7 +85,7 @@ public:
      * @return
      * @details 实现Huang的模糊阈值方法,使用香农熵函数（也可以使用Yager熵函数）
      */
-    int huang2(std::vector<int> data);
+    NInt huang2(std::vector<int> data);
 
     /**
      * @brief  中间模
@@ -88,7 +94,7 @@ public:
      * @details 采用双峰直方图。直方图需要平滑（使用迭代地运行大小为3的平均值），直到只有两个局部极大值。j和k阈值t为（j+k）/2。
      * 直方图具有极不相等的峰值或宽而平坦不适合这种方法。
      */
-    int intermodes(std::vector<int> data);
+    NInt intermodes(std::vector<int> data);
 
     /**
      * @brief
@@ -97,7 +103,7 @@ public:
      * @details 该过程通过采用初始阈值将图像分为对象和背景，然后计算等于或低于阈值的像素和高于阈值的像素的平均值。
      * 计算这两个值的平均值，增加阈值并重复该过程，直到阈值大于复合平均值。与threshold_default类似
      */
-    int iso_data(std::vector<int> data);
+    NInt iso_data(std::vector<int> data);
 
     /**
      * @brief
@@ -105,7 +111,7 @@ public:
      * @return
      * @details 实现了李的最小交叉熵阈值方法,该实现基于算法的迭代版本
      */
-    int li(std::vector<int> data);
+    NInt li(std::vector<int> data);
 
     /**
      * @brief
@@ -113,7 +119,7 @@ public:
      * @return
      * @details 一种利用直方图熵进行灰度图像阈值化的新方法,实现 Kapur-Sahoo-Wong（最大熵）阈值方法。
      */
-    int max_entropy(std::vector<int> data);
+    NInt max_entropy(std::vector<int> data);
 
     /**
      * @brief
@@ -121,7 +127,7 @@ public:
      * @return
      * @details 阈值是灰度数据的平均值
      */
-    int mean(std::vector<int> data);
+    NInt mean(std::vector<int> data);
 
     /**
      * @brief
@@ -130,7 +136,7 @@ public:
      * @details Kittler 和 Illingworth 的最小误差阈值的迭代实现。此实现似乎比原始实现更频繁地收敛。然而，有时该算法不会收敛到一个解决方案。
        在这种情况下，将向日志窗口报告警告，结果默认为使用均值方法计算的阈值的初始估计值。
     */
-    int min_errorI(std::vector<int> data);
+    NInt min_errorI(std::vector<int> data);
 
     /**
      * @brief
@@ -140,7 +146,7 @@ public:
      * 直方图使用大小为 3 的运行平均值迭代平滑，直到只有两个局部最大值。阈值 t 使得 yt-1 > yt <= yt+1。
      * 直方图具有极不相等的峰或宽而平坦的谷的图像不适合这种方法。
      */
-    int minimum(std::vector<int> data);
+    NInt minimum(std::vector<int> data);
 
     /**
      * @brief
@@ -148,21 +154,21 @@ public:
      * @return
      * @details  Tsai的方法试图在阈值化结果中保留原始图像的矩。“矩保持阈值：一种新方法”。
      */
-    int moments(std::vector<int> data);
+    NInt moments(std::vector<int> data);
 
     /**
      * @brief 大津阈值法
      * @param data
      * @return
      */
-    int otsu(std::vector<int> data);
+    NInt otsu(std::vector<int> data);
     /**
      * @brief 百分比阈值法，默认50%
      * @param data
      * @param ptile
      * @return
      */
-    int percentile(std::vector<int> data, double ptile = 0.5);
+    NInt percentile(std::vector<int> data, NDouble ptile = 0.5);
 
     /**
      * @brief
@@ -170,7 +176,7 @@ public:
      * @return
      * @details 一种利用直方图熵进行灰度图像阈值化的新方法,类似于MaxEntropy方法，但使用 Renyi 的熵。
      */
-    int renyi_entropy(std::vector<int> data);
+    NInt renyi_entropy(std::vector<int> data);
 
     /**
      * @brief
@@ -178,7 +184,7 @@ public:
      * @return
      * @details “利用信息度量作为图像阈值化“图形模型和图像处理”
      */
-    int shanbhag(std::vector<int> data);
+    NInt shanbhag(std::vector<int> data);
 
     /**
      * @brief
@@ -189,7 +195,7 @@ public:
      之间产生两个可能的阈值区域）时出现问题。在这里，该算法被扩展为查找数据在最大峰值的哪一侧走得最远，并在该最大范围
      内搜索阈值。
     */
-    int triangle(std::vector<int> data);
+    NInt triangle(std::vector<int> data);
 
     /**
      * @brief
@@ -197,7 +203,7 @@ public:
      * @return
      * @details 实现日元阈值方法
      */
-    int yen(std::vector<int> data);
+    NInt yen(std::vector<int> data);
 
     /**
      * @brief
@@ -205,7 +211,7 @@ public:
      * @return
      * @details 局部自适应阈值
      */
-    int jubu(cv::Mat& src, METHOD type = METHOD::GAUSS, int radius = 3, float ratio = 0.15);
+    cv::Mat jubu(const cv::Mat& src, METHOD type = METHOD::GAUSS, NInt radius = 3, NFloat ratio = 0.15);
 
 
     /**
@@ -218,7 +224,7 @@ public:
      * @note
      * https://blog.csdn.net/wfh2015/article/details/80418336?spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-3-80418336-blog-86595319.pc_relevant_multi_platform_whitelistv1_exp2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-3-80418336-blog-86595319.pc_relevant_multi_platform_whitelistv1_exp2&utm_relevant_index=6
      */
-    int sauvola(const cv::Mat& src, cv::Mat& dst, const double& k = 0.1, const int& wnd_size = 7);
+    NInt sauvola(const cv::Mat& src, cv::Mat& dst, const double& k = 0.1, const int& wnd_size = 7);
 
     /**
      * @brief 执行阈值化
@@ -229,24 +235,44 @@ public:
      * @param reset    是否进行阈值化
      * @return         返回阈值
      */
-    int exec_threshold(cv::Mat& src, THRESHOLD_TYPE type, int doIblack = -1, int doIwhite = -1, bool reset = false);
+    NInt exec_threshold(cv::Mat& src, THRESHOLD_TYPE type, NInt doIblack = -1, NInt doIwhite = -1, bool reset = false);
 
     /**
      * @brief 选择阈值化类型
      * @param src
      * @return
      */
-    int select(cv::Mat& src, int type = -1);
+    NInt select(cv::Mat& src, NInt type = -1);
 
     template<typename T>
-    static double partialSum(std::vector<T> y, int j)
+    static NDouble partialSum(std::vector<T> y, NInt j)
     {
-        double x = 0;
-        for (int i = 0; i <= j; i++) {
+        NDouble x = 0;
+        for (NInt i = 0; i <= j; i++) {
             x += y[i];
         }
         return x;
     }
+
+    /**
+     * @brief: 自适应otsu，光照不均匀的问题
+     * @param src
+     * @return
+     * @note :
+     **/
+    cv::Mat otsu_auto(const cv::Mat& src);
+
+    int sample_otsu(cv::Mat img, int min_value = 0, int max_value = 255);
+
+    /**
+     * @brief:
+     * @param image
+     * @param blockSize
+     * @return
+     * @note : https://harry.blog.csdn.net/article/details/54019994
+     **/
+    cv::Mat unevenLightCompensate(cv::Mat image, int blockSize = 32);
+    cv::Mat unevenLightCompensate_2(cv::Mat image, int blockSize = 32);
 };
 
 NAO_VISION_NAMESPACE_END

@@ -25,12 +25,12 @@ struct GGCMFeatures;
 class VGemm : public VisionObject
 {
 public:
-    typedef std::vector<std::vector<int>> VecGGCM;
+    typedef std::vector<std::vector<NInt>> VecGGCM;
     VGemm();
     ~VGemm() override;
 
 private:
-    int grayLevel_;   // 将灰度共生矩阵划分为 grayLevel 个等级
+    NInt grayLevel_;   // 将灰度共生矩阵划分为 grayLevel 个等级
 
 public:
     /**
@@ -38,7 +38,7 @@ public:
      * @param vecGGCM
      * @param size
      */
-    void initGGCM(VecGGCM& vecGGCM, int size = 16);
+    NVoid initGGCM(VecGGCM& vecGGCM, NInt size = 16);
 
     /**
      * @brief 计算灰度-梯度共生矩阵
@@ -47,14 +47,14 @@ public:
      * @param tempVec_Gray
      * @param tempVec_Gradient
      */
-    void calGGCM(cv::Mat& inputImg, VecGGCM& vecGGCM /*, VecGGCM& tempVec_Gray, VecGGCM& tempVec_Gradient*/);
+    NVoid calGGCM(cv::Mat& inputImg, VecGGCM& vecGGCM /*, VecGGCM& tempVec_Gray, VecGGCM& tempVec_Gradient*/);
 
     /**
      * @brief 计算特征值
      * @param vecGGCM
      * @param features
      */
-    void getGGCMFeatures(VecGGCM& vecGGCM, GGCMFeatures& features);
+    NVoid getGGCMFeatures(VecGGCM& vecGGCM, GGCMFeatures& features);
 };
 
 NAO_VISION_NAMESPACE_END

@@ -1,11 +1,11 @@
 /**
- * @FilePath     : /cola/src/Dag/DagElement/DGroup/DRegion/DRegion.h
+ * @FilePath     : /cola/cola/Dag/DagElement/DGroup/DRegion/DRegion.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 15:26:11
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:49:56
+ * @LastEditTime : 2024-09-05 14:39:12
  **/
 #ifndef NAO_DREGION_H
 #define NAO_DREGION_H
@@ -26,6 +26,12 @@ public:
      */
     DRegion* setDEngineType(DEngineType type);
 
+    /**
+     * 修剪冗余的连边信息
+     * @return
+     */
+    NSize trim();
+
 protected:
     explicit DRegion();
     ~DRegion() override;
@@ -45,6 +51,7 @@ private:
 
     NBool isSeparate(DElementCPtr a, DElementCPtr b) const final;
 
+
 private:
     DElementManagerPtr manager_ = nullptr;   // region 内部通过 manager来管理其中的 element 信息
 
@@ -52,6 +59,7 @@ private:
 
     friend class DPipeline;
     friend class UAllocator;
+    friend class DTrimOptimizer;
 };
 
 using DRegionPtr = DRegion*;

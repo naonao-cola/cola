@@ -61,6 +61,8 @@ CheckOptions:
     value:           'true'  # 检查并标识非 const 参数，以提高代码的可读性和安全性。
   - key:             MinimumVariableNameLength
     value:           '0'
+  - key:             readability-identifier-naming.ShortVariableName.MinLength
+    value:           '1'
 
   # CERT 安全编码标准（CERT）
   - key:             cert-dcl21-cpp

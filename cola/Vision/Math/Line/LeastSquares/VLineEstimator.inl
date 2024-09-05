@@ -27,7 +27,7 @@ Eigen::VectorXd VLineParamEstimator<T>::LeastSquareMethod(std::vector<T> X, std:
     MatrixX mtxVandermonde(X.size(), orders + 1);   // Vandermonde matrix of X-axis coordinate vector of sample data
     MatrixX colVandermonde = sampleX;               // Vandermonde column
 
-    for (size_t i = 0; i < orders + 1; ++i) {   // construct Vandermonde matrix column by column
+    for (NSize i = 0; i < orders + 1; ++i) {   // construct Vandermonde matrix column by column
         if (0 == i) {
             mtxVandermonde.col(0) = VectorX::Constant(X.size(), 1, 1);   // 最后一列赋值为1
             continue;
@@ -51,27 +51,27 @@ void VLineParamEstimator<T>::calcError(std::vector<T> X, std::vector<T> Y)
         exit(EXIT_FAILURE);
     }
     mean_ = mean<T>(Y);
-    double yi;   // 用拟合后的曲线计算得到的yi
-    for (int i = 0; i < X.size(); i++) {
+    NDouble yi;   // 用拟合后的曲线计算得到的yi
+    for (NInt i = 0; i < X.size(); i++) {
         yi = 0;
-        for (int j = 0; j < order_; j++)
+        for (NInt j = 0; j < order_; j++)
             yi += pow(X[i], j) * mat_[order_ - j];   // 用拟合后的曲线计算得到的yi
         ssr_ += ((yi - mean_) * (yi - mean_));       // 计算回归平方和
         sse_ += ((yi - Y[i]) * (yi - Y[i]));         // 残差平方和
     }
-    rmse_ = sqrt(sse_ / (double(X.size())));   // 剩余平方和
+    rmse_ = sqrt(sse_ / (NDouble(X.size())));   // 剩余平方和
 };
 
 template<typename T>
 bool VLineParamEstimator<T>::agree(T x, T y)
 {
-    double dis = 0;
-    double yi  = 0;
-    for (int i = x - 200; i < x + 200; i++) {
-        for (int j = 0; j < order_; j++)
+    NDouble dis = 0;
+    NDouble yi  = 0;
+    for (NInt i = x - 200; i < x + 200; i++) {
+        for (NInt j = 0; j < order_; j++)
             yi = pow(i, j) * mat_[order_ - j];
-        double tmp = (x - i) * (x - i) + (y - yi) * (y - yi);
-        tmp        = pow(tmp, 0.5);
+        NDouble tmp = (x - i) * (x - i) + (y - yi) * (y - yi);
+        tmp         = pow(tmp, 0.5);
         if (tmp > dis) {
             dis = tmp;
         }
@@ -80,12 +80,12 @@ bool VLineParamEstimator<T>::agree(T x, T y)
 };
 
 template<typename T>
-double VLineParamEstimator<T>::mean(std::vector<T> Y)
+NDouble VLineParamEstimator<T>::mean(std::vector<T> Y)
 {
     if (Y.size() < 2)
         exit(EXIT_FAILURE);
-    double sum = 0.0;
-    for (size_t i = 0; i < Y.size(); i++)
+    NDouble sum = 0.0;
+    for (NSize i = 0; i < Y.size(); i++)
         sum += Y[i];
     sum = (sum / (Y.size() * 1.0));
     return sum;

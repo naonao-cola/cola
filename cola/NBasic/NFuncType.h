@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-10 17:09:47
+ * @LastEditTime : 2024-09-05 10:17:46
  * @Copyright    :
  **/
 #ifndef NAO_FUNCTYPE_H
@@ -50,7 +50,7 @@ enum class NFunctionType
 /** 生成一个包含异常位置的 NStatus
  * 这里这样实现，是为了符合 NStatus 类似写法
  * */
-#define NErrStatus(info) NStatus(info, NAO_GET_LOCATE)
+#define NErrStatus(info) NStatus(info)
 
 /** 返回异常信息和状态 */
 #define NAO_RETURN_ERROR_STATUS(info) return NErrStatus(info);

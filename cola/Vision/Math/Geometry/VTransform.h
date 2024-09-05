@@ -82,7 +82,7 @@ public:
      * @param dst  目标图
      * @param flip_type 翻转类型，0，表示上下翻转。1，表示左右翻转。-1表示对角线翻转。
      */
-    cv::Mat affine_img_flip(const cv::Mat src, int flip_type);
+    cv::Mat affine_img_flip(const cv::Mat src, NInt flip_type);
     /**
      * @brief  图像旋转
      * @param src   原图
@@ -92,7 +92,7 @@ public:
      * @param scale  缩放比例
      */
     template<typename T>
-    cv::Mat affine_img_rotate(const cv::Mat src, double angle, T center = T(0, 0), double scale = 1.0);
+    cv::Mat affine_img_rotate(const cv::Mat src, NDouble angle, T center = T(0, 0), NDouble scale = 1.0);
 
     /**
      * @brief 平移变换
@@ -104,11 +104,11 @@ public:
      * @other 另一种写法，平移矩阵为,2行3列矩阵
      * 1,0，xoffset
      * 0,1，yoffset
-     * 所以矩阵可以写为 cv::Mat m = (cv::Mat_<double>(2,3)<< 1,0,xoffset,0,1,yoffset);
+     * 所以矩阵可以写为 cv::Mat m = (cv::Mat_<NDouble>(2,3)<< 1,0,xoffset,0,1,yoffset);
      * 三点透视变换
      */
     template<typename T>
-    cv::Mat affine_img_move(const cv::Mat src, double xoffset, double yoffset);
+    cv::Mat affine_img_move(const cv::Mat src, NDouble xoffset, NDouble yoffset);
 
     /**
      * @brief 最原始的仿射变换函数,用此函数进行错切变换
@@ -125,7 +125,7 @@ public:
     /*
     向量的旋转平移变化
     */
-    cv::Mat     vector_angle_to_M(double x1, double y1, double d1, double x2, double y2, double d2);
+    cv::Mat     vector_angle_to_M(NDouble x1, NDouble y1, NDouble d1, NDouble x2, NDouble y2, NDouble d2);
     cv::Point2f TransPoint(const cv::Mat& M, const cv::Point2f& point);
 
 
@@ -143,7 +143,7 @@ public:
     **/
     cv::Mat get_affine_3d_matrix(const std::vector<cv::Point3f>& src_point_vec, const std::vector<cv::Point3f>& dst_point_vec);
 
-    TRigidTrans3D get_affine_3d_matrix(const std::vector<cv::Point3f>& src_point_vec, const std::vector<cv::Point3f>& dst_point_vec, int pointsNum);
+    TRigidTrans3D get_affine_3d_matrix(const std::vector<cv::Point3f>& src_point_vec, const std::vector<cv::Point3f>& dst_point_vec, NInt pointsNum);
 };
 
 NAO_VISION_NAMESPACE_END

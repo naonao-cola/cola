@@ -25,7 +25,7 @@ public:
      * @return
      * @note :
      **/
-    static double distance_2d_p2p(const cv::Point& a, const cv::Point& b);
+    static NDouble distance_2d_p2p(const cv::Point& a, const cv::Point& b);
 
     /**
      * @brief: 点到直线的距离
@@ -35,7 +35,7 @@ public:
      * @return
      * @note :
      **/
-    static double distance_2d_p2l(cv::Point pointP, cv::Point pointA, cv::Point pointB);
+    static NDouble distance_2d_p2l(cv::Point pointP, cv::Point pointA, cv::Point pointB);
 
     /**
      * @brief: 已知一条直线，与一点的y，求x
@@ -45,7 +45,7 @@ public:
      * @return
      * @note :
      **/
-    static double coordinate_2d_y2x(cv::Point line_p1, cv::Point line_p2, double y);
+    static NDouble coordinate_2d_y2x(cv::Point line_p1, cv::Point line_p2, NDouble y);
 
     /**
      * @brief: 已知一条直线，与一点的x，求y
@@ -55,7 +55,7 @@ public:
      * @return
      * @note :
      **/
-    static double coordinate_2d_x2y(cv::Point line_p1, cv::Point line_p2, double x);
+    static NDouble coordinate_2d_x2y(cv::Point line_p1, cv::Point line_p2, NDouble x);
 
     /**
      * @brief:  获取直线的 斜率与截距
@@ -93,7 +93,7 @@ public:
      * @return
      * @note :
      **/
-    static double area_triangle(cv::Point2d p1, cv::Point2d p2, cv::Point2d p3);
+    static NDouble area_triangle(cv::Point2d p1, cv::Point2d p2, cv::Point2d p3);
     /**
      * @brief:  将线段转化为极坐标
      * @param p
@@ -111,7 +111,7 @@ public:
      * @return
      * @note :
      **/
-    static double angle_2d_l2l(cv::Point p1, cv::Point p2, cv::Point p3, cv::Point p4);
+    static NDouble angle_2d_l2l(cv::Point p1, cv::Point p2, cv::Point p3, cv::Point p4);
 
     /**
      * @brief 判断p3是否在 p1,p2所组成的线上。
@@ -120,7 +120,7 @@ public:
      * @param p3
      * @return 在线上返回1，在线外返回0
      */
-    int on_line(const cv::Point p1, const cv::Point p2, const cv::Point p3);
+    NInt on_line(const cv::Point p1, const cv::Point p2, const cv::Point p3);
 
     /**
      * @brief: 判断点是否在多边形内外
@@ -130,7 +130,7 @@ public:
      * @return 返回0 是外部，1 是内部或者在多边形上
      * @note :  https://www.cnblogs.com/anningwang/p/7581545.html
      **/
-    int in_polygon(int pointCoint, std::vector<cv::Point> ptVec, const cv::Point p);
+    NInt in_polygon(NInt pointCoint, std::vector<cv::Point> ptVec, const cv::Point p);
 };
 
 NAO_VISION_NAMESPACE_END

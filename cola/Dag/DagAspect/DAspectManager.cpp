@@ -23,7 +23,7 @@ DAspectManager::~DAspectManager()
 }
 
 
-NStatus DAspectManager::reflect(const DAspectType& type, const NStatus& curStatus)
+NStatus DAspectManager::reflect(const internal::DAspectType& type, const NStatus& curStatus)
 {
     NAO_FUNCTION_BEGIN
 
@@ -33,19 +33,33 @@ NStatus DAspectManager::reflect(const DAspectType& type, const NStatus& curStatu
          * 仅针对Begin对应的内容，进行返回值判断
          * run()方法切面更容易被执行，故放在最前方判断
          */
-        case DAspectType::BEGIN_RUN: status = aspect->beginRun(); break;
-        case DAspectType::FINISH_RUN: aspect->finishRun(curStatus); break;
-        case DAspectType::BEGIN_INIT: status = aspect->beginInit(); break;
-        case DAspectType::FINISH_INIT: aspect->finishInit(curStatus); break;
-        case DAspectType::BEGIN_DESTROY: status = aspect->beginDestroy(); break;
-        case DAspectType::FINISH_DESTROY: aspect->finishDestroy(curStatus); break;
-        case DAspectType::ENTER_CRASHED: aspect->enterCrashed(); break;
-        default: status = NErrStatus("unknown aspect type");
+        case internal::DAspectType::BEGIN_RUN:
+            status = aspect->beginRun();
+            break;
+        case internal::DAspectType::FINISH_RUN:
+            aspect->finishRun(curStatus);
+            break;
+        case internal::DAspectType::BEGIN_INIT:
+            status = aspect->beginInit();
+            break;
+        case internal::DAspectType::FINISH_INIT:
+            aspect->finishInit(curStatus);
+            break;
+        case internal::DAspectType::BEGIN_DESTROY:
+            status = aspect->beginDestroy();
+            break;
+        case internal::DAspectType::FINISH_DESTROY:
+            aspect->finishDestroy(curStatus);
+            break;
+        case internal::DAspectType::ENTER_CRASHED:
+            aspect->enterCrashed();
+            break;
+        default:
+            status = NErrStatus("unknown aspect type");
         }
 
         NAO_FUNCTION_CHECK_STATUS
     }
-
     NAO_FUNCTION_END
 }
 

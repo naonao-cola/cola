@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/_DEngine/DDynamicEngine/DDynamicEngine.cpp
+ * @FilePath     : /cola/cola/Dag/DagElement/_DEngine/DDynamicEngine/DDynamicEngine.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 11:36:19
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 11:45:14
+ * @LastEditTime : 2024-09-05 11:13:59
  **/
 
 #include "DDynamicEngine.h"
@@ -30,25 +30,16 @@ NStatus DDynamicEngine::setup(const DSortedDElementPtrSet& elements)
 NStatus DDynamicEngine::run()
 {
     NAO_FUNCTION_BEGIN
+    cur_status_.reset();
 
-    switch (dag_type_) {
-    case internal::DEngineDagType::COMMON:
-    {
-        beforeRun();
-        asyncRunAndWait();
-        break;
-    }
-    case internal::DEngineDagType::ALL_SERIAL:
-    {
+    if (internal::DEngineDagType::COMMON == dag_type_) {
+        commonRunAll();
+    } else if (internal::DEngineDagType::ALL_SERIAL == dag_type_) {
         serialRunAll();
-        break;
-    }
-    case internal::DEngineDagType::ALL_PARALLEL:
-    {
+    } else if (internal::DEngineDagType::ALL_PARALLEL == dag_type_) {
         parallelRunAll();
-        break;
-    }
-    default: NAO_RETURN_ERROR_STATUS("unknown engine dag type")
+    } else {
+        NAO_RETURN_ERROR_STATUS("unknown engine dag type")
     }
     status = cur_status_;
     NAO_FUNCTION_END
@@ -73,30 +64,20 @@ NStatus DDynamicEngine::afterRunCheck()
 }
 
 
-NVoid DDynamicEngine::asyncRunAndWait()
+NVoid DDynamicEngine::commonRunAll()
 {
     /**
      * 1. 执行没有任何依赖的element
      * 2. 在element执行完成之后，进行裂变，直到所有的element执行完成
      * 3. 等待异步执行结束
      */
+    finished_end_size_ = 0;
     for (const auto& element : front_element_arr_) {
         process(element, element == front_element_arr_.back());
     }
 
     fatWait();
 }
-
-
-NVoid DDynamicEngine::beforeRun()
-{
-    finished_end_size_ = 0;
-    cur_status_.reset();
-    for (DElementPtr element : total_element_arr_) {
-        element->beforeRun();
-    }
-}
-
 
 NVoid DDynamicEngine::mark(const DSortedDElementPtrSet& elements)
 {
@@ -121,7 +102,7 @@ NVoid DDynamicEngine::analysisDagType(const DSortedDElementPtrSet& elements)
 {
     if (total_element_arr_.empty() || (front_element_arr_.size() == 1 && total_element_arr_.size() - 1 == linked_size_)) {
         /**
-         * 如果所有的信息中，只有一个是非linkable。则说明只有开头的那个是的，且只有一个开头
+         * 如果所有的信息中，只有一个是非linkable。则说明只有最后的那个是的，且只有一个开头
          * 故，这里将其认定为一条 lineal 的情况
          * ps: 只有一个或者没有 element的情况，也会被算到 ALL_SERIAL 中去
          */
@@ -143,6 +124,7 @@ NVoid DDynamicEngine::process(DElementPtr element, NBool affinity)
     }
 
     const auto& exec = [this, element] {
+        element->beforeRun();
         const NStatus& curStatus = element->fatProcessor(NFunctionType::RUN);
         if (unlikely(curStatus.isErr())) {
             // 当且仅当整体状正常，且当前状态异常的时候，进入赋值逻辑。确保不重复赋值
@@ -152,12 +134,11 @@ NVoid DDynamicEngine::process(DElementPtr element, NBool affinity)
         afterElementRun(element);
     };
 
-    if (affinity && NAO_DEFAULT_BINDING_INDEX == element->getBindingIndex()) {
+     if (affinity && element->isDefaultBinding()) {
         // 如果 affinity=true，表示用当前的线程，执行这个逻辑。以便增加亲和性
-         exec();
-    }
-    else {
-         thread_pool_->execute(exec, calcIndex(element));
+        exec();
+    } else {
+        thread_pool_->execute(exec, element->binding_index_);
     }
 }
 
@@ -166,7 +147,7 @@ NVoid DDynamicEngine::afterElementRun(DElementPtr element)
 {
     element->done_ = true;
     if (!element->run_before_.empty() && cur_status_.isOK()) {
-        if (1 == element->run_before_.size() && (*element->run_before_.begin())->isLinkable()) {
+        if (internal::DElementShape::LINKABLE == element->shape_) {
             // 针对linkable 的情况，做特殊判定
             process(*(element->run_before_.begin()), true);
         }
@@ -258,7 +239,9 @@ NVoid DDynamicEngine::parallelRunAll()
     std::vector<std::future<NStatus>> futures;
     futures.reserve(total_end_size_);
     for (int i = 0; i < total_end_size_; i++) {
-        futures.emplace_back(thread_pool_->commit([this, i] { return total_element_arr_[i]->fatProcessor(NFunctionType::RUN); }, calcIndex(total_element_arr_[i])));
+        futures.emplace_back(std::move(thread_pool_->commit([this, i] {
+            return total_element_arr_[i]->fatProcessor(NFunctionType::RUN);
+        }, total_element_arr_[i]->binding_index_)));
     }
 
     for (auto& fut : futures) {

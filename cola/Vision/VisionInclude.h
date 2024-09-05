@@ -9,6 +9,7 @@
  **/
 #ifndef NAO_VISIONINCLUDE_H
 #define NAO_VISIONINCLUDE_H
+
 #include "DimReduct/VDimInclude.h"
 #include "Edge/VEdgeInclude.h"
 #include "Enhance/VEnhanceInclude.h"

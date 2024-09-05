@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/DElementDefine.h
+ * @FilePath     : /cola/cola/Dag/DagElement/DElementDefine.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 17:53:50
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:40:32
+ * @LastEditTime : 2024-09-05 10:49:03
 **/
 
 
@@ -53,10 +53,18 @@ using DPipelineState = DElementState;   // pipeline 同element共享状态
 
 enum class DElementTimeoutStrategy
 {
-    AS_ERROR         = 1,   // 当做异常处理（默认）
-    HOLD_BY_PIPELINE = 2,   // pipeline run执行完成之前，等待结束
-    NO_HOLD          = 3,   // 不等待结束。非特殊场景，强烈不推荐使用，不排除个别平台会出现崩溃的情况
+    AS_ERROR = 0,                             // 当做异常处理（默认）
+    HOLD_BY_PIPELINE = 1,                     // pipeline run执行完成之前，等待结束
+    NO_HOLD = 2,                              // 不等待结束。非特殊场景，强烈不推荐使用，不排除个别平台会出现崩溃的情况
 };
+
+NAO_INTERNAL_NAMESPACE_BEGIN
+enum class DElementShape {
+    NORMAL = 0,                               // 普通的元素
+    LINKABLE = 1,                             // 后继是唯一元素的情况（类似 list）
+    ROOT = 2,                                 // 所有后继元素，只有一个前驱的情况（类似tree root）
+};
+NAO_INTERNAL_NAMESPACE_END
 
 NAO_NAMESPACE_END
 

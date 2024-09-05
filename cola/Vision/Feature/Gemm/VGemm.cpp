@@ -33,21 +33,21 @@ struct GGCMFeatures
         , differ_moment(0.0)
     {
     }
-    float small_grads_dominance;   // 小梯度优势
-    float big_grads_dominance;     // 大梯度优势
-    float gray_asymmetry;          // 灰度分布不均匀性
-    float grads_asymmetry;         // 梯度分布不均匀性
-    float energy;                  // 能量
-    float gray_mean;               // 灰度均值
-    float grads_mean;              // 梯度均值
-    float gray_variance;           // 灰度均方差
-    float grads_variance;          // 梯度均方差
-    float corelation;              // 相关性
-    float gray_entropy;            // 灰度熵
-    float grads_entropy;           // 梯度熵
-    float entropy;                 // 混合熵
-    float inertia;                 // 惯性
-    float differ_moment;           // 逆差距
+    NFloat small_grads_dominance;   // 小梯度优势
+    NFloat big_grads_dominance;     // 大梯度优势
+    NFloat gray_asymmetry;          // 灰度分布不均匀性
+    NFloat grads_asymmetry;         // 梯度分布不均匀性
+    NFloat energy;                  // 能量
+    NFloat gray_mean;               // 灰度均值
+    NFloat grads_mean;              // 梯度均值
+    NFloat gray_variance;           // 灰度均方差
+    NFloat grads_variance;          // 梯度均方差
+    NFloat corelation;              // 相关性
+    NFloat gray_entropy;            // 灰度熵
+    NFloat grads_entropy;           // 梯度熵
+    NFloat entropy;                 // 混合熵
+    NFloat inertia;                 // 惯性
+    NFloat differ_moment;           // 逆差距
 };
 
 
@@ -56,31 +56,31 @@ VGemm::VGemm()
 {
 }
 VGemm::~VGemm() = default;
-void VGemm::initGGCM(VecGGCM& vecGGCM, int size)
+NVoid VGemm::initGGCM(VecGGCM& vecGGCM, NInt size)
 {
     assert(size == grayLevel_);
     vecGGCM.resize(size);
-    for (int i = 0; i < size; ++i) {
+    for (NInt i = 0; i < size; ++i) {
         vecGGCM[i].resize(size);
     }
-    for (int i = 0; i < size; ++i) {
-        for (int j = 0; j < size; ++j) {
+    for (NInt i = 0; i < size; ++i) {
+        for (NInt j = 0; j < size; ++j) {
             vecGGCM[i][j] = 0;
         }
     }
 }
 
-void VGemm::calGGCM(cv::Mat& inputImg, VecGGCM& vecGGCM)
+NVoid VGemm::calGGCM(cv::Mat& inputImg, VecGGCM& vecGGCM)
 {
     assert(inputImg.channels() == 1);
     cv::Mat src;
     src        = inputImg.clone();
-    int height = src.rows;
-    int width  = src.cols;
+    NInt height = src.rows;
+    NInt width  = src.cols;
 
     // 寻找最大像素灰度最大值
-    double    min;
-    double    maxGrayLevel;
+    NDouble   min;
+    NDouble   maxGrayLevel;
     cv::Point minloc;
     cv::Point maxloc;
     cv::minMaxLoc(src, &min, &maxGrayLevel, &minloc, &maxloc);
@@ -89,24 +89,24 @@ void VGemm::calGGCM(cv::Mat& inputImg, VecGGCM& vecGGCM)
     // 生成一个和原图一般大小的二维vector,初始化动态数组
     VecGGCM tempVec_Gray;
     tempVec_Gray.resize(height);
-    for (int i = 0; i < height; ++i) {
+    for (NInt i = 0; i < height; ++i) {
         tempVec_Gray[i].resize(width);
     }
 
     //  灰度归一化
     //  若灰度级数大于16，则将图像的灰度级缩小至16级。
     if (maxGrayLevel > grayLevel_) {
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                int tmpVal         = src.at<uchar>(i, j);
+        for (NInt i = 0; i < height; ++i) {
+            for (NInt j = 0; j < width; ++j) {
+                NInt tmpVal         = src.at<uchar>(i, j);
                 tempVec_Gray[i][j] = static_cast<int>(tmpVal * grayLevel_ / maxGrayLevel);
             }
         }
     }
     else {   // 若灰度级数小于16，则生成相应的灰度矩阵
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                int tmpVal         = src.at<uchar>(i, j);
+        for (NInt i = 0; i < height; ++i) {
+            for (NInt j = 0; j < width; ++j) {
+                NInt tmpVal         = src.at<uchar>(i, j);
                 tempVec_Gray[i][j] = tmpVal;
             }
         }
@@ -114,22 +114,22 @@ void VGemm::calGGCM(cv::Mat& inputImg, VecGGCM& vecGGCM)
 
     VecGGCM tempVec_Gradient;
     tempVec_Gradient.resize(height);
-    for (int i = 0; i < height; ++i) {
+    for (NInt i = 0; i < height; ++i) {
         tempVec_Gradient[i].resize(width);
     }
-    int maxGradientLevel = 0;
+    NInt maxGradientLevel = 0;
     //  求图像的梯度
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
+    for (NInt i = 0; i < height; ++i) {
+        for (NInt j = 0; j < width; ++j) {
             if (i == 0 || i == height - 1 || j == 0 || j == width - 1) {
                 tempVec_Gradient[i][j] = 0;
             }
             else {
-                int g_x =
+                NInt g_x =
                     src.at<uchar>(i + 1, j - 1) + 2 * src.at<uchar>(i + 1, j) + src.at<uchar>(i + 1, j + 1) - src.at<uchar>(i - 1, j - 1) - 2 * src.at<uchar>(i - 1, j) - src.at<uchar>(i - 1, j + 1);
-                int g_y =
+                NInt g_y =
                     src.at<uchar>(i - 1, j + 1) + 2 * src.at<uchar>(i, j + 1) + src.at<uchar>(i + 1, j + 1) - src.at<uchar>(i - 1, j + 1) - 2 * src.at<uchar>(i, j - 1) - src.at<uchar>(i + 1, j - 1);
-                int g                  = sqrt(g_x * g_x + g_y * g_y);
+                NInt g                  = sqrt(g_x * g_x + g_y * g_y);
                 tempVec_Gradient[i][j] = g;
                 if (g > maxGradientLevel) {
                     maxGradientLevel = g;
@@ -140,18 +140,18 @@ void VGemm::calGGCM(cv::Mat& inputImg, VecGGCM& vecGGCM)
     ++maxGradientLevel;
     //  梯度归一化
     if (maxGradientLevel > grayLevel_) {
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                int tmpVal             = tempVec_Gradient[i][j];
+        for (NInt i = 0; i < height; ++i) {
+            for (NInt j = 0; j < width; ++j) {
+                NInt tmpVal             = tempVec_Gradient[i][j];
                 tempVec_Gradient[i][j] = int(tmpVal * grayLevel_ / maxGradientLevel);
             }
         }
     }
     // 得到梯度-灰度共生矩阵
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
-            int row = tempVec_Gray[i][j];
-            int col = tempVec_Gradient[i][j];
+    for (NInt i = 0; i < height; ++i) {
+        for (NInt j = 0; j < width; ++j) {
+            NInt row = tempVec_Gray[i][j];
+            NInt col = tempVec_Gradient[i][j];
             vecGGCM[row][col]++;
         }
     }
@@ -159,11 +159,11 @@ void VGemm::calGGCM(cv::Mat& inputImg, VecGGCM& vecGGCM)
 
 // 二维数组求和
 template<typename T>
-float sumVVector(std::vector<std::vector<T>> v)
+NFloat sumVVector(std::vector<std::vector<T>> v)
 {
-    float ans = 0;
-    for (int i = 0; i < v.size(); ++i) {
-        for (int j = 0; j < v[i].size(); ++j) {
+    NFloat ans = 0;
+    for (NInt i = 0; i < v.size(); ++i) {
+        for (NInt j = 0; j < v[i].size(); ++j) {
             ans += v[i][j];
         }
     }
@@ -172,10 +172,10 @@ float sumVVector(std::vector<std::vector<T>> v)
 
 // 二维数组按行求和
 template<typename T>
-float sumRowVVector(std::vector<std::vector<T>> v, int num)
+NFloat sumRowVVector(std::vector<std::vector<T>> v, NInt num)
 {
-    float ans = 0;
-    for (int i = 0; i < v.size(); ++i) {
+    NFloat ans = 0;
+    for (NInt i = 0; i < v.size(); ++i) {
         ans += v[num][i];
     }
     return ans;
@@ -183,24 +183,24 @@ float sumRowVVector(std::vector<std::vector<T>> v, int num)
 
 // 二维数组按列求和
 template<typename T>
-float sumColVVector(std::vector<std::vector<T>> v, int num)
+NFloat sumColVVector(std::vector<std::vector<T>> v, NInt num)
 {
-    float ans = 0;
-    for (int i = 0; i < v.size(); ++i) {
+    NFloat ans = 0;
+    for (NInt i = 0; i < v.size(); ++i) {
         ans += v[i][num];
     }
     return ans;
 }
 
-void VGemm::getGGCMFeatures(VecGGCM& vecGGCM, GGCMFeatures& features)
+NVoid VGemm::getGGCMFeatures(VecGGCM& vecGGCM, GGCMFeatures& features)
 {
-    float total = sumVVector(vecGGCM);
-    for (int i = 0; i < grayLevel_; ++i) {
-        float sumRowGray = 0;
+    NFloat total = sumVVector(vecGGCM);
+    for (NInt i = 0; i < grayLevel_; ++i) {
+        NFloat sumRowGray = 0;
         sumRowGray       = sumRowVVector(vecGGCM, i);
-        float sumColGrad = 0;
+        NFloat sumColGrad = 0;
         sumColGrad       = sumColVVector(vecGGCM, i);
-        for (int j = 0; j < grayLevel_; ++j) {
+        for (NInt j = 0; j < grayLevel_; ++j) {
             features.small_grads_dominance += vecGGCM[i][j] / pow(j + 1, 2);
             features.big_grads_dominance += vecGGCM[i][j] * pow(j + 1, 2);
         }
@@ -213,25 +213,25 @@ void VGemm::getGGCMFeatures(VecGGCM& vecGGCM, GGCMFeatures& features)
     features.gray_asymmetry /= total;
     features.grads_asymmetry /= total;
 
-    std::vector<std::vector<float>> vecPGGCM;
+    std::vector<std::vector<NFloat>> vecPGGCM;
     vecPGGCM.resize(grayLevel_);
-    for (int i = 0; i < grayLevel_; ++i) {
+    for (NInt i = 0; i < grayLevel_; ++i) {
         vecPGGCM[i].resize(grayLevel_);
     }
 
-    for (int i = 0; i < vecGGCM.size(); i++) {
-        for (int j = 0; j < vecGGCM[i].size(); j++) {
-            int tmp        = vecGGCM[i][j];
+    for (NInt i = 0; i < vecGGCM.size(); i++) {
+        for (NInt j = 0; j < vecGGCM[i].size(); j++) {
+            NInt tmp        = vecGGCM[i][j];
             vecPGGCM[i][j] = tmp / total;
         }
     }
 
-    for (int i = 0; i < grayLevel_; i++) {
-        float sumRowGray = 0;
+    for (NInt i = 0; i < grayLevel_; i++) {
+        NFloat sumRowGray = 0;
         sumRowGray       = sumRowVVector(vecPGGCM, i);
-        float sumColGrad = 0;
+        NFloat sumColGrad = 0;
         sumColGrad       = sumColVVector(vecPGGCM, i);
-        for (int j = 0; j < grayLevel_; j++) {
+        for (NInt j = 0; j < grayLevel_; j++) {
             features.energy += pow(vecPGGCM[i][j], 2);
             if (vecGGCM[i][j] != 0) {
                 features.entropy -= vecPGGCM[i][j] * log(vecPGGCM[i][j]);
@@ -249,19 +249,19 @@ void VGemm::getGGCMFeatures(VecGGCM& vecGGCM, GGCMFeatures& features)
         }
     }
 
-    for (int i = 0; i < grayLevel_; i++) {
-        float sumRowGray = 0;
+    for (NInt i = 0; i < grayLevel_; i++) {
+        NFloat sumRowGray = 0;
         sumRowGray       = sumRowVVector(vecPGGCM, i);
         features.gray_variance += pow(i + 1 - features.gray_mean, 2) * sumRowGray;
-        float sumColGrad = 0;
+        NFloat sumColGrad = 0;
         sumColGrad       = sumColVVector(vecPGGCM, i);
         features.grads_variance += pow(i + 1 - features.grads_mean, 2) * sumColGrad;
     }
     features.gray_variance  = pow(features.gray_variance, 0.5);
     features.grads_variance = pow(features.grads_variance, 0.5);
 
-    for (int i = 0; i < grayLevel_; ++i) {
-        for (int j = 0; j < grayLevel_; ++j) {
+    for (NInt i = 0; i < grayLevel_; ++i) {
+        for (NInt j = 0; j < grayLevel_; ++j) {
             features.corelation += (i + 1 - features.gray_mean) * (j + 1 - features.grads_mean) * vecPGGCM[i][j];
         }
     }

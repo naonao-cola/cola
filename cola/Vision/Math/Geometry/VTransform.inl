@@ -68,10 +68,10 @@ cv::Mat VTransform::get_perspective(const std::vector<T> src_points, const std::
     std::vector<T> dst_tmp = order_pts(dst_points);
     T              src[4];
     T              dst[4];
-    for (int i = 0; i < src_tmp.size(); i++) {
+    for (NInt i = 0; i < src_tmp.size(); i++) {
         src[i] = T(src_tmp[i].x, src_tmp[i].y);
     }
-    for (int i = 0; i < dst_tmp.size(); i++) {
+    for (NInt i = 0; i < dst_tmp.size(); i++) {
         dst[i] = T(dst_tmp[i].x, dst_tmp[i].y);
     }
     return cv::getPerspectiveTransform(src, dst).clone();
@@ -88,7 +88,7 @@ cv::Mat VTransform::get_perspective(const std::vector<T> pts)
     std::vector<T> tmp_pt = order_pts(pts);
     T              src_pts[4], dst_pts[4];
     // 赋值
-    for (int i = 0; i < tmp_pt.size(); i++)
+    for (NInt i = 0; i < tmp_pt.size(); i++)
         src_pts[i] = T(tmp_pt[i].x, tmp_pt[i].y);
     dst_pts[0] = T(tmp_pt[0].x, tmp_pt[0].y);
     dst_pts[1] = T(tmp_pt[2].x, tmp_pt[0].y);
@@ -113,17 +113,17 @@ cv::Mat VTransform::get_perspective_homo(const std::vector<T> src_points, const 
 template<typename T>
 T VTransform::perspective_point(const T src_point, const cv::Mat wrap_mat)
 {
-    cv::Mat_<double> pt(3, 1);
+    cv::Mat_<NDouble> pt(3, 1);
     pt(0, 0)    = src_point.x;
     pt(0, 1)    = src_point.y;
     pt(0, 2)    = 1;
     cv::Mat ret = wrap_mat * pt;
-    double  a1  = ret.at<double>(0, 0);
-    double  a2  = ret.at<double>(1, 0);
-    double  a3  = ret.at<double>(2, 0);
+    NDouble  a1  = ret.at<NDouble>(0, 0);
+    NDouble  a2  = ret.at<NDouble>(1, 0);
+    NDouble  a3  = ret.at<NDouble>(2, 0);
     T       dst_point;
-    dst_point.x = static_cast<double>(a1 / a3);
-    dst_point.y = static_cast<double>(a2 / a3);
+    dst_point.x = static_cast<NDouble>(a1 / a3);
+    dst_point.y = static_cast<NDouble>(a2 / a3);
     return dst_point;
 }
 
@@ -132,23 +132,23 @@ T VTransform::perspective_inv_point(const T& src_point, const cv::Mat& wrap_mat)
 {
     cv::Mat M_inv;
     cv::invert(wrap_mat, M_inv, cv::DECOMP_SVD);
-    cv::Mat_<double> pt(3, 1);
+    cv::Mat_<NDouble> pt(3, 1);
     pt(0, 0)    = src_point.x;
     pt(0, 1)    = src_point.y;
     pt(0, 2)    = 1;
     cv::Mat ret = M_inv * pt;
-    double  a1  = ret.at<double>(0, 0);
-    double  a2  = ret.at<double>(1, 0);
-    double  a3  = ret.at<double>(2, 0);
+    NDouble  a1  = ret.at<NDouble>(0, 0);
+    NDouble  a2  = ret.at<NDouble>(1, 0);
+    NDouble  a3  = ret.at<NDouble>(2, 0);
     T       dst_point;
-    dst_point.x = static_cast<double>(a1 / a3);
-    dst_point.y = static_cast<double>(a2 / a3);
+    dst_point.x = static_cast<NDouble>(a1 / a3);
+    dst_point.y = static_cast<NDouble>(a2 / a3);
     return dst_point;
 }
 
 
 template<typename T>
-cv::Mat VTransform::affine_img_rotate(const cv::Mat src, double angle, T center, double scale)
+cv::Mat VTransform::affine_img_rotate(const cv::Mat src, NDouble angle, T center, NDouble scale)
 {
     cv::Mat ret;
     cv::Mat m = cv::getRotationMatrix2D(center, angle, scale);
@@ -158,7 +158,7 @@ cv::Mat VTransform::affine_img_rotate(const cv::Mat src, double angle, T center,
 
 
 template<typename T>
-cv::Mat VTransform::affine_img_move(const cv::Mat src, double xoffset, double yoffset)
+cv::Mat VTransform::affine_img_move(const cv::Mat src, NDouble xoffset, NDouble yoffset)
 {
     T pt1[3], pt2[3];
     // 平移前的位置

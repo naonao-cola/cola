@@ -54,13 +54,6 @@ protected:
     NStatus clear() final;
 
     /**
-     * 设置调度策略
-     * @param type
-     * @return
-     */
-    DElementManager* setScheduleStrategy(int strategy);
-
-    /**
      * 设置图引擎运行模式
      * @param engineType
      * @return
@@ -92,6 +85,12 @@ protected:
      * @return
      */
     NBool checkSerializable();
+
+    /**
+     * 剪裁多余的连边信息
+     * @return
+     */
+    NSize trim();
 
     /**
      * 加入数据，并且执行

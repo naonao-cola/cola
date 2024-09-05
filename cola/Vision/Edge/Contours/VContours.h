@@ -84,11 +84,11 @@ public:
      **/
     static std::vector<cv::Point> contours_xor(const std::vector<cv::Point>& lcontour, const std::vector<cv::Point>& rcontour);
 
-    static std::vector<cv::Point> contours_offset(const std::vector<cv::Point>& contour, double off_value);
+    static std::vector<cv::Point> contours_offset(const std::vector<cv::Point>& contour, NDouble off_value);
 
-    static int PointInPolygon(const std::vector<cv::Point>& contour, const cv::Point& point);
+    static NInt PointInPolygon(const std::vector<cv::Point>& contour, const cv::Point& point);
 
-    static double contours_area(const std::vector<cv::Point>& contour);
+    static NDouble contours_area(const std::vector<cv::Point>& contour);
 
     static ClipperLib::Path                    contour2path(const std::vector<cv::Point>& contour);
     static ClipperLib::Paths                   contours2paths(const std::vector<std::vector<cv::Point>>& contours);

@@ -24,29 +24,29 @@ class Curve
 protected:
     cv::Scalar                       _color;
     cv::Scalar                       _back_color;
-    int                              _tolerance;   // 鼠标按下或移动时，捕获曲线点的误差范围
+    NInt                              _tolerance;   // 鼠标按下或移动时，捕获曲线点的误差范围
     bool                             _is_mouse_down;
     std::vector<cv::Point>           _points;    // control points 曲线的所有控制点
     std::vector<cv::Point>::iterator _current;   // pointer to current point 当前控制点的指针
 
-    std::vector<cv::Point>::iterator find(int x);
-    std::vector<cv::Point>::iterator find(int x, int y);
-    std::vector<cv::Point>::iterator add(int x, int y);
+    std::vector<cv::Point>::iterator find(NInt x);
+    std::vector<cv::Point>::iterator find(NInt x, NInt y);
+    std::vector<cv::Point>::iterator add(NInt x, NInt y);
 
 public:
     Curve();
     virtual ~Curve();
-    int  calcCurve(double* z);      // 供内部调用的方法：计算曲线
+    NInt  calcCurve(NDouble* z);      // 供内部调用的方法：计算曲线
     void draw(cv::Mat& mat);        // 将曲线画在mat上
-    void mouseDown(int x, int y);   // 当鼠标按下，请调用mouseDown()方法
-    bool mouseMove(int x, int y);   // 当鼠标移动，请调用mouseMove()方法
-    void mouseUp(int x, int y);     // 当鼠标抬起，请调用mouseUp()方法
+    void mouseDown(NInt x, NInt y);   // 当鼠标按下，请调用mouseDown()方法
+    bool mouseMove(NInt x, NInt y);   // 当鼠标移动，请调用mouseMove()方法
+    void mouseUp(NInt x, NInt y);     // 当鼠标抬起，请调用mouseUp()方法
 
     // 以下方法用于：用编程方式生成曲线
     void clearPoints();                                 // 清除曲线上所有的点
-    int  addPoint(const cv::Point& p);                  // 增加一个点
-    int  deletePoint(const cv::Point& p);               // 删除一个点
-    int  movePoint(const cv::Point& p, int x, int y);   // 移动一个点
+    NInt  addPoint(const cv::Point& p);                  // 增加一个点
+    NInt  deletePoint(const cv::Point& p);               // 删除一个点
+    NInt  movePoint(const cv::Point& p, NInt x, NInt y);   // 移动一个点
 };
 
 /**
@@ -66,11 +66,11 @@ public:
     Curve  _BlueChannel;              // Blue通道
     Curve* _CurrentChannel;           // 当前通道的指针
     void   draw(cv::Mat& mat);        // 将曲线画在mat上
-    void   mouseDown(int x, int y);   // 当鼠标按下，请调用mouseDown()方法
-    bool   mouseMove(int x, int y);   // 当鼠标移动，请调用mouseMove()方法
-    void   mouseUp(int x, int y);     // 当鼠标抬起，请调用mouseUp()方法
+    void   mouseDown(NInt x, NInt y);   // 当鼠标按下，请调用mouseDown()方法
+    bool   mouseMove(NInt x, NInt y);   // 当鼠标移动，请调用mouseMove()方法
+    void   mouseUp(NInt x, NInt y);     // 当鼠标抬起，请调用mouseUp()方法
     // 实施曲线调整
-    int adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask = cv::noArray());
+    NInt adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask = cv::noArray());
 };
 
 /*
@@ -80,10 +80,10 @@ public:
 class Saturation
 {
 public:
-    explicit Saturation(int param);
+    explicit Saturation(NInt param);
     ~Saturation();
     // 调整系数
-    int _nParameter;
+    NInt _nParameter;
     //= = = = = = = = = = = = = = = = = = = =
     // @FuncName:
     // @Brief:     饱和度函数
@@ -92,7 +92,7 @@ public:
     // @Returns:
     // @Others:
     //= = = = = = = = = = = = = = = = = = = =
-    int adjust(cv::InputArray input, cv::OutputArray output);
+    NInt adjust(cv::InputArray input, cv::OutputArray output);
 };
 
 NAO_VISION_NAMESPACE_END

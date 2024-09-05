@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:31:32
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 15:05:09
+ * @LastEditTime : 2024-09-05 10:46:11
  **/
 #ifndef NAO_DELEMENT_H
 #define NAO_DELEMENT_H
@@ -74,7 +74,11 @@ public:
      * @param name
      * @return
      */
+#ifdef _WIN32
+    NVoidPtr setName(const std::string& name) override;
+#else
     DElement* setName(const std::string& name) override;
+#endif
 
     /**
      * 设置循环次数
@@ -127,7 +131,7 @@ public:
      */
     NBool isDGroup() const;
 
-     /**
+    /**
      * 当前element是否是一个 adaptor逻辑
      * @return
      */
@@ -212,9 +216,8 @@ protected:
      * 崩溃流程处理
      * @param ex
      * @return
-     * @notice 可以自行覆写crashed方法，但不推荐。如果需要复写的话，返回值需要填写 STATUS_CRASH，否则可能出现执行异常
      */
-    virtual NStatus crashed(const NException& ex);
+    NStatus crashed(const NException& ex);
 
     /**
      * 获取当前element内部参数
@@ -263,17 +266,6 @@ private:
      */
     NVoid beforeRun();
 
-    // /**
-    //  * run方法执行之后的执行函数
-    //  * @return
-    //  */
-    // NVoid afterRun();
-
-    /**
-     * 判定node是否可以和前面节点一起执行
-     * @return
-     */
-    NBool isLinkable() const;
 
     /**
      * 判定当前的内容，是否需要异步执行
@@ -305,7 +297,7 @@ private:
      * @param curStatus
      * @return
      */
-    NStatus doAspect(const DAspectType& aspectType, const NStatus& curStatus = NStatus());
+    NStatus doAspect(const internal::DAspectType& aspectType, const NStatus& curStatus = NStatus());
 
     /**
      * 设置element信息
@@ -379,7 +371,7 @@ private:
      * 判断是否进入 yield状态。如果是的话，则等待恢复。未进入yield状态，则继续运行
      * @return
      */
-    inline NVoid checkYield();
+    NVoid checkYield();
 
     /**
      * 判断当前元素，是否可以线性执行。默认返回true
@@ -418,14 +410,28 @@ private:
      */
     std::vector<DElement*> getDeepPath(NBool reverse) const;
 
+
+    /**
+     * 判断是否是默认绑定策略
+     * @return
+     */
+    NBool isDefaultBinding() const;
+
+    /**
+     * 删除一个依赖的节点信息
+     * @param element
+     * @return
+     */
+    NBool removeDepend(DElement* element);
+
 private:
     /** 状态相关信息 */
-    NBool                      done_{false};                           // 判定被执行结束
-    NBool                      linkable_{false};                       // 判定是否可以连通计算
-    NBool                      visible_{true};                         // 判定可见的，如果被删除的话，则认为是不可见的
-    NBool                      is_init_{false};                        // 判断是否init
-    DElementType               element_type_{DElementType::ELEMENT};   // 用于区分element 内部类型
-    std::atomic<DElementState> cur_state_{DElementState::CREATE};      // 当前执行状态
+    NBool                      done_{false};                              // 判定被执行结束
+    NBool                      visible_{true};                            // 判定可见的，如果被删除的话，则认为是不可见的
+    NBool                      is_init_{false};                           // 判断是否init
+    DElementType               element_type_{DElementType::ELEMENT};      // 用于区分element 内部类型
+    std::atomic<DElementState> cur_state_{DElementState::CREATE};         // 当前执行状态
+    internal::DElementShape    shape_{internal::DElementShape::NORMAL};   // 元素位置类型
 
     /** 配置相关信息 */
     NSize                   loop_{NAO_DEFAULT_LOOP_TIMES};                          // 元素执行次数
@@ -480,6 +486,7 @@ private:
     friend class DAspectObject;
     friend class DOptimizer;
     friend class DMaxParaOptimizer;
+    friend class DTrimOptimizer;
     friend class DSeparateOptimizer;
     friend class DElementRepository;
     friend class DPerf;

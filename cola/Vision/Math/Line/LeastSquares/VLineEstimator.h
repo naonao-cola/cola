@@ -5,7 +5,7 @@
  * @Date         : 2024-07-20 23:50:57
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-22 15:31:56
+ * @LastEditTime : 2024-08-19 15:10:15
  **/
 #ifndef NAONAO_VLINEESTIMATOR_H
 #define NAONAO_VLINEESTIMATOR_H
@@ -22,7 +22,6 @@ https://zhuanlan.zhihu.com/p/268884807
 #include <Eigen/Geometry>
 #include <vector>
 
-
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
@@ -32,7 +31,7 @@ class VLineParamEstimator : public VisionObject
 public:
     typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> MatrixX;   // 动态矩阵
     typedef Eigen::Matrix<T, Eigen::Dynamic, 1>              VectorX;   // 动态列向量
-    VLineParamEstimator(double error)
+    VLineParamEstimator(NDouble error)
         : error_(error)
         , mean_(0)
         , sse_(0)
@@ -90,16 +89,16 @@ public:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    double mean(std::vector<T> Y);
+    NDouble mean(std::vector<T> Y);
 
 private:
     Eigen::VectorXd mat_;
-    int             order_;
-    double          error_;   // 错误阈值
-    double          mean_;
-    double          ssr_;
-    double          sse_;
-    double          rmse_;
+    NInt             order_;
+    NDouble          error_;   // 错误阈值
+    NDouble          mean_;
+    NDouble          ssr_;
+    NDouble          sse_;
+    NDouble          rmse_;
 };
 
 NAO_VISION_NAMESPACE_END

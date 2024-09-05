@@ -28,13 +28,13 @@ NAO_VISION_NAMESPACE_BEGIN
  * @param maxCg
  * 参考链接 https://blog.csdn.net/EbowTang/article/details/42373081
  */
-void __simple_ace(cv::Mat& src, cv::Mat& dst, int win_size = 3, int maxCg = 7.5)
+void __simple_ace(cv::Mat& src, cv::Mat& dst, NInt win_size = 3, NInt maxCg = 7.5)
 {
     if (CV_8UC1 != src.type()) {
         return;
     }
-    int rows = src.rows;
-    int cols = src.cols;
+    NInt rows = src.rows;
+    NInt cols = src.cols;
     // 图像局部均值
     cv::Mat mean_local;
     // 图像局部方差
@@ -52,21 +52,21 @@ void __simple_ace(cv::Mat& src, cv::Mat& dst, int win_size = 3, int maxCg = 7.5)
     // 计算局部方差
     cv::blur(var_local, var_local, cv::Size(win_size, win_size));
     var_local.convertTo(var_local, CV_32F);
-    for (int i = 0; i < rows; i++) {
+    for (NInt i = 0; i < rows; i++) {
         // 获取局部标准差
-        for (int j = 0; j < cols; j++) {
-            var_local.at<float>(i, j) = (float)sqrt(var_local.at<float>(i, j));
+        for (NInt j = 0; j < cols; j++) {
+            var_local.at<NFloat>(i, j) = (NFloat)sqrt(var_local.at<NFloat>(i, j));
         }
     }
     // 获取全局均值与标准差
     cv::meanStdDev(src, mean_global, var_global);
     // 增益系数矩阵
     cv::Mat gain_Arr = 0.5 * mean_global / var_local;
-    for (int i = 0; i < rows; i++) {
+    for (NInt i = 0; i < rows; i++) {
         // 增益系数截断
-        for (int j = 0; j < cols; j++) {
-            if (gain_Arr.at<float>(i, j) > maxCg) {
-                gain_Arr.at<float>(i, j) = maxCg;
+        for (NInt j = 0; j < cols; j++) {
+            if (gain_Arr.at<NFloat>(i, j) > maxCg) {
+                gain_Arr.at<NFloat>(i, j) = maxCg;
             }
         }
     }
@@ -83,7 +83,7 @@ void __simple_ace(cv::Mat& src, cv::Mat& dst, int win_size = 3, int maxCg = 7.5)
  * @param win_size
  * @return
  */
-bool __get_variance_mean(cv::Mat& src, cv::Mat& means_dst, cv::Mat& variance_dst, int win_size)
+bool __get_variance_mean(cv::Mat& src, cv::Mat& means_dst, cv::Mat& variance_dst, NInt win_size)
 {
     if (!src.data) {
         std::cerr << "获取方差与均值的函数读入图片有误" << std::endl;
@@ -94,26 +94,26 @@ bool __get_variance_mean(cv::Mat& src, cv::Mat& means_dst, cv::Mat& variance_dst
         return false;
     }
     cv::Mat copyBorder_yChannels;
-    int     copyBorderSize = (win_size - 1) / 2;
+    NInt     copyBorderSize = (win_size - 1) / 2;
     /*扩充图像边界*/
     cv::copyMakeBorder(src, copyBorder_yChannels, copyBorderSize, copyBorderSize, copyBorderSize, copyBorderSize, cv::BORDER_REFLECT);
-    for (int i = (win_size - 1) / 2; i < copyBorder_yChannels.rows - (win_size - 1) / 2; i++) {
-        for (int j = (win_size - 1) / 2; j < copyBorder_yChannels.cols - (win_size - 1) / 2; j++) {
+    for (NInt i = (win_size - 1) / 2; i < copyBorder_yChannels.rows - (win_size - 1) / 2; i++) {
+        for (NInt j = (win_size - 1) / 2; j < copyBorder_yChannels.cols - (win_size - 1) / 2; j++) {
             /*截取扩展后的图像中的一个方块*/
             cv::Mat    temp = copyBorder_yChannels(cv::Rect(j - (win_size - 1) / 2, i - (win_size - 1) / 2, win_size, win_size));
             cv::Scalar mean;
             cv::Scalar dev;
             cv::meanStdDev(temp, mean, dev);
             // 一一对应赋值
-            variance_dst.at<float>(i - (win_size - 1) / 2, j - (win_size - 1) / 2) = dev.val[0];
-            means_dst.at<float>(i - (win_size - 1) / 2, j - (win_size - 1) / 2)    = mean.val[0];
+            variance_dst.at<NFloat>(i - (win_size - 1) / 2, j - (win_size - 1) / 2) = dev.val[0];
+            means_dst.at<NFloat>(i - (win_size - 1) / 2, j - (win_size - 1) / 2)    = mean.val[0];
         }
     }
     return true;
 }
 
 
-cv::Mat VEnhance::adapt_contrast_enhancement(cv::Mat scr, int win_size /*= 15*/, int maxCg /*= 10*/)
+cv::Mat VEnhance::adapt_contrast_enhancement(cv::Mat scr, NInt win_size /*= 15*/, NInt maxCg /*= 10*/)
 {
     cv::Mat dst;
     if (!scr.data) {
@@ -143,16 +143,16 @@ cv::Mat VEnhance::adapt_contrast_enhancement(cv::Mat scr, int win_size /*= 15*/,
     cv::Scalar dev;
     cv::meanStdDev(temp, mean, dev);
 
-    float   meansGlobal = mean.val[0];
+    NFloat   meansGlobal = mean.val[0];
     cv::Mat enhanceMatrix(scr.rows, scr.cols, CV_8UC1);
     // 遍历，对每个点进行自适应调节
-    for (int i = 0; i < scr.rows; i++) {
-        for (int j = 0; j < scr.cols; j++) {
-            if (localVarianceMatrix.at<float>(i, j) >= 0.01) {
-                float cg  = 0.2 * meansGlobal / localVarianceMatrix.at<float>(i, j);
-                float cgs = cg > maxCg ? maxCg : cg;
+    for (NInt i = 0; i < scr.rows; i++) {
+        for (NInt j = 0; j < scr.cols; j++) {
+            if (localVarianceMatrix.at<NFloat>(i, j) >= 0.01) {
+                NFloat cg  = 0.2 * meansGlobal / localVarianceMatrix.at<NFloat>(i, j);
+                NFloat cgs = cg > maxCg ? maxCg : cg;
                 cgs       = cgs < 1 ? 1 : cgs;
-                int e     = localMeansMatrix.at<float>(i, j) + cgs * (temp.at<uchar>(i, j) - localMeansMatrix.at<float>(i, j));
+                NInt e     = localMeansMatrix.at<NFloat>(i, j) + cgs * (temp.at<uchar>(i, j) - localMeansMatrix.at<NFloat>(i, j));
                 if (e > 255) {
                     e = 255;
                 }
@@ -181,16 +181,16 @@ cv::Mat VEnhance::adapt_contrast_enhancement(cv::Mat scr, int win_size /*= 15*/,
  *  https://blog.csdn.net/smallstones/article/details/41787079
  *  https://blog.csdn.net/onezeros/article/details/6342661
  */
-double* __create_kernel(double sigma)
+NDouble* __create_kernel(NDouble sigma)
 {
-    int     i, x, filter_size;
-    double* filter;
-    double  sum;
+    NInt     i, x, filter_size;
+    NDouble* filter;
+    NDouble  sum;
     if (sigma > 200)
         sigma = 200;
-    filter_size = (int)floor(sigma * 6) / 2;
+    filter_size = (NInt)floor(sigma * 6) / 2;
     filter_size = filter_size * 2 + 1;
-    filter      = new double[filter_size];
+    filter      = new NDouble[filter_size];
     sum         = 0;
     for (i = 0; i < filter_size; i++) {
         // x的取值范围从中间到两边
@@ -207,19 +207,19 @@ double* __create_kernel(double sigma)
 
 #define INT_PREC 1024.0
 #define INT_PREC_BITS 10
-inline double int2double(int x)
+inline NDouble int2double(NInt x)
 {
-    return static_cast<double>(x) / INT_PREC;
+    return static_cast<NDouble>(x) / INT_PREC;
 }
-inline int double2int(double x)
+inline NInt double2int(NDouble x)
 {
-    return static_cast<int>(x * INT_PREC + 0.5);
+    return static_cast<NInt>(x * INT_PREC + 0.5);
 }
-inline int int2smallint(int x)
+inline NInt int2smallint(NInt x)
 {
     return (x >> INT_PREC_BITS);
 }
-inline int int2bigint(int x)
+inline NInt int2bigint(NInt x)
 {
     return (x << INT_PREC_BITS);
 }
@@ -228,18 +228,18 @@ inline int int2bigint(int x)
  * @param sigma
  * @return
  */
-int* __create_fast_kernel(double sigma)
+NInt* __create_fast_kernel(NDouble sigma)
 {
-    double* fp_kernel;
-    int*    kernel;
-    int     i;
-    int     filter_size;
+    NDouble* fp_kernel;
+    NInt*    kernel;
+    NInt     i;
+    NInt     filter_size;
     if (sigma > 200) {
         sigma = 200;
     }
-    filter_size = (int)floor(sigma * 6) / 2;
+    filter_size = (NInt)floor(sigma * 6) / 2;
     filter_size = filter_size * 2 + 1;
-    kernel      = new int[filter_size];
+    kernel      = new NInt[filter_size];
     fp_kernel   = __create_kernel(sigma);
     for (i = 0; i < filter_size; i++) {
         kernel[i] = double2int(fp_kernel[i]);
@@ -253,15 +253,15 @@ int* __create_fast_kernel(double sigma)
  * @param img
  * @param sigma
  */
-void __filter_gaussian(cv::Mat& img, double sigma)
+void __filter_gaussian(cv::Mat& img, NDouble sigma)
 {
-    int     i, j, k, source, filter_size;
-    int*    kernel;
+    NInt     i, j, k, source, filter_size;
+    NInt*    kernel;
     cv::Mat temp;
-    int     v1, v2, v3;
+    NInt     v1, v2, v3;
     if (sigma > 200)
         sigma = 200;
-    filter_size = (int)floor(sigma * 6) / 2;
+    filter_size = (NInt)floor(sigma * 6) / 2;
     filter_size = filter_size * 2 + 1;
     kernel      = __create_fast_kernel(sigma);
     temp.create(cv::Size(img.cols, img.rows), img.type());
@@ -332,13 +332,13 @@ void __filter_gaussian(cv::Mat& img, double sigma)
  * @param img
  * @param sigma
  */
-void __fast_filter(cv::Mat& img, double sigma)
+void __fast_filter(cv::Mat& img, NDouble sigma)
 {
-    int filter_size;
+    NInt filter_size;
     if (sigma > 200) {
         sigma = 200;
     }
-    filter_size = (int)floor(sigma * 6) / 2;
+    filter_size = (NInt)floor(sigma * 6) / 2;
     filter_size = filter_size * 2 + 1;
     if (filter_size < 3) {
         return;
@@ -362,14 +362,14 @@ void __fast_filter(cv::Mat& img, double sigma)
     }
 }
 
-cv::Mat VEnhance::retinex(cv::Mat img, double sigma, int gain, int offset)
+cv::Mat VEnhance::retinex(cv::Mat img, NDouble sigma, NInt gain, NInt offset)
 {
     cv::Mat   A;
     cv::Mat   fA;
     cv::Mat   fB;
     cv::Mat   fC;
     cv::Mat   dst;
-    const int ch = img.channels();
+    const NInt ch = img.channels();
     fA.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
     fB.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
     fC.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
@@ -392,11 +392,11 @@ cv::Mat VEnhance::retinex(cv::Mat img, double sigma, int gain, int offset)
     return dst;
 }
 
-cv::Mat VEnhance::multi_scale_retinex(cv::Mat img, int scales, double* weights, double* sigmas, int gain, int offset)
+cv::Mat VEnhance::multi_scale_retinex(cv::Mat img, NInt scales, NDouble* weights, NDouble* sigmas, NInt gain, NInt offset)
 {
-    int       i;
-    double    weight;
-    const int ch = img.channels();
+    NInt       i;
+    NDouble    weight;
+    const NInt ch = img.channels();
     cv::Mat   A;
     cv::Mat   fA;
     cv::Mat   fB;
@@ -440,10 +440,10 @@ cv::Mat VEnhance::multi_scale_retinex(cv::Mat img, int scales, double* weights, 
     return dst;
 }
 
-cv::Mat VEnhance::multi_scale_retinex_CR(cv::Mat img, int scales, double* weights, double* sigmas, int gain, int offset, double restoration_factor, double color_gain)
+cv::Mat VEnhance::multi_scale_retinex_CR(cv::Mat img, NInt scales, NDouble* weights, NDouble* sigmas, NInt gain, NInt offset, NDouble restoration_factor, NDouble color_gain)
 {
-    int     i;
-    double  weight;
+    NInt     i;
+    NDouble  weight;
     cv::Mat A;
     cv::Mat B;
     cv::Mat C;
@@ -459,7 +459,7 @@ cv::Mat VEnhance::multi_scale_retinex_CR(cv::Mat img, int scales, double* weight
     cv::Mat dst;
 
     // Initialize temp images
-    const int ch = img.channels();
+    const NInt ch = img.channels();
     fA.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
     fB.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
     fC.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
@@ -564,24 +564,24 @@ cv::Mat VEnhance::multi_scale_retinex_CR(cv::Mat img, int scales, double* weight
  * @param src		输入单通道图像
  * @return
  */
-int __get_mat__midval(cv::Mat& src)
+NInt __get_mat__midval(cv::Mat& src)
 {
     if (src.channels() > 1) {
         return 0;
     }
-    int rows = src.rows;
-    int cols = src.cols;
+    NInt rows = src.rows;
+    NInt cols = src.cols;
     /*定义数组*/
-    float mat_hists[256] = {0};
-    for (int row = 0; row < rows; row++) {
-        for (int col = 0; col < cols; col++) {
-            int val = src.at<uchar>(row, col);
+    NFloat mat_hists[256] = {0};
+    for (NInt row = 0; row < rows; row++) {
+        for (NInt col = 0; col < cols; col++) {
+            NInt val = src.at<uchar>(row, col);
             mat_hists[val]++;
         }
     }
-    int calc_val = rows * cols / 2;
-    int tmp_sum  = 0;
-    for (int i = 0; i < 255; i++) {
+    NInt calc_val = rows * cols / 2;
+    NInt tmp_sum  = 0;
+    for (NInt i = 0; i < 255; i++) {
         tmp_sum += mat_hists[i];
         if (tmp_sum > calc_val) {
             return i;
@@ -590,9 +590,9 @@ int __get_mat__midval(cv::Mat& src)
     return 0;
 }
 
-void VEnhance::adapt_min_max_threshold_median(cv::Mat img, int& min_val, int& max_val, float sigma /*= 0.3*/)
+void VEnhance::adapt_min_max_threshold_median(cv::Mat img, NInt& min_val, NInt& max_val, NFloat sigma /*= 0.3*/)
 {
-    int mid_val = __get_mat__midval(img);
+    NInt mid_val = __get_mat__midval(img);
     if (mid_val == 0)
         return;
     /*opencv自带的防止颜色溢出的函数*/
@@ -608,19 +608,19 @@ void VEnhance::adapt_min_max_threshold_median(cv::Mat img, int& min_val, int& ma
  * @param high
  * @param percent_of_pix_is_not_edges
  */
-void __adaptive_find_threshold(cv::Mat dx, cv::Mat dy, double& low, double& high, double percent_of_pix_is_not_edges = 0.7)
+void __adaptive_find_threshold(cv::Mat dx, cv::Mat dy, NDouble& low, NDouble& high, NDouble percent_of_pix_is_not_edges = 0.7)
 {
-    int      i;
-    int      j;
+    NInt      i;
+    NInt      j;
     cv::Size size = dx.size();
     cv::Mat  imge = cv::Mat::zeros(size, CV_32FC1);
-    float    maxv = 0.0;
-    float    data = 0.0;
+    NFloat    maxv = 0.0;
+    NFloat    data = 0.0;
     for (i = 0; i < size.height; i++) {
         // 计算边缘强度
         for (j = 0; j < size.width; j++) {
-            data                 = (float)(abs(dx.at<uchar>(i, j)) + abs(dy.at<uchar>(i, j)));
-            imge.at<float>(i, j) = data;
+            data                 = (NFloat)(abs(dx.at<uchar>(i, j)) + abs(dy.at<uchar>(i, j)));
+            imge.at<NFloat>(i, j) = data;
             maxv                 = maxv < data ? data : maxv;
         }
     }
@@ -630,27 +630,27 @@ void __adaptive_find_threshold(cv::Mat dx, cv::Mat dy, double& low, double& high
         return;
     }
     // 计算直方图
-    int hist_size = maxv;
-    // hist_size                               = hist_size > (int)maxv ? (int)maxv : hist_size;
-    float        range_0[2]  = {0, (float)maxv};
-    const float* ranges[1]   = {range_0};
-    const int    channels[1] = {0};
+    NInt hist_size = maxv;
+    // hist_size                               = hist_size > (NInt)maxv ? (NInt)maxv : hist_size;
+    NFloat        range_0[2]  = {0, (NFloat)maxv};
+    const NFloat* ranges[1]   = {range_0};
+    const NInt    channels[1] = {0};
     cv::Mat      hist;
     // 注意const类型，避免参数类型不符合
     cv::calcHist(&imge, 1, channels, cv::Mat(), hist, 1, &hist_size, ranges);
-    int        total  = (int)(size.height * size.width * percent_of_pix_is_not_edges);
-    float      sum    = 0;
-    int        icount = hist.rows;
+    NInt        total  = (NInt)(size.height * size.width * percent_of_pix_is_not_edges);
+    NFloat      sum    = 0;
+    NInt        icount = hist.rows;
     cv::Scalar mean   = cv::mean(hist);
     cv::Scalar mean1  = cv::mean(imge);
     for (i = 0; i < icount; i++) {
-        sum += hist.at<float>(i, 0);
+        sum += hist.at<NFloat>(i, 0);
         if (sum > total) {
             break;
         }
     }
     // Canny 推荐的 高:低 阈值比在 2:1 到3:1之间。2~3 --> 2.5
-    high = (double)((i + 1) * maxv / hist_size);
+    high = (NDouble)((i + 1) * maxv / hist_size);
     if (high >= 255)
         high = 255;
     if (0.0 == high) {
@@ -662,9 +662,9 @@ void __adaptive_find_threshold(cv::Mat dx, cv::Mat dy, double& low, double& high
 }
 
 
-void VEnhance::adapt_find_threshold_matlab(const cv::Mat image, double& low, double& high, double percent_of_pix_is_not_edges /*= 0.7*/, int aperture_size /*= 3*/)
+void VEnhance::adapt_find_threshold_matlab(const cv::Mat image, NDouble& low, NDouble& high, NDouble percent_of_pix_is_not_edges /*= 0.7*/, NInt aperture_size /*= 3*/)
 {
-    const int cn = image.channels();
+    const NInt cn = image.channels();
     cv::Mat   dx(image.rows, image.cols, CV_16SC(cn));
     cv::Mat   dy(image.rows, image.cols, CV_16SC(cn));
     cv::Sobel(image, dx, CV_16S, 1, 0, aperture_size, 1, 0, cv::BORDER_REPLICATE);
@@ -674,19 +674,19 @@ void VEnhance::adapt_find_threshold_matlab(const cv::Mat image, double& low, dou
     __adaptive_find_threshold(_dx, _dy, low, high);
 }
 
-void VEnhance::non_maximum_suppression(cv::Mat& src, cv::Mat& dst, int win_size /*= 15*/)
+void VEnhance::non_maximum_suppression(cv::Mat& src, cv::Mat& dst, NInt win_size /*= 15*/)
 {
-    int     border_size = (win_size - 1) / 2;
+    NInt     border_size = (win_size - 1) / 2;
     cv::Mat src_diff, temp;
     cv::convertScaleAbs(src, src_diff);
     dst = cv::Mat::zeros(src_diff.size(), src_diff.type());
-    for (int i = border_size; i < src.rows - border_size; i++) {
-        for (int j = border_size; j < src.cols - border_size; j++) {
+    for (NInt i = border_size; i < src.rows - border_size; i++) {
+        for (NInt j = border_size; j < src.cols - border_size; j++) {
             temp      = src_diff(cv::Rect(j - border_size, i - border_size, win_size, win_size));
             uchar max = *std::max_element(temp.begin<uchar>(), temp.end<uchar>());
-            for (int m = 0; m < temp.rows; m++) {
+            for (NInt m = 0; m < temp.rows; m++) {
                 uchar* every_data_row = temp.ptr<uchar>(m);
-                for (int n = 0; n < temp.cols; n++) {
+                for (NInt n = 0; n < temp.cols; n++) {
                     uchar every_data = every_data_row[n];
                     if (every_data >= max) {
                         uchar* dst_row               = dst.ptr<uchar>(m + i - border_size);
@@ -699,13 +699,13 @@ void VEnhance::non_maximum_suppression(cv::Mat& src, cv::Mat& dst, int win_size 
 }
 
 
-cv::Mat VEnhance::segmented_enhancement(const cv::Mat& img, double r1, double r2, double s1, double s2)
+cv::Mat VEnhance::segmented_enhancement(const cv::Mat& img, NDouble r1, NDouble r2, NDouble s1, NDouble s2)
 {
-    double k1 = s1 / r1;
-    double k2 = (s2 - s1) / (r2 - r1);
-    double k3 = (255 - s2) / (255 - r2);
+    NDouble k1 = s1 / r1;
+    NDouble k2 = (s2 - s1) / (r2 - r1);
+    NDouble k3 = (255 - s2) / (255 - r2);
     uchar  Lutfirst[256];
-    for (int i = 0; i < 256; i++) {
+    for (NInt i = 0; i < 256; i++) {
         if (i <= r2 && i >= r1) {
             Lutfirst[i] = k2 * (i - r1);
         }
@@ -749,37 +749,37 @@ void __color_retransfer_with_merge(cv::Mat& output, std::vector<cv::Mat>& chls)
  * @param src
  * @param dst
  */
-void __get_histogram(const cv::Mat& src, int* dst)
+void __get_histogram(const cv::Mat& src, NInt* dst)
 {
     cv::Mat      hist;
-    int          channels[1] = {0};
-    int          histSize[1] = {256};
-    float        hranges[2]  = {0, 256.0};
-    const float* ranges[1]   = {hranges};
+    NInt          channels[1] = {0};
+    NInt          histSize[1] = {256};
+    NFloat        hranges[2]  = {0, 256.0};
+    const NFloat* ranges[1]   = {hranges};
     cv::calcHist(&src, 1, channels, cv::Mat(), hist, 1, histSize, ranges);
-    for (int i = 0; i < 256; i++) {
-        float binVal = hist.at<float>(i);
-        dst[i]       = int(binVal);
+    for (NInt i = 0; i < 256; i++) {
+        NFloat binVal = hist.at<NFloat>(i);
+        dst[i]       = NInt(binVal);
     }
 }
 
-double VEnhance::spline(double* x, double* y, int n, double* t, int m, double* z)
+NDouble VEnhance::spline(NDouble* x, NDouble* y, NInt n, NDouble* t, NInt m, NDouble* z)
 {
-    double* dy = new double[n];
-    std::memset(dy, 0, sizeof(double) * n);
+    NDouble* dy = new NDouble[n];
+    std::memset(dy, 0, sizeof(NDouble) * n);
     dy[0]       = -0.5;
-    double* ddy = new double[n];
-    std::memset(ddy, 0, sizeof(double) * n);
+    NDouble* ddy = new NDouble[n];
+    std::memset(ddy, 0, sizeof(NDouble) * n);
 
-    double  h1;
-    double* s  = new double[n];
-    double  h0 = x[1] - x[0];
+    NDouble  h1;
+    NDouble* s  = new NDouble[n];
+    NDouble  h0 = x[1] - x[0];
     s[0]       = 3.0 * (y[1] - y[0]) / (2.0 * h0) - ddy[0] * h0 / 4.0;
 
-    for (int j = 1; j <= n - 2; ++j) {
+    for (NInt j = 1; j <= n - 2; ++j) {
         h1           = x[j + 1] - x[j];
-        double alpha = h0 / (h0 + h1);
-        double beta  = (1.0 - alpha) * (y[j] - y[j - 1]) / h0;
+        NDouble alpha = h0 / (h0 + h1);
+        NDouble beta  = (1.0 - alpha) * (y[j] - y[j - 1]) / h0;
         beta         = 3.0 * (beta + alpha * (y[j + 1] - y[j]) / h1);
         dy[j]        = -alpha / (2.0 + (1.0 - alpha) * dy[j - 1]);
         s[j]         = (beta - (1.0 - alpha) * s[j - 1]);
@@ -789,29 +789,29 @@ double VEnhance::spline(double* x, double* y, int n, double* t, int m, double* z
 
     dy[n - 1] = (3.0 * (y[n - 1] - y[n - 2]) / h1 + ddy[n - 1] * h1 / 2.0 - s[n - 2]) / (2.0 + dy[n - 2]);
 
-    for (int j = n - 2; j >= 0; --j) {
+    for (NInt j = n - 2; j >= 0; --j) {
         dy[j] = dy[j] * dy[j + 1] + s[j];
     }
-    for (int j = 0; j <= n - 2; ++j) {
+    for (NInt j = 0; j <= n - 2; ++j) {
         s[j] = x[j + 1] - x[j];
     }
 
-    for (int j = 0; j <= n - 2; ++j) {
+    for (NInt j = 0; j <= n - 2; ++j) {
         h1     = s[j] * s[j];
         ddy[j] = 6.0 * (y[j + 1] - y[j]) / h1 - 2.0 * (2.0 * dy[j] + dy[j + 1]) / s[j];
     }
 
     h1         = s[n - 2] * s[n - 2];
     ddy[n - 1] = 6.0 * (y[n - 2] - y[n - 1]) / h1 + 2.0 * (2.0 * dy[n - 1] + dy[n - 2]) / s[n - 2];
-    double g   = 0.0;
-    for (int i = 0; i <= n - 2; i++) {
+    NDouble g   = 0.0;
+    for (NInt i = 0; i <= n - 2; i++) {
         h1 = 0.5 * s[i] * (y[i] + y[i + 1]);
         h1 = h1 - s[i] * s[i] * s[i] * (ddy[i] + ddy[i + 1]) / 24.0;
         g  = g + h1;
     }
 
-    for (int j = 0; j <= m - 1; j++) {
-        int i;
+    for (NInt j = 0; j <= m - 1; j++) {
+        NInt i;
         if (t[j] >= x[n - 1]) {
             i = n - 2;
         }
@@ -836,7 +836,7 @@ double VEnhance::spline(double* x, double* y, int n, double* t, int m, double* z
     return (g);
 }
 
-void VEnhance::dot_line(cv::Mat& mat, const cv::Point& p1, const cv::Point& p2, const cv::Scalar& color, int thickness /*= 1*/, int lineType /*= 8*/, int line_step /*= 6*/, int blank_step /*= 6*/)
+void VEnhance::dot_line(cv::Mat& mat, const cv::Point& p1, const cv::Point& p2, const cv::Scalar& color, NInt thickness /*= 1*/, NInt lineType /*= 8*/, NInt line_step /*= 6*/, NInt blank_step /*= 6*/)
 {
     if (p1 == p2)
         return;
@@ -851,15 +851,15 @@ void VEnhance::dot_line(cv::Mat& mat, const cv::Point& p1, const cv::Point& p2, 
         blank_step = 1;
 
     // dot_ratio = blank_step / line_step;
-    double dot_ratio = blank_step * 1.0 / line_step;
+    NDouble dot_ratio = blank_step * 1.0 / line_step;
 
     // calculat step_x, step_y
-    double len, step_x, step_y;
+    NDouble len, step_x, step_y;
     len    = sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
     step_x = (p2.x - p1.x) / len * line_step;
     step_y = (p2.y - p1.y) / len * line_step;
 
-    double x1, y1, x2, y2;
+    NDouble x1, y1, x2, y2;
     x1 = p1.x;
     y1 = p1.y;   // start from Point p1
 
@@ -879,7 +879,7 @@ void VEnhance::dot_line(cv::Mat& mat, const cv::Point& p1, const cv::Point& p2, 
                 x2 = x1 + step_x;
                 y2 = y1 + step_y;
             }
-            cv::line(mat, cv::Point(static_cast<int>(x1), static_cast<int>(y1)), cv::Point(static_cast<int>(x2), static_cast<int>(y2)), color, thickness, lineType);
+            cv::line(mat, cv::Point(static_cast<NInt>(x1), static_cast<NInt>(y1)), cv::Point(static_cast<NInt>(x2), static_cast<NInt>(y2)), color, thickness, lineType);
             // step
             x1 = x2 + step_x * dot_ratio;
             y1 = y2 + step_y * dot_ratio;
@@ -900,7 +900,7 @@ void VEnhance::dot_line(cv::Mat& mat, const cv::Point& p1, const cv::Point& p2, 
                 x2 = x1 + step_x;
                 y2 = y1 + step_y;
             }
-            cv::line(mat, cv::Point(static_cast<int>(x1), static_cast<int>(y1)), cv::Point(static_cast<int>(x2), static_cast<int>(y2)), color, thickness, lineType);
+            cv::line(mat, cv::Point(static_cast<NInt>(x1), static_cast<NInt>(y1)), cv::Point(static_cast<NInt>(x2), static_cast<NInt>(y2)), color, thickness, lineType);
             // step
             x1 = x2 + step_x * dot_ratio;
             y1 = y2 + step_y * dot_ratio;
@@ -909,12 +909,12 @@ void VEnhance::dot_line(cv::Mat& mat, const cv::Point& p1, const cv::Point& p2, 
 }
 
 
-cv::Mat VEnhance::gamma_trans(const cv::Mat& img, double gamma, int n_c)
+cv::Mat VEnhance::gamma_trans(const cv::Mat& img, NDouble gamma, NInt n_c)
 {
     cv::Mat img_gamma(img.size(), CV_32FC1);
-    for (int i = 0; i < img.rows; i++) {
-        for (int j = 0; j < img.cols; j++) {
-            img_gamma.at<float>(i, j) = n_c * pow(img.at<uchar>(i, j), gamma);
+    for (NInt i = 0; i < img.rows; i++) {
+        for (NInt j = 0; j < img.cols; j++) {
+            img_gamma.at<NFloat>(i, j) = n_c * pow(img.at<uchar>(i, j), gamma);
         }
     }
     cv::normalize(img_gamma, img_gamma, 0, 255, cv::NormTypes::NORM_MINMAX);
@@ -922,20 +922,20 @@ cv::Mat VEnhance::gamma_trans(const cv::Mat& img, double gamma, int n_c)
     return img_gamma;
 }
 
-cv::Mat VEnhance::gray_stairs(const cv::Mat& img, double sin /*= 0.0*/, double hin /*= 255.0*/, double mt /*= 1.0*/, double sout /*= 0.0*/, double hout /*= 255.0*/)
+cv::Mat VEnhance::gray_stairs(const cv::Mat& img, NDouble sin /*= 0.0*/, NDouble hin /*= 255.0*/, NDouble mt /*= 1.0*/, NDouble sout /*= 0.0*/, NDouble hout /*= 255.0*/)
 {
-    double Sin    = std::min(std::max(sin, 0.0), hin - 2);     // Sin, 黑场阈值, 0 <= Sin < Hin
-    double Hin    = std::min(hin, 255.0);                      // Hin, 白场阈值, Sin<Hin<=255
-    double Mt     = std::min(std::max(mt, 0.01), 9.99);        // Mt, 灰场调节值, 0.01~9.99
-    double Sout   = std::min(std::max(sout, 0.0), hout - 2);   // Sout, 输出黑场阈值, 0<=Sout<Hout
-    double Hout   = std::min(hout, 255.0);                     // Hout, 输出白场阈值, Sout<Hout<=255
-    double difin  = Hin - Sin;
-    double difout = Hout - Sout;
+    NDouble Sin    = std::min(std::max(sin, 0.0), hin - 2);     // Sin, 黑场阈值, 0 <= Sin < Hin
+    NDouble Hin    = std::min(hin, 255.0);                      // Hin, 白场阈值, Sin<Hin<=255
+    NDouble Mt     = std::min(std::max(mt, 0.01), 9.99);        // Mt, 灰场调节值, 0.01~9.99
+    NDouble Sout   = std::min(std::max(sout, 0.0), hout - 2);   // Sout, 输出黑场阈值, 0<=Sout<Hout
+    NDouble Hout   = std::min(hout, 255.0);                     // Hout, 输出白场阈值, Sout<Hout<=255
+    NDouble difin  = Hin - Sin;
+    NDouble difout = Hout - Sout;
     uchar  lutData[256];
-    for (int i = 0; i < 256; i++) {
-        double v1  = std::min(std::max(255 * (i - Sin) / difin, 0.0), 255.0);         // 输入动态线性拉伸
-        double v2  = 255 * std::pow(v1 / 255.0, 1.0 / Mt);                            // 灰场伽马调节
-        lutData[i] = (int)std::min(std::max(Sout + difout * v2 / 255, 0.0), 255.0);   // # 输出线性拉伸
+    for (NInt i = 0; i < 256; i++) {
+        NDouble v1  = std::min(std::max(255 * (i - Sin) / difin, 0.0), 255.0);         // 输入动态线性拉伸
+        NDouble v2  = 255 * std::pow(v1 / 255.0, 1.0 / Mt);                            // 灰场伽马调节
+        lutData[i] = (NInt)std::min(std::max(Sout + difout * v2 / 255, 0.0), 255.0);   // # 输出线性拉伸
     }
     cv::Mat lut(1, 256, CV_8UC1, lutData);
     cv::Mat dst;
@@ -971,37 +971,37 @@ cv::Mat VEnhance::get_equal_img(const cv::Mat& hist_img, const cv::Rect& hist_re
 {
     cv::Mat      hist1;
     cv::Mat      hist2;
-    const int    channels[1] = {0};
-    float        inRanges[2] = {0, 255};
-    const float* ranges[1]   = {inRanges};
-    const int    bins[1]     = {256};
+    const NInt    channels[1] = {0};
+    NFloat        inRanges[2] = {0, 255};
+    const NFloat* ranges[1]   = {inRanges};
+    const NInt    bins[1]     = {256};
     // 保留ROI 区域的直方图
     cv::Mat img_1 = hist_img(hist_rect).clone();
     cv::Mat img_2 = template_img(template_rect).clone();
     cv::calcHist(&img_1, 1, channels, cv::Mat(), hist1, 1, bins, ranges, true, false);
     cv::calcHist(&img_2, 1, channels, cv::Mat(), hist2, 1, bins, ranges, true, false);
-    float hist1_cdf[256] = {hist1.at<float>(0)};
-    float hist2_cdf[256] = {hist2.at<float>(0)};
-    for (int i = 1; i < 256; ++i) {
-        hist1_cdf[i] = hist1_cdf[i - 1] + hist1.at<float>(i);
-        hist2_cdf[i] = hist2_cdf[i - 1] + hist2.at<float>(i);
+    NFloat hist1_cdf[256] = {hist1.at<NFloat>(0)};
+    NFloat hist2_cdf[256] = {hist2.at<NFloat>(0)};
+    for (NInt i = 1; i < 256; ++i) {
+        hist1_cdf[i] = hist1_cdf[i - 1] + hist1.at<NFloat>(i);
+        hist2_cdf[i] = hist2_cdf[i - 1] + hist2.at<NFloat>(i);
     }
     // 归一化，两幅图像大小可能不一致
-    for (int i = 0; i < 256; i++) {
+    for (NInt i = 0; i < 256; i++) {
         hist1_cdf[i] = hist1_cdf[i] / (img_1.rows * img_1.cols);
         hist2_cdf[i] = hist2_cdf[i] / (img_1.rows * img_1.cols);
     }
-    float diff_cdf[256][256];
-    for (int i = 0; i < 256; ++i) {
-        for (int j = 0; j < 256; ++j) {
+    NFloat diff_cdf[256][256];
+    for (NInt i = 0; i < 256; ++i) {
+        for (NInt j = 0; j < 256; ++j) {
             diff_cdf[i][j] = fabs(hist1_cdf[i] - hist2_cdf[j]);
         }
     }
     cv::Mat lut(1, 256, CV_8U);
-    for (int i = 0; i < 256; ++i) {
-        float min   = diff_cdf[i][0];
-        int   index = 0;
-        for (int j = 1; j < 256; ++j) {
+    for (NInt i = 0; i < 256; ++i) {
+        NFloat min   = diff_cdf[i][0];
+        NInt   index = 0;
+        for (NInt j = 1; j < 256; ++j) {
             if (min > diff_cdf[i][j]) {
                 min   = diff_cdf[i][j];
                 index = j;
@@ -1016,26 +1016,26 @@ cv::Mat VEnhance::get_equal_img(const cv::Mat& hist_img, const cv::Rect& hist_re
 }
 
 
-cv::Mat GetRotateCropImage(const cv::Mat& srcimage, std::vector<std::vector<int>> box)
+cv::Mat GetRotateCropImage(const cv::Mat& srcimage, std::vector<std::vector<NInt>> box)
 {
     cv::Mat image;
     srcimage.copyTo(image);
-    std::vector<std::vector<int>> points       = box;
-    int                           x_collect[4] = {box[0][0], box[1][0], box[2][0], box[3][0]};
-    int                           y_collect[4] = {box[0][1], box[1][1], box[2][1], box[3][1]};
-    int                           left         = int(*std::min_element(x_collect, x_collect + 4));
-    int                           right        = int(*std::max_element(x_collect, x_collect + 4));
-    int                           top          = int(*std::min_element(y_collect, y_collect + 4));
-    int                           bottom       = int(*std::max_element(y_collect, y_collect + 4));
+    std::vector<std::vector<NInt>> points       = box;
+    NInt                           x_collect[4] = {box[0][0], box[1][0], box[2][0], box[3][0]};
+    NInt                           y_collect[4] = {box[0][1], box[1][1], box[2][1], box[3][1]};
+    NInt                           left         = NInt(*std::min_element(x_collect, x_collect + 4));
+    NInt                           right        = NInt(*std::max_element(x_collect, x_collect + 4));
+    NInt                           top          = NInt(*std::min_element(y_collect, y_collect + 4));
+    NInt                           bottom       = NInt(*std::max_element(y_collect, y_collect + 4));
     cv::Mat                       img_crop;
     image(cv::Rect(left, top, right - left, bottom - top)).copyTo(img_crop);
 
-    for (int i = 0; i < points.size(); i++) {
+    for (NInt i = 0; i < points.size(); i++) {
         points[i][0] -= left;
         points[i][1] -= top;
     }
-    int         img_crop_width  = int(sqrt(pow(points[0][0] - points[1][0], 2) + pow(points[0][1] - points[1][1], 2)));
-    int         img_crop_height = int(sqrt(pow(points[0][0] - points[3][0], 2) + pow(points[0][1] - points[3][1], 2)));
+    NInt         img_crop_width  = NInt(sqrt(pow(points[0][0] - points[1][0], 2) + pow(points[0][1] - points[1][1], 2)));
+    NInt         img_crop_height = NInt(sqrt(pow(points[0][0] - points[3][0], 2) + pow(points[0][1] - points[3][1], 2)));
     cv::Point2f pts_std[4], pointsf[4];
     pts_std[0] = cv::Point2f(0., 0.);
     pts_std[1] = cv::Point2f(img_crop_width, 0.);
@@ -1053,45 +1053,45 @@ cv::Mat GetRotateCropImage(const cv::Mat& srcimage, std::vector<std::vector<int>
 
 cv::Mat VEnhance::get_equal_img_2(const cv::Mat& hist_img, const std::vector<cv::Point2f>& hist_pts, const cv::Mat& template_img, std::vector<cv::Point2f>& template_pts)
 {
-    std::vector<std::vector<int>> hist_box{
-        {int(hist_pts[0].x), int(hist_pts[0].y)}, {int(hist_pts[1].x), int(hist_pts[1].y)}, {int(hist_pts[2].x), int(hist_pts[2].y)}, {int(hist_pts[3].x), int(hist_pts[3].y)}};
-    std::vector<std::vector<int>> temp_box{{int(template_pts[0].x), int(template_pts[0].y)},
-                                           {int(template_pts[1].x), int(template_pts[1].y)},
-                                           {int(template_pts[2].x), int(template_pts[2].y)},
-                                           {int(template_pts[3].x), int(template_pts[3].y)}};
+    std::vector<std::vector<NInt>> hist_box{
+        {NInt(hist_pts[0].x), NInt(hist_pts[0].y)}, {NInt(hist_pts[1].x), NInt(hist_pts[1].y)}, {NInt(hist_pts[2].x), NInt(hist_pts[2].y)}, {NInt(hist_pts[3].x), NInt(hist_pts[3].y)}};
+    std::vector<std::vector<NInt>> temp_box{{NInt(template_pts[0].x), NInt(template_pts[0].y)},
+                                           {NInt(template_pts[1].x), NInt(template_pts[1].y)},
+                                           {NInt(template_pts[2].x), NInt(template_pts[2].y)},
+                                           {NInt(template_pts[3].x), NInt(template_pts[3].y)}};
     cv::Mat                       hist1, hist2;
-    const int                     channels[1] = {0};
-    float                         inRanges[2] = {0, 255};
-    const float*                  ranges[1]   = {inRanges};
-    const int                     bins[1]     = {256};
+    const NInt                     channels[1] = {0};
+    NFloat                         inRanges[2] = {0, 255};
+    const NFloat*                  ranges[1]   = {inRanges};
+    const NInt                     bins[1]     = {256};
     // 保留ROI 区域的直方图
     cv::Mat img_1 = GetRotateCropImage(hist_img, hist_box);
     cv::Mat img_2 = GetRotateCropImage(template_img, temp_box);
     cv::calcHist(&img_1, 1, channels, cv::Mat(), hist1, 1, bins, ranges, true, false);
     cv::calcHist(&img_2, 1, channels, cv::Mat(), hist2, 1, bins, ranges, true, false);
 
-    float hist1_cdf[256] = {hist1.at<float>(0)};
-    float hist2_cdf[256] = {hist2.at<float>(0)};
-    for (int i = 1; i < 256; ++i) {
-        hist1_cdf[i] = hist1_cdf[i - 1] + hist1.at<float>(i);
-        hist2_cdf[i] = hist2_cdf[i - 1] + hist2.at<float>(i);
+    NFloat hist1_cdf[256] = {hist1.at<NFloat>(0)};
+    NFloat hist2_cdf[256] = {hist2.at<NFloat>(0)};
+    for (NInt i = 1; i < 256; ++i) {
+        hist1_cdf[i] = hist1_cdf[i - 1] + hist1.at<NFloat>(i);
+        hist2_cdf[i] = hist2_cdf[i - 1] + hist2.at<NFloat>(i);
     }
     // 归一化，两幅图像大小可能不一致
-    for (int i = 0; i < 256; i++) {
+    for (NInt i = 0; i < 256; i++) {
         hist1_cdf[i] = hist1_cdf[i] / (img_1.rows * img_1.cols);
         hist2_cdf[i] = hist2_cdf[i] / (img_1.rows * img_1.cols);
     }
-    float diff_cdf[256][256];
-    for (int i = 0; i < 256; ++i) {
-        for (int j = 0; j < 256; ++j) {
+    NFloat diff_cdf[256][256];
+    for (NInt i = 0; i < 256; ++i) {
+        for (NInt j = 0; j < 256; ++j) {
             diff_cdf[i][j] = fabs(hist1_cdf[i] - hist2_cdf[j]);
         }
     }
     cv::Mat lut(1, 256, CV_8U);
-    for (int i = 0; i < 256; ++i) {
-        float min   = diff_cdf[i][0];
-        int   index = 0;
-        for (int j = 1; j < 256; ++j) {
+    for (NInt i = 0; i < 256; ++i) {
+        NFloat min   = diff_cdf[i][0];
+        NInt   index = 0;
+        for (NInt j = 1; j < 256; ++j) {
             if (min > diff_cdf[i][j]) {
                 min   = diff_cdf[i][j];
                 index = j;

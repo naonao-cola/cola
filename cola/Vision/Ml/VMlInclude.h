@@ -10,6 +10,6 @@
 #ifndef NAONAO_VMLINCLUDE_H
 #define NAONAO_VMLINCLUDE_H
 
-
 #include "SVM/VSvm.h"
+
 #endif   // NAONAO_VMLINCLUDE_H

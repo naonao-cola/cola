@@ -63,6 +63,7 @@ private:
      */
     virtual NBool isSeparate(DElementCPtr a, DElementCPtr b) const;
 
+
 private:
     DElementPtrArr group_elements_arr_;   // 存放 element的数组
 

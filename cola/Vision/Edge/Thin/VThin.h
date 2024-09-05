@@ -27,7 +27,7 @@ public:
      * @param intera	迭代次数
      * 参考链接 https://www.cnblogs.com/mikewolf2002/p/3321732.html
      */
-    static cv::Mat thin_line(cv::Mat& src, int intera = 2);
+    static cv::Mat thin_line(cv::Mat& src, NInt intera = 2);
 };
 
 NAO_VISION_NAMESPACE_END

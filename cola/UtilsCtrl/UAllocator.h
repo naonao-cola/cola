@@ -1,15 +1,16 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/UAllocator.h
+ * @FilePath     : /cola/cola/UtilsCtrl/UAllocator.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:46:52
+ * @LastEditTime : 2024-09-05 13:58:36
  * @Copyright    :
  **/
 #ifndef NAO_UALLOCATOR_H
 #define NAO_UALLOCATOR_H
 
+#include <new>
 #include <memory>
 #include <mutex>
 
@@ -27,7 +28,7 @@ public:
     /**
      * 生成一个 NObject 对象
      * @tparam T
-     * @return
+     * @return T*
      */
     template<typename T, c_enable_if_t<std::is_base_of<NObject, T>::value, int> = 0>
     static T* safeMallocNObject()
@@ -38,7 +39,7 @@ public:
     /**
      * 生成一个 NStruct 的对象
      * @tparam T
-     * @return
+     * @return  T*
      */
     template<typename T, c_enable_if_t<std::is_base_of<NStruct, T>::value, int> = 0>
     static T* safeMallocNStruct()
@@ -51,23 +52,23 @@ public:
      * @tparam T
      * @tparam Args
      * @param args
-     * @return
+     * @return T*
      */
     template<typename T, typename... Args,
              c_enable_if_t<std::is_base_of<NObject, T>::value, int> = 0>
     static T* safeMallocTemplateNObject(Args... args)
     {
-        T* ptr = nullptr;
-        while (!ptr) {
-            ptr = new T(std::forward<Args>(args)...);
+        T* result = nullptr;
+        while (!result) {
+            result = new(std::nothrow) T(std::forward<Args&&>(args)...);
         }
-        return ptr;
+        return result;
     }
 
     /**
      * 生成unique智能指针信息
      * @tparam T
-     * @return
+     * @return std::unique_ptr<T>
      */
     template<typename T, c_enable_if_t<std::is_base_of<NObject, T>::value, int> = 0>
     static std::unique_ptr<T> makeUniqueNObject()
@@ -79,7 +80,7 @@ private:
     /**
      * 生成T类型的对象
      * @tparam T
-     * @return
+     * @return T*
      */
     template<class T> static T* safeMalloc()
     {

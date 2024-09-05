@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 15:25:01
+ * @LastEditTime : 2024-09-05 11:11:38
  **/
 #include "UThreadPool.h"
 
@@ -102,6 +102,7 @@ NStatus UThreadPool::submit(const UTaskGroup& taskGroup, NMSec ttl)
     NAO_ASSERT_INIT(true)
 
     std::vector<std::future<NVoid>> futures;
+    futures.reserve(taskGroup.getSize());
     for (const auto& task : taskGroup.task_arr_) {
         futures.emplace_back(commit(task));
     }

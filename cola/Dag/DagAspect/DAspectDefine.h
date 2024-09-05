@@ -13,7 +13,7 @@
 #include "../DagObject.h"
 
 NAO_NAMESPACE_BEGIN
-
+NAO_INTERNAL_NAMESPACE_BEGIN
 enum class DAspectType
 {
     BEGIN_INIT     = 0,
@@ -25,6 +25,7 @@ enum class DAspectType
     ENTER_CRASHED  = 99,
 };
 
+NAO_INTERNAL_NAMESPACE_END
 NAO_NAMESPACE_END
 
 #endif   // NAO_DASPECTDEFINE_H

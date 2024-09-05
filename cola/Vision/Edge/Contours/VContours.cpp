@@ -162,7 +162,7 @@ std::vector<cv::Point> VContours::contours_xor(const std::vector<cv::Point>& lco
     }
     return dst;
 }
-std::vector<cv::Point> VContours::contours_offset(const std::vector<cv::Point>& contour, double off_value)
+std::vector<cv::Point> VContours::contours_offset(const std::vector<cv::Point>& contour, NDouble off_value)
 {
     ClipperLib::Path          path = contour2path(contour);
     ClipperLib::ClipperOffset co;
@@ -178,14 +178,14 @@ std::vector<cv::Point> VContours::contours_offset(const std::vector<cv::Point>& 
     return dst;
 }
 
-int VContours::PointInPolygon(const std::vector<cv::Point>& contour, const cv::Point& point)
+NInt VContours::PointInPolygon(const std::vector<cv::Point>& contour, const cv::Point& point)
 {
     ClipperLib::Path     path = contour2path(contour);
     ClipperLib::IntPoint testPoint(point.x, point.y);
     return ClipperLib::PointInPolygon(testPoint, path);
 }
 
-double VContours::contours_area(const std::vector<cv::Point>& contour)
+NDouble VContours::contours_area(const std::vector<cv::Point>& contour)
 {
     ClipperLib::Path path = contour2path(contour);
     return ClipperLib::Area(path);

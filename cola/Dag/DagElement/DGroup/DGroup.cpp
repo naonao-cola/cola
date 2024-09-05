@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/DGroup/DGroup.cpp
+ * @FilePath     : /cola/cola/Dag/DagElement/DGroup/DGroup.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 15:11:36
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:45:42
+ * @LastEditTime : 2024-09-05 14:41:53
  **/
 #include "DGroup.h"
 
@@ -80,6 +80,7 @@ NVoid DGroup::dumpGroupLabelBegin(std::ostream& oss)
 
 NVoid DGroup::dumpGroupLabelEnd(std::ostream& oss)
 {
+    (void)(this);
     oss << "}\n";
 }
 

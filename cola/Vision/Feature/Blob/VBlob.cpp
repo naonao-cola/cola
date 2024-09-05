@@ -29,7 +29,7 @@ void VBlob::Release()
     bComplete_ = false;
     // 初始化向量
     if (BlobResult_.size() != 0) {
-        for (int i = 0; i < BlobResult_.size(); i++) {
+        for (NInt i = 0; i < BlobResult_.size(); i++) {
             std::vector<cv::Point>().swap(BlobResult_[i].ptIndexs);
             std::vector<cv::Point>().swap(BlobResult_[i].ptContours);
         }
@@ -37,7 +37,7 @@ void VBlob::Release()
     }
 }
 
-bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Mat GrayBuffer, int nMaxDefectCount)
+NBool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Mat GrayBuffer, NInt nMaxDefectCount)
 {
     Release();
     // 如果没有画面,则返回
@@ -49,7 +49,7 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Mat GrayBuffer, int nMa
         return false;
     }
     // 如果Gray画面不存在X&1频道
-    bool bGrayEmpty = false;
+    NBool bGrayEmpty = false;
     if (GrayBuffer.empty() || GrayBuffer.channels() != 1) {
         GrayBuffer = ThresholdBuffer.clone();
         bGrayEmpty = true;
@@ -115,32 +115,32 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Mat GrayBuffer, int nMa
     return true;
 }
 
-bool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, int nTotalLabel)
+NBool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, NInt nTotalLabel)
 {
     if (nTotalLabel <= 0) {
         return true;
     }
-    float fVal = 4.F * CV_PI;
+    NFloat fVal = 4.F * CV_PI;
     BlobResult_.resize(nTotalLabel);
 
 #ifdef _DEBUG
 #else
 #    pragma omp parallel for
 #endif
-    for (int idx = 1; idx <= nTotalLabel; idx++) {
-        int nBlobNum                            = idx - 1;
+    for (NInt idx = 1; idx <= nTotalLabel; idx++) {
+        NInt nBlobNum                            = idx - 1;
         BlobResult_.at(nBlobNum).rectBox.x      = matStats.at<int>(idx, cv::CC_STAT_LEFT);
         BlobResult_.at(nBlobNum).rectBox.y      = matStats.at<int>(idx, cv::CC_STAT_TOP);
         BlobResult_.at(nBlobNum).rectBox.width  = matStats.at<int>(idx, cv::CC_STAT_WIDTH);
         BlobResult_.at(nBlobNum).rectBox.height = matStats.at<int>(idx, cv::CC_STAT_HEIGHT);
 
         // 对象周围(用于背景GV)
-        int nOffSet = 20;
+        NInt nOffSet = 20;
 
-        int nSX = BlobResult_.at(nBlobNum).rectBox.x - nOffSet;
-        int nSY = BlobResult_.at(nBlobNum).rectBox.y - nOffSet;
-        int nEX = BlobResult_.at(nBlobNum).rectBox.x + BlobResult_.at(nBlobNum).rectBox.width + nOffSet + nOffSet;
-        int nEY = BlobResult_.at(nBlobNum).rectBox.y + BlobResult_.at(nBlobNum).rectBox.height + nOffSet + nOffSet;
+        NInt nSX = BlobResult_.at(nBlobNum).rectBox.x - nOffSet;
+        NInt nSY = BlobResult_.at(nBlobNum).rectBox.y - nOffSet;
+        NInt nEX = BlobResult_.at(nBlobNum).rectBox.x + BlobResult_.at(nBlobNum).rectBox.width + nOffSet + nOffSet;
+        NInt nEY = BlobResult_.at(nBlobNum).rectBox.y + BlobResult_.at(nBlobNum).rectBox.height + nOffSet + nOffSet;
 
         if (nSX < 0) {
             nSX = 0;
@@ -171,11 +171,11 @@ bool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& m
         cv::Mat matTmp_src   = GrayBuffer(rectTemp);   // 原始ROI
         cv::Mat matTmp_label = matLabel(rectTemp);     // Label的ROI
         cv::Mat matTemp      = cv::Mat(rectTemp.height, rectTemp.width, CV_8UC1);
-        for (int y = 0; y < rectTemp.height; y++) {
+        for (NInt y = 0; y < rectTemp.height; y++) {
             int*   ptrLabel = reinterpret_cast<int*>(matTmp_label.ptr(y));
             uchar* ptrGray  = matTmp_src.ptr(y);
             uchar* ptrTemp  = matTemp.ptr(y);
-            for (int x = 0; x < rectTemp.width; x++, ptrLabel++, ptrGray++, ptrTemp++) {
+            for (NInt x = 0; x < rectTemp.width; x++, ptrLabel++, ptrGray++, ptrTemp++) {
                 // 对象
                 if (*ptrLabel == idx) {
                     nSum_in += *ptrGray;
@@ -221,8 +221,8 @@ bool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& m
         if (ptContours.size() != 0) {
             // ROI画面,需要校正
             // 复制轮廓坐标结果
-            for (int m = 0; m < ptContours.size(); m++) {
-                for (int k = 0; k < ptContours.at(m).size(); k++) {
+            for (NInt m = 0; m < ptContours.size(); m++) {
+                for (NInt k = 0; k < ptContours.at(m).size(); k++) {
                     BlobResult_.at(nBlobNum).ptContours.emplace_back(ptContours.at(m)[k].x + nSX, ptContours.at(m)[k].y + nSY);
                 }
             }
@@ -247,8 +247,8 @@ bool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& m
         BlobResult_.at(nBlobNum).fDiffGV = BlobResult_.at(nBlobNum).fBKGV - BlobResult_.at(nBlobNum).fMeanGV;
 
         // min,获取max GV
-        double valMin = NAN;
-        double valMax = NAN;
+        NDouble valMin = NAN;
+        NDouble valMax = NAN;
         cv::minMaxLoc(matTmp_src, &valMin, &valMax, 0, 0, matTemp);
         BlobResult_.at(nBlobNum).nMinGV = static_cast<long>(valMin);
         BlobResult_.at(nBlobNum).nMaxGV = static_cast<long>(valMax);
@@ -316,32 +316,32 @@ bool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& m
     return true;
 }
 
-bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, int nTotalLabel)
+NBool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, NInt nTotalLabel)
 {
     // 如果有一个结果
     if (nTotalLabel <= 0) {
         return true;
     }
-    float fVal = 4.F * CV_PI;
+    NFloat fVal = 4.F * CV_PI;
     BlobResult_.resize(nTotalLabel);
 
 #ifdef _DEBUG
 #else
 #    pragma omp parallel for
 #endif
-    for (int idx = 1; idx <= nTotalLabel; idx++) {
-        int nBlobNum                            = idx - 1;
+    for (NInt idx = 1; idx <= nTotalLabel; idx++) {
+        NInt nBlobNum                            = idx - 1;
         BlobResult_.at(nBlobNum).rectBox.x      = matStats.at<int>(idx, cv::CC_STAT_LEFT);
         BlobResult_.at(nBlobNum).rectBox.y      = matStats.at<int>(idx, cv::CC_STAT_TOP);
         BlobResult_.at(nBlobNum).rectBox.width  = matStats.at<int>(idx, cv::CC_STAT_WIDTH);
         BlobResult_.at(nBlobNum).rectBox.height = matStats.at<int>(idx, cv::CC_STAT_HEIGHT);
 
         // 对象周围(用于背景GV)
-        int nOffSet = 20;
-        int nSX     = BlobResult_.at(nBlobNum).rectBox.x - nOffSet;
-        int nSY     = BlobResult_.at(nBlobNum).rectBox.y - nOffSet;
-        int nEX     = BlobResult_.at(nBlobNum).rectBox.x + BlobResult_.at(nBlobNum).rectBox.width + nOffSet + nOffSet;
-        int nEY     = BlobResult_.at(nBlobNum).rectBox.y + BlobResult_.at(nBlobNum).rectBox.height + nOffSet + nOffSet;
+        NInt nOffSet = 20;
+        NInt nSX     = BlobResult_.at(nBlobNum).rectBox.x - nOffSet;
+        NInt nSY     = BlobResult_.at(nBlobNum).rectBox.y - nOffSet;
+        NInt nEX     = BlobResult_.at(nBlobNum).rectBox.x + BlobResult_.at(nBlobNum).rectBox.width + nOffSet + nOffSet;
+        NInt nEY     = BlobResult_.at(nBlobNum).rectBox.y + BlobResult_.at(nBlobNum).rectBox.height + nOffSet + nOffSet;
 
         if (nSX < 0) {
             nSX = 0;
@@ -367,11 +367,11 @@ bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
         cv::Mat matTmp_label = matLabel(rectTemp);     // Label的ROI
         cv::Mat matTemp      = cv::Mat(rectTemp.height, rectTemp.width, CV_8UC1);
 
-        for (int y = 0; y < rectTemp.height; y++) {
+        for (NInt y = 0; y < rectTemp.height; y++) {
             int*    ptrLabel = reinterpret_cast<int*>(matTmp_label.ptr(y));
             ushort* ptrGray  = reinterpret_cast<ushort*>(matTmp_src.ptr(y));
             uchar*  ptrTemp  = matTemp.ptr(y);
-            for (int x = 0; x < rectTemp.width; x++, ptrLabel++, ptrGray++, ptrTemp++) {
+            for (NInt x = 0; x < rectTemp.width; x++, ptrLabel++, ptrGray++, ptrTemp++) {
                 // 对象
                 if (*ptrLabel == idx) {
                     nSum_in += *ptrGray;
@@ -416,8 +416,8 @@ bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
         if (ptContours.size() != 0) {
             // ROI画面,需要校正
             // 复制轮廓坐标结果
-            for (int m = 0; m < ptContours.size(); m++) {
-                for (int k = 0; k < ptContours.at(m).size(); k++) {
+            for (NInt m = 0; m < ptContours.size(); m++) {
+                for (NInt k = 0; k < ptContours.at(m).size(); k++) {
                     BlobResult_.at(nBlobNum).ptContours.push_back(cv::Point(ptContours.at(m)[k].x + nSX, ptContours.at(m)[k].y + nSY));
                 }
             }
@@ -447,8 +447,8 @@ bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
         BlobResult_.at(nBlobNum).fDiffGV = BlobResult_.at(nBlobNum).fBKGV - BlobResult_.at(nBlobNum).fMeanGV;
 
         // min,获取max GV
-        double valMin = NAN;
-        double valMax = NAN;
+        NDouble valMin = NAN;
+        NDouble valMax = NAN;
         cv::minMaxLoc(matTmp_src, &valMin, &valMax, 0, 0, matTemp);
         BlobResult_.at(nBlobNum).nMinGV = static_cast<long>(valMin);
         BlobResult_.at(nBlobNum).nMaxGV = static_cast<long>(valMax);
@@ -521,7 +521,7 @@ bool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
     return true;
 }
 
-bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat GrayBuffer, int nMaxDefectCount)
+NBool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat GrayBuffer, NInt nMaxDefectCount)
 {
     Release();
     if (ThresholdBuffer.empty()) {
@@ -530,7 +530,7 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat G
     if (ThresholdBuffer.channels() != 1) {
         return false;
     }
-    bool bGrayEmpty = false;
+    NBool bGrayEmpty = false;
     if (GrayBuffer.empty() || GrayBuffer.channels() != 1) {
         GrayBuffer = ThresholdBuffer.clone();
         bGrayEmpty = true;
@@ -598,18 +598,18 @@ bool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat G
 }
 
 // 坐标校正
-void VBlob::CoordApply(cv::Rect rectROI, int nTotalLabel)
+void VBlob::CoordApply(cv::Rect rectROI, NInt nTotalLabel)
 {
-    for (int nBlobNum = 0; nBlobNum < nTotalLabel; nBlobNum++) {
+    for (NInt nBlobNum = 0; nBlobNum < nTotalLabel; nBlobNum++) {
         BlobResult_.at(nBlobNum).rectBox.x += rectROI.tl().x;
         BlobResult_.at(nBlobNum).rectBox.y += rectROI.tl().y;
         BlobResult_.at(nBlobNum).ptCenter.x += rectROI.tl().x;
         BlobResult_.at(nBlobNum).ptCenter.y += rectROI.tl().y;
-        for (int idx = 0; idx < BlobResult_.at(nBlobNum).ptIndexs.size(); idx++) {
+        for (NInt idx = 0; idx < BlobResult_.at(nBlobNum).ptIndexs.size(); idx++) {
             BlobResult_.at(nBlobNum).ptIndexs[idx].x += rectROI.tl().x;
             BlobResult_.at(nBlobNum).ptIndexs[idx].y += rectROI.tl().y;
         }
-        for (int idx = 0; idx < BlobResult_.at(nBlobNum).ptContours.size(); idx++) {
+        for (NInt idx = 0; idx < BlobResult_.at(nBlobNum).ptContours.size(); idx++) {
             BlobResult_.at(nBlobNum).ptContours[idx].x += rectROI.tl().x;
             BlobResult_.at(nBlobNum).ptContours[idx].y += rectROI.tl().y;
         }
@@ -618,14 +618,14 @@ void VBlob::CoordApply(cv::Rect rectROI, int nTotalLabel)
 std::vector<tBLOB_FEATURE> VBlob::DoDefectBlobSingleJudgment(const std::vector<STRU_DEFECT_ITEM>& EngineerBlockDefectJudge)
 {
     std::vector<tBLOB_FEATURE> dst_blob;
-    for (int nFork = 0; nFork < EngineerBlockDefectJudge.size(); nFork++) {
+    for (NInt nFork = 0; nFork < EngineerBlockDefectJudge.size(); nFork++) {
         if (EngineerBlockDefectJudge[nFork].strItemName.empty()) {
             continue;
         }
-        for (int i = 0; i < BlobResult_.size(); i++) {
-            bool bFilter = true;
-            bool bInit   = false;
-            for (int nForj = 0; nForj < EngineerBlockDefectJudge[nFork].Judgment.size(); nForj++) {
+        for (NInt i = 0; i < BlobResult_.size(); i++) {
+            NBool bFilter = true;
+            NBool bInit   = false;
+            for (NInt nForj = 0; nForj < EngineerBlockDefectJudge[nFork].Judgment.size(); nForj++) {
                 // 特征未使用，或者过滤特征大于特征总数
                 if (!EngineerBlockDefectJudge[nFork].Judgment[nForj].bUse || EngineerBlockDefectJudge[nFork].Judgment[nForj].feature_index > E_FEATURE_COUNT) {
                     continue;
@@ -650,13 +650,13 @@ std::vector<tBLOB_FEATURE> VBlob::DoDefectBlobSingleJudgment(const std::vector<S
     return dst_blob;
 }
 
-bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, double dValue)
+NBool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, NInt nBlobFilter, NInt nSign, NDouble dValue)
 {
     // 如果已过滤，则排除
     if (tBlobResult.bFiltering) {
         return false;
     }
-    bool bRes = false;
+    NBool bRes = false;
     switch (nBlobFilter) {
     case E_FEATURE_AREA:
         bRes = Compare(static_cast<double>(tBlobResult.nArea), nSign, dValue);
@@ -737,8 +737,8 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
     case E_FEATURE_GV_UP_COUNT_1:
     case E_FEATURE_GV_UP_COUNT_2:
     {
-        int nCount = static_cast<int>(dValue) / 10000;
-        int nGV    = static_cast<int>(dValue) % 10000;
+        NInt nCount = static_cast<int>(dValue) / 10000;
+        NInt nGV    = static_cast<int>(dValue) % 10000;
 
         if (nGV < 0) {
             nGV = 0;
@@ -748,7 +748,7 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
         }
 
         NLLong nHist = 0;
-        for (int m = nGV; m < IMAGE_MAX_GV; m++) {
+        for (NInt m = nGV; m < IMAGE_MAX_GV; m++) {
             nHist += tBlobResult.nHist[m];
         }
 
@@ -759,8 +759,8 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
     case E_FEATURE_GV_DOWN_COUNT_1:
     case E_FEATURE_GV_DOWN_COUNT_2:
     {
-        int nCount = static_cast<int>(dValue) / 10000;
-        int nGV    = static_cast<int>(dValue) % 10000;
+        NInt nCount = static_cast<int>(dValue) / 10000;
+        NInt nGV    = static_cast<int>(dValue) % 10000;
 
         if (nGV < 0) {
             nGV = 0;
@@ -769,7 +769,7 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
             nGV = IMAGE_MAX_GV - 1;
         }
         NLLong nHist = 0;
-        for (int m = 0; m <= nGV; m++) {
+        for (NInt m = 0; m <= nGV; m++) {
             nHist += tBlobResult.nHist[m];
         }
         bRes = Compare(static_cast<double>(nHist), nSign, static_cast<double>(nCount));
@@ -782,10 +782,10 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
     case E_FEATURE_GVAREA_RATIO_TEST:   // 04.20 choi
     {
 
-        int    nTmp    = static_cast<int>(dValue) % 10000;
-        double nPer    = (dValue - static_cast<double>(nTmp)) / 10000.0;
-        double nRatio  = nTmp / 1000;
-        double Mean_GV = tBlobResult.fBKGV * nRatio;
+        NInt   nTmp    = static_cast<int>(dValue) % 10000;
+        NDouble nPer    = (dValue - static_cast<double>(nTmp)) / 10000.0;
+        NDouble nRatio  = nTmp / 1000;
+        NDouble Mean_GV = tBlobResult.fBKGV * nRatio;
         if (Mean_GV < 0) {
             Mean_GV = 0;
         }
@@ -793,10 +793,10 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
             Mean_GV = IMAGE_MAX_GV - 1;
         }
         NLLong nHist = 0;
-        for (int m = Mean_GV; m <= 255; m++) {
+        for (NInt m = Mean_GV; m <= 255; m++) {
             nHist += tBlobResult.nHist[m];
         }
-        double Area_per = nHist / tBlobResult.nBoxArea;
+        NDouble Area_per = nHist / tBlobResult.nBoxArea;
         Area_per *= 100;
         bRes = Compare(Area_per, nSign, nPer);
     }; break;
@@ -808,9 +808,9 @@ bool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, int nBlobFilter, int nSign, 
 }
 
 // 运算符(<,>,==,<=,>=)
-bool VBlob::Compare(double dFeatureValue, int nSign, double dValue)
+NBool VBlob::Compare(NDouble dFeatureValue, NInt nSign, NDouble dValue)
 {
-    bool bRes = false;
+    NBool bRes = false;
     switch (nSign) {
     case E_SIGN_EQUAL:
         bRes = dFeatureValue == dValue;   // x == judgment value

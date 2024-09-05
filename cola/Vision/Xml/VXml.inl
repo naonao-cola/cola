@@ -16,13 +16,13 @@ NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
 template<typename T>
-void VXmlw::writeValue(const std::string& key, const T& value)
+NVoid VXmlw::writeValue(const std::string& key, const T& value)
 {
     fs_ << key << value;
 }
 
 template<typename T>
-void VXmlw::writeValue(const std::string& key, const std::vector<T>& value)
+NVoid VXmlw::writeValue(const std::string& key, const std::vector<T>& value)
 {
     fs_ << key << "[";
     for (int i = 0; i < value.size(); i++)
@@ -31,19 +31,19 @@ void VXmlw::writeValue(const std::string& key, const std::vector<T>& value)
 }
 
 template<typename T, is_instance<T, cv::Point_>>
-void VXmlw::writePoint(const std::string& key, const T& point)
+NVoid VXmlw::writePoint(const std::string& key, const T& point)
 {
     fs_ << key << point;
 }
 
 template<typename T, is_instance<T, cv::Point_>>
-void VXmlw::writePoint(const std::string& key, const std::vector<T>& points)
+NVoid VXmlw::writePoint(const std::string& key, const std::vector<T>& points)
 {
     fs_ << key << "[" << points << "]";
 }
 
 template<typename T>
-void VXmlw::writeWithLeaf(const std::string& parentNodeName, const std::vector<std::string>& childNodeName, std::vector<T>& data)
+NVoid VXmlw::writeWithLeaf(const std::string& parentNodeName, const std::vector<std::string>& childNodeName, std::vector<T>& data)
 {
     if (childNodeName.size() != data.size())
         std::cerr << "the count is not same" << std::endl;
@@ -54,13 +54,13 @@ void VXmlw::writeWithLeaf(const std::string& parentNodeName, const std::vector<s
 }
 
 template<typename T>
-void VXmlw::writeChildNode(const std::string& childNodeName, T& data)
+NVoid VXmlw::writeChildNode(const std::string& childNodeName, T& data)
 {
     fs_ << childNodeName << data;
 }
 
 template<typename T>
-void VXmlr::readValue(const std::string& key, T& value)
+NVoid VXmlr::readValue(const std::string& key, T& value)
 {
     cv::FileStorage fs(file_name_, cv::FileStorage::READ);
     value = T(fs[key]);
@@ -68,7 +68,7 @@ void VXmlr::readValue(const std::string& key, T& value)
 }
 
 template<typename T>
-void VXmlr::readValue(const std::string& key, std::vector<T>& value)
+NVoid VXmlr::readValue(const std::string& key, std::vector<T>& value)
 {
     cv::FileStorage      fs(file_name_, cv::FileStorage::READ);
     cv::FileNode         arrayName = fs[key];
@@ -80,7 +80,7 @@ void VXmlr::readValue(const std::string& key, std::vector<T>& value)
 }
 
 template<typename T, is_instance<T, cv::Point_>>
-void VXmlr::readPoint(const std::string& key, T& point)
+NVoid VXmlr::readPoint(const std::string& key, T& point)
 {
     cv::FileStorage fs(file_name_, cv::FileStorage::READ);
     fs[key] >> point;
@@ -88,7 +88,7 @@ void VXmlr::readPoint(const std::string& key, T& point)
 }
 
 template<typename T, is_instance<T, cv::Point_>>
-void VXmlr::readPoint(const std::string& key, std::vector<T>& points)
+NVoid VXmlr::readPoint(const std::string& key, std::vector<T>& points)
 {
     cv::FileStorage fs(file_name_, cv::FileStorage::READ);
     fs[key][0] >> points;
@@ -96,7 +96,7 @@ void VXmlr::readPoint(const std::string& key, std::vector<T>& points)
 }
 
 template<typename T>
-void VXmlr::readWithLeaf(const std::string& parentNodeName, const std::vector<std::string>& childNodeName, std::vector<T>& data)
+NVoid VXmlr::readWithLeaf(const std::string& parentNodeName, const std::vector<std::string>& childNodeName, std::vector<T>& data)
 {
     cv::FileStorage      fs(file_name_, cv::FileStorage::READ);
     cv::FileNode         parentNode = fs[parentNodeName];
@@ -111,7 +111,7 @@ void VXmlr::readWithLeaf(const std::string& parentNodeName, const std::vector<st
 }
 
 template<typename T>
-void VXmlr::readChildNode(const std::string& parentNodeName, const std::string& childNodeName, T& data)
+NVoid VXmlr::readChildNode(const std::string& parentNodeName, const std::string& childNodeName, T& data)
 {
     cv::FileStorage fs(file_name_, cv::FileStorage::READ);
     cv::FileNode    tmpNode = fs[parentNodeName];
@@ -124,7 +124,7 @@ void VXmlr::readChildNode(const std::string& parentNodeName, const std::string& 
 }
 
 template<typename T>
-void VXmlr::readChildNode(const std::vector<std::string>& parentNodeName, const std::string& childNodeName, T& data)
+NVoid VXmlr::readChildNode(const std::vector<std::string>& parentNodeName, const std::string& childNodeName, T& data)
 {
     cv::FileStorage fs(file_name_, cv::FileStorage::READ);
     cv::FileNode    tmpNode = fs[parentNodeName[0]];
@@ -142,4 +142,4 @@ void VXmlr::readChildNode(const std::vector<std::string>& parentNodeName, const 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
 
-#endif   // !NAO_VXML_INL
+#endif   // NAO_VXML_INL
