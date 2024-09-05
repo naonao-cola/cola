@@ -117,8 +117,4 @@ NBool DGroup::isSeparate(DElementCPtr a, DElementCPtr b) const
     return false;
 }
 
-NSize DGroup::trim() const {
-    return 0;
-}
-
 NAO_NAMESPACE_END

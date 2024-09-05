@@ -135,7 +135,8 @@ NBool DRegion::isSeparate(DElementCPtr a, DElementCPtr b) const
     return DSeparateOptimizer::checkSeparate(manager_->manager_elements_, a, b);
 }
 
-NSize DRegion::trim() const {
+NSize DRegion::trim() {
+    NAO_ASSERT_INIT_THROW_ERROR(false)
     NSize result = 0;
     if (manager_) {
         result = DTrimOptimizer::trim(manager_->manager_elements_);

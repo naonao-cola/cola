@@ -26,6 +26,12 @@ public:
      */
     DRegion* setDEngineType(DEngineType type);
 
+    /**
+     * 修剪冗余的连边信息
+     * @return
+     */
+    NSize trim();
+
 protected:
     explicit DRegion();
     ~DRegion() override;
@@ -45,7 +51,6 @@ private:
 
     NBool isSeparate(DElementCPtr a, DElementCPtr b) const final;
 
-    NSize trim() const override ;
 
 private:
     DElementManagerPtr manager_ = nullptr;   // region 内部通过 manager来管理其中的 element 信息

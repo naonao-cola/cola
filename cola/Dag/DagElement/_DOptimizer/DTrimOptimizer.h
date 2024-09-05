@@ -51,8 +51,8 @@ class DTrimOptimizer : public DOptimizer
                     trimNum++;
                 }
             }
-             if (cur->isDGroup()) {
-                trimNum += ((DGroupPtr)cur)->trim();
+            if (DElementType::REGION == cur->element_type_) {
+                trimNum += ((DRegionPtr)cur)->trim();
             }
         }
 
