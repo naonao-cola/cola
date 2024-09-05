@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-10 17:09:59
+ * @LastEditTime : 2024-09-05 10:19:47
  * @Copyright    :
  **/
 #ifndef NAO_STATUS_H
@@ -33,18 +33,16 @@ class NSTATUS
 public:
     explicit NSTATUS() = default;
 
-    explicit NSTATUS(const std::string& errorInfo, const std::string& locateInfo = NAO_EMPTY)
+    explicit NSTATUS(const std::string& errorInfo)
     {
-        this->error_code_   = STATUS_ERR;   // 默认的error code信息
-        this->error_info_   = errorInfo;
-        this->error_locate_ = locateInfo;
+        this->error_code_ = STATUS_ERR;   // 默认的error code信息
+        this->error_info_ = errorInfo;
     }
 
-    explicit NSTATUS(int errorCode, const std::string& errorInfo, const std::string& locateInfo = NAO_EMPTY)
+    explicit NSTATUS(int errorCode, const std::string& errorInfo)
     {
-        this->error_code_   = errorCode;
-        this->error_info_   = errorInfo;
-        this->error_locate_ = locateInfo;
+        this->error_code_ = errorCode;
+        this->error_info_ = errorInfo;
     }
 
     NSTATUS(const NSTATUS& status)
@@ -52,9 +50,8 @@ public:
         if (status.error_code_ == error_code_) {
             return;
         }
-        this->error_code_   = status.error_code_;
-        this->error_info_   = status.error_info_;
-        this->error_locate_ = status.error_locate_;
+        this->error_code_ = status.error_code_;
+        this->error_info_ = status.error_info_;
     }
 
     NSTATUS(const NSTATUS&& status) noexcept
@@ -63,18 +60,16 @@ public:
             return;
         }
 
-        this->error_code_   = status.error_code_;
-        this->error_info_   = status.error_info_;
-        this->error_locate_ = status.error_locate_;
+        this->error_code_ = status.error_code_;
+        this->error_info_ = status.error_info_;
     }
 
     NSTATUS& operator=(const NSTATUS& status)
     {
         if (this->error_code_ != status.error_code_) {
             // 如果status是正常的话，则所有数据保持不变
-            this->error_code_   = status.error_code_;
-            this->error_info_   = status.error_info_;
-            this->error_locate_ = status.error_locate_;
+            this->error_code_ = status.error_code_;
+            this->error_info_ = status.error_info_;
         }
         return (*this);
     }
@@ -86,9 +81,8 @@ public:
          * 如果当前状态正常，并且传入的状态是异常的话，则返回异常
          */
         if (!this->isErr() && cur.isErr()) {
-            this->error_code_   = cur.error_code_;
-            this->error_info_   = cur.error_info_;
-            this->error_locate_ = cur.error_locate_;
+            this->error_code_ = cur.error_code_;
+            this->error_info_ = cur.error_info_;
         }
         return (*this);
     }
@@ -101,7 +95,6 @@ public:
         if (this->error_code_ != STATUS_OK) {
             this->error_code_ = STATUS_OK;
             this->error_info_.clear();
-            this->error_locate_.clear();
         }
     }
 
@@ -117,11 +110,6 @@ public:
      */
     const std::string& getInfo() const { return this->error_info_; }
 
-    /**
-     * 获取报错位置
-     * @return
-     */
-    const std::string& getLocate() const { return this->error_locate_; }
 
     /**
      * 判断当前状态是否可行
@@ -172,7 +160,6 @@ public:
 private:
     int         error_code_ = STATUS_OK;   // 错误码信息
     std::string error_info_;               // 错误信息描述
-    std::string error_locate_;             // 错误发生的具体位置，形如：file|function|line
 };
 
 NAO_INTERNAL_NAMESPACE_END

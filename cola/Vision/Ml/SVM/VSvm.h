@@ -5,7 +5,7 @@
  * @Date         : 2024-07-18 19:10:54
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-19 14:22:21
+ * @LastEditTime : 2024-08-23 11:18:30
  **/
 #ifndef NAONAO_VSVM_H
 #define NAONAO_VSVM_H
@@ -14,6 +14,8 @@
 https://www.cnblogs.com/jiahuiyu/p/5415936.html
 使用官方的grid.py 进行网格搜索，得到最优参数
 https://www.cnblogs.com/ranjiewen/p/6869402.html
+
+https://www.cnblogs.com/LuffySir/p/6060694.html
 */
 
 #include "../../VisionObject.h"

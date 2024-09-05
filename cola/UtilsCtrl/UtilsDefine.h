@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-05 23:32:05
+ * @LastEditTime : 2024-09-05 10:34:54
  * @Copyright    :
  **/
 #ifndef NAO_UTILSDEFINE_H
@@ -36,11 +36,7 @@ NAO_NAMESPACE_BEGIN
 using NAO_LOCK_GUARD  = std::lock_guard<std::mutex>;
 using NAO_UNIQUE_LOCK = std::unique_lock<std::mutex>;
 
-/* 判断函数流程是否可以继续 */
-NAO_INTERNAL_NAMESPACE_BEGIN
-static std::mutex g_check_status_mtx;
-static std::mutex g_echo_mtx;
-NAO_INTERNAL_NAMESPACE_END
+
 
 #if __cplusplus >= 201703L
 using NAO_READ_LOCK  = std::shared_lock<std::shared_mutex>;
@@ -132,14 +128,13 @@ NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T t, Args... args)
 
 #define NAO_SLEEP_MILLISECOND(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
-#define NAO_FUNCTION_CHECK_STATUS                                                                                                    \
-    if (unlikely(status.isErr())) {                                                                                                  \
-        if (status.isCrash()) {                                                                                                      \
-            throw NException(status.getInfo());                                                                                      \
-        }                                                                                                                            \
-        NAO_LOCK_GUARD lock{internal::g_check_status_mtx};                                                                           \
-        NAO_ECHO("%s, errorCode = [%d], errorInfo = [%s].", status.getLocate().c_str(), status.getCode(), status.getInfo().c_str()); \
-        return status;                                                                                                               \
+#define NAO_FUNCTION_CHECK_STATUS                                                                    \
+    if (unlikely(status.isErr())) {                                                                  \
+        if (status.isCrash()) {                                                                      \
+            throw NException(status.getInfo());                                                      \
+        }                                                                                            \
+        NAO_ECHO("errorCode = [%d], errorInfo = [%s].", status.getCode(), status.getInfo().c_str()); \
+        return status;                                                                               \
     }
 
 /**
@@ -153,8 +148,8 @@ inline NVoid NAO_ECHO(const char* cmd, ...)
 #ifdef _NAO_SILENCE_
     return;
 #endif
-
-    std::lock_guard<std::mutex> lock{internal::g_echo_mtx};
+    static std::mutex           echo_mtx;
+    std::lock_guard<std::mutex> lock{echo_mtx};
     auto                        now  = std::chrono::system_clock::now();
     auto                        time = std::chrono::system_clock::to_time_t(now);
     auto                        ms   = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000;

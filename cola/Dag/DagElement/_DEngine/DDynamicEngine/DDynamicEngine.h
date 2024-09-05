@@ -44,8 +44,8 @@ protected:
      * 动态图运行
      * @param
      * @return
-     */
-    NVoid asyncRunAndWait();
+    */
+    NVoid commonRunAll();
 
     /**
      * 动态图运行前重置
@@ -99,7 +99,7 @@ private:
     std::mutex              lock_;
     std::condition_variable cv_;
     std::mutex status_lock_;
-    
+
     friend class UAllocator;
 };
 

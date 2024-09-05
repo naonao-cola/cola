@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:32:29
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 15:08:00
+ * @LastEditTime : 2024-09-05 10:28:40
  **/
 #include <algorithm>
 
@@ -53,8 +53,7 @@ DElementPtr DElement::setLoop(NSize loop)
 {
     // 由于运行机制问题，loop执行的element，不支持异步执行
     NAO_ASSERT_MUTABLE_INIT_THROW_ERROR(false)
-    NAO_THROW_EXCEPTION_BY_CONDITION((timeout_ > NAO_DEFAULT_ELEMENT_TIMEOUT && loop != NAO_DEFAULT_LOOP_TIMES),
-                                     "cannot set loop value when timeout is bigger than 0")
+    NAO_THROW_EXCEPTION_BY_CONDITION((timeout_ > NAO_DEFAULT_ELEMENT_TIMEOUT && loop != NAO_DEFAULT_LOOP_TIMES), "cannot set loop value when timeout is bigger than 0")
 
     this->loop_ = loop;
     return this;
@@ -95,15 +94,15 @@ DElementPtr DElement::setTimeout(NMSec timeout, DElementTimeoutStrategy strategy
 {
     NAO_ASSERT_INIT_THROW_ERROR(false)
     NAO_THROW_EXCEPTION_BY_CONDITION((timeout < NAO_DEFAULT_ELEMENT_TIMEOUT), "timeout value cannot smaller than 0")
-    NAO_THROW_EXCEPTION_BY_CONDITION((loop_ > NAO_DEFAULT_LOOP_TIMES && NAO_DEFAULT_ELEMENT_TIMEOUT != timeout),
-                                     "cannot set timeout value when loop bigger than 1")
+    NAO_THROW_EXCEPTION_BY_CONDITION((loop_ > NAO_DEFAULT_LOOP_TIMES && NAO_DEFAULT_ELEMENT_TIMEOUT != timeout), "cannot set timeout value when loop bigger than 1")
 
     this->timeout_          = timeout;
     this->timeout_strategy_ = strategy;
     return this;
 }
 
-DElementPtr DElement::setMacro(NBool macro) {
+DElementPtr DElement::setMacro(NBool macro)
+{
     NAO_ASSERT_INIT_THROW_ERROR(false)
     // 目前仅针对非group逻辑生效
     NAO_THROW_EXCEPTION_BY_CONDITION(isDGroup(), "cannot set group as macro")
@@ -155,13 +154,6 @@ DElement& DElement::operator*(NSize loop) noexcept
 
     return (*this);
 }
-
-
-NBool DElement::isLinkable() const
-{
-    return this->linkable_;
-}
-
 
 NBool DElement::isAsync() const
 {
@@ -305,7 +297,8 @@ NStatus DElement::fatProcessor(const NFunctionType& type)
             doAspect(DAspectType::FINISH_DESTROY, status);
             break;
         }
-        default: NAO_RETURN_ERROR_STATUS("get function type error")
+        default:
+            NAO_RETURN_ERROR_STATUS("get function type error")
         }
     }
     catch (const NException& ex) {
@@ -368,19 +361,20 @@ NBool DElement::isMutable() const
 }
 
 
-NBool DElement::isMacro() const {
+NBool DElement::isMacro() const
+{
     return is_marco_;
 }
 
 NStatus DElement::crashed(const NException& ex)
 {
-    return NStatus(internal::STATUS_CRASH, ex.what(), NAO_GET_LOCATE);
+    return NStatus(internal::STATUS_CRASH, ex.what());
 }
 
 
 NIndex DElement::getThreadIndex()
 {
-    NAO_THROW_EXCEPTION_BY_CONDITION((nullptr == thread_pool_), this->getName() + " getThreadIndex with no threadpool")   // 理论不可能出现的情况
+    NAO_THROW_EXCEPTION_BY_CONDITION((nullptr == thread_pool_), this->getName() + " getThreadIndex with no thread pool")   // 理论不可能出现的情况
 
     auto tid = (NSize)std::hash<std::thread::id>{}(std::this_thread::get_id());
     return thread_pool_->getThreadIndex(tid);
@@ -482,12 +476,14 @@ NBool DElement::isDGroup() const
     return (long(element_type_) & long(DElementType::GROUP)) > 0;
 }
 
-NBool DElement::isGAdaptor() const {
+NBool DElement::isGAdaptor() const
+{
     return (long(element_type_) & long(DElementType::ADAPTER)) > 0;
 }
 
 
-NBool DElement::isGNode() const {
+NBool DElement::isGNode() const
+{
     return DElementType::NODE == element_type_;
 }
 
@@ -511,9 +507,9 @@ NIndex DElement::getBindingIndex() const
 DElementRelation DElement::getRelation() const
 {
     DElementRelation relation;
-    relation.predecessors_ = this->dependence_.asVector();    // 前驱
-    relation.successors_ = this->run_before_.asVector();    // 后继
-    relation.belong_       = this->belong_;       // 从属信息
+    relation.predecessors_ = this->dependence_.asVector();   // 前驱
+    relation.successors_   = this->run_before_.asVector();   // 后继
+    relation.belong_       = this->belong_;                  // 从属信息
 
     return relation;
 }
@@ -554,8 +550,7 @@ NStatus DElement::asyncRun()
         status = getAsyncResult();
     }
     else {
-        NAO_RETURN_ERROR_STATUS_BY_CONDITION(DElementTimeoutStrategy::AS_ERROR == timeout_strategy_,
-                                             "[" + name_ + "] running time more than [" + std::to_string(timeout_) + "]ms")
+        NAO_RETURN_ERROR_STATUS_BY_CONDITION(DElementTimeoutStrategy::AS_ERROR == timeout_strategy_, "[" + name_ + "] running time more than [" + std::to_string(timeout_) + "]ms")
         cur_state_.store(DElementState::TIMEOUT, std::memory_order_release);
     }
 
@@ -580,8 +575,7 @@ NStatus DElement::checkSuitable()
     NAO_ASSERT_NOT_NULL(thread_pool_)
 
     // 包含异步执行的逻辑，不可以loop超过1次
-    NAO_RETURN_ERROR_STATUS_BY_CONDITION(loop_ > NAO_DEFAULT_LOOP_TIMES && this->isAsync(),
-                                         "[" + this->getName() + "] can set loop <= 1 only for the reason of async run")
+    NAO_RETURN_ERROR_STATUS_BY_CONDITION(loop_ > NAO_DEFAULT_LOOP_TIMES && this->isAsync(), "[" + this->getName() + "] can set loop <= 1 only for the reason of async run")
     if (!this->isRegistered()) {
         NAO_ECHO("[notice] [%s] is created but not registered into pipeline, so it will not work.", this->getName().c_str());
     }
@@ -604,6 +598,11 @@ DElementPtrArr DElement::getDeepPath(NBool reverse) const
         std::reverse(path.begin(), path.end());
     }
     return path;
+}
+
+NBool DElement::isDefaultBinding() const
+{
+    return NAO_DEFAULT_BINDING_INDEX == binding_index_;
 }
 
 NAO_NAMESPACE_END

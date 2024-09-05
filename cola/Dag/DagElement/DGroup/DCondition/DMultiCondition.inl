@@ -60,10 +60,12 @@ NStatus DMultiCondition<type>::parallelRun()
     std::vector<std::future<NStatus>> futures;
     for (DElementPtr cur : this->group_elements_arr_) {
         if (!cur->isMatch()) {
-            continue;   // 不满足条件，则不执行
+            continue;    // 不满足条件，则不执行
         }
 
-        futures.emplace_back(this->thread_pool_->commit([cur] { return cur->fatProcessor(NFunctionType::RUN); }, cur->getBindingIndex()));
+        futures.emplace_back(std::move(this->thread_pool_->commit([cur] {
+            return cur->fatProcessor(NFunctionType::RUN);
+        }, cur->binding_index_)));
     }
 
     for (auto& fut : futures) {
