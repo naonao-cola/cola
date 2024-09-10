@@ -62,6 +62,9 @@ jobs:
         with:
           path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
           key: macOS-${{ matrix.arch }}-${{ matrix.os }}-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
+          restore-keys: |
+            ${{ runner.os }}-xmake-
+
 
 
       # Setup compilation mode and install project dependencies

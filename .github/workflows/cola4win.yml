@@ -16,14 +16,13 @@ on:
       - 'cola/**'
       - '.github/workflows/**'
 
-
-
 jobs:
   build:
     strategy:
       matrix:
         os: [windows-latest]
         arch: [x64, x86]
+        mode: [debug, releasedbg]
 
     runs-on: ${{ matrix.os }}
 
@@ -32,6 +31,15 @@ jobs:
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
+
+      # Cache xmake dependencies
+      - name: Retrieve cached xmake dependencies
+        uses: actions/cache@v3
+        with:
+          path: 'C:\npm\cache\.xmake\packages'
+          key: windows-${{ matrix.arch }}-${{ matrix.os }}-${{ matrix.mode }}
+          restore-keys: |
+            ${{ runner.os }}-xmake-
 
       - name: Tests
         run: |
