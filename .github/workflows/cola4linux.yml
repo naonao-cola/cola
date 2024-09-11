@@ -62,6 +62,7 @@ jobs:
         run: echo "hash=$(xmake l utils.ci.packageskey)" >> $GITHUB_OUTPUT
 
       - name: Retrieve cached xmake dependencies
+        id: restore-depcache
         uses: actions/cache/restore@v4
         with:
           path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
