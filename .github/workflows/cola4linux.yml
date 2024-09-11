@@ -55,6 +55,14 @@ jobs:
       - name: Update xmake repository
         run: xmake repo --update
 
+      - name: Retrieve cached xmake dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
+          key: linux-${{ matrix.arch }}-${{ matrix.os }}-${{ matrix.mode }}
+          restore-keys: |
+            ${{ runner.os }}-xmake
+
       # Fetch xmake dephash
       - name: Retrieve dependencies hash
         id: dep_hash
