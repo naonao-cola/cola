@@ -57,7 +57,7 @@ jobs:
         id: restore-depcache
         uses: actions/cache/restore@v4
         with:
-          path:  ${{ env.XMAKE_GLOBALDIR }}\.xmake\packages
+          path:  ${{ env.XMAKE_GLOBALDIR }}\.xmake
           key: MSVC-${{ matrix.arch }}-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
           restore-keys: |
             ${{ runner.os }}-xmake
@@ -70,7 +70,7 @@ jobs:
         if: ${{ !steps.restore-depcache.outputs.cache-hit }}
         uses: actions/cache/save@v4
         with:
-          path: ${{ env.XMAKE_GLOBALDIR }}\.xmake\packages
+          path: ${{ env.XMAKE_GLOBALDIR }}\.xmake
           key: ${{ steps.restore-depcache.outputs.cache-primary-key }}
 
       - name: Tests
