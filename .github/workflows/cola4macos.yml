@@ -36,15 +36,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Force xmake to a specific folder (for cache)
       - name: Set xmake env
         run: echo "XMAKE_GLOBALDIR=${{ runner.workspace }}/xmake-global" >> $GITHUB_ENV
 
       - name: Install xmake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: latest
-          #xmake-version: branch@dev # FIXME. switch to dev branch to fix ci temporary
+          xmake-version: branch@dev
           actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
 
       # Update xmake repository (in order to have the file that will be cached)
@@ -58,15 +56,25 @@ jobs:
 
       # Cache xmake dependencies
       - name: Retrieve cached xmake dependencies
-        uses: actions/cache@v3
+        id: restore-depcache
+        uses: actions/cache/restore@v4
         with:
           path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
           key: macOS-${{ matrix.arch }}-${{ matrix.os }}-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
-
+          restore-keys: |
+            ${{ runner.os }}-xmake
 
       # Setup compilation mode and install project dependencies
       - name: Configure xmake and install dependencies
         run: xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.mode }}   --yes -v --ccache=n
+
+       # Save dependencies
+      - name: Save cached xmake dependencies
+        if: ${{ !steps.restore-depcache.outputs.cache-hit }}
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
+          key: ${{ steps.restore-depcache.outputs.cache-primary-key }}
 
       - name: Build the task
         run: |

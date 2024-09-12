@@ -36,8 +36,6 @@ for _, v in pairs(tutorial_list) do
         add_files("Common/**.cpp")
         -- test-file
         for index, filedir in ipairs(os.filedirs(string.format("%s/**", v))) do
-            -- print(index)
-            -- print(filedir)
             local s = filedir
             if s:endswith(".cuh") or s:endswith(".h") then
                  add_headerfiles(filedir)

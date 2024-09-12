@@ -16,27 +16,65 @@ on:
       - 'cola/**'
       - '.github/workflows/**'
 
-
-
 jobs:
   build:
     strategy:
       matrix:
         os: [windows-latest]
         arch: [x64, x86]
+        mode: [debug, releasedbg]
 
     runs-on: ${{ matrix.os }}
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: xmake-io/github-action-setup-xmake@v1
+      #https://github.com/NazaraEngine/NazaraEngine/blob/main/.github/workflows/windows-build.yml
+      - name: Get current date as package key
+        id: cache_key
+        run: echo "key=$(date +'%W')" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set xmake env
+        run: echo "XMAKE_GLOBALDIR=${{ runner.workspace }}\xmake-global" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Setup xmake
+        uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: latest
+          xmake-version: branch@dev
+          actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
+
+      - name: Update xmake repository
+        run: xmake repo --update
+
+      - name: Retrieve dependencies hash
+        id: dep_hash
+        run: echo "hash=$(xmake l utils.ci.packageskey)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Retrieve cached xmake dependencies
+        id: restore-depcache
+        uses: actions/cache/restore@v4
+        with:
+          path:  ${{ env.XMAKE_GLOBALDIR }}\.xmake
+          key: MSVC-${{ matrix.arch }}-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
+          restore-keys: |
+            ${{ runner.os }}-xmake
+
+      - name: Configure xmake and install dependencies
+        run: xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.mode }}   --yes -v --ccache=n
+
+       # Save dependencies
+      - name: Save cached xmake dependencies
+        if: ${{ !steps.restore-depcache.outputs.cache-hit }}
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.XMAKE_GLOBALDIR }}\.xmake
+          key: ${{ steps.restore-depcache.outputs.cache-primary-key }}
 
       - name: Tests
         run: |
           xmake clean -a
-          xrepo install -y "opencv 4.8.0"
-          xmake f -m debug -a ${{ matrix.arch }}
-          xmake build --root -r -v -D -y
+          xmake --yes -vD
           xmake run -a
