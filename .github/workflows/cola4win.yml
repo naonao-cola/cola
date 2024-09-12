@@ -43,7 +43,7 @@ jobs:
       - name: Setup xmake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: latest
+          xmake-version: branch@dev
           actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
 
       - name: Update xmake repository
@@ -77,6 +77,5 @@ jobs:
         run: |
           xmake clean -a
           xrepo install -y "opencv 4.8.0"
-          xmake f -m debug -a ${{ matrix.arch }}
           xmake build --root -r -v -D -y
           xmake run -a
