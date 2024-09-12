@@ -76,6 +76,5 @@ jobs:
       - name: Tests
         run: |
           xmake clean -a
-          xrepo install -y "opencv 4.8.0"
-          xmake build --root -r -v -D -y
+          xmake --yes -vD
           xmake run -a

@@ -85,5 +85,5 @@ jobs:
       - name: Build the task
         run: |
           xmake clean -a
-          xmake --yes
+          xmake --yes -vD
           xmake run -a
