@@ -22,6 +22,7 @@ RUN \
     git \
     iputils-ping \
     gpg \
+    make \
     gpg-agent \
     valgrind \
     libssl-dev \
