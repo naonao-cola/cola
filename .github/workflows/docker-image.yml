@@ -14,5 +14,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Docker login
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag cola-env:$(date +%s)
+      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/cola-env:$(date +%s)
+
+    - name: Docker image push
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/cola-env:$(date +%s)
