@@ -22,6 +22,8 @@ RUN \
     git \
     iputils-ping \
     gpg \
+    curl \
+    wget \
     make \
     gpg-agent \
     valgrind \
