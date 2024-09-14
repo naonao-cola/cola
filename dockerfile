@@ -38,8 +38,8 @@ RUN \
 RUN add-apt-repository ppa:xmake-io/xmake && apt-get update && apt-get install -y xmake && \
     git clone https://github.com/naonao-cola/cola.git
 
-RUN cd cola && xmake  update --root  && exec bash && source ~/.xmake/profile && xmake --version --root
+RUN  xmake  update --root  && exec bash && source ~/.xmake/profile && xmake --version --root
 
-RUN xmake --root -vD -y
+RUN cd cola && xmake --root -vD -y
 
 CMD /bin/sh -c "/bin/bash"
