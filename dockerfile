@@ -40,6 +40,7 @@ RUN add-apt-repository ppa:xmake-io/xmake && apt-get update && apt-get install -
 
 RUN  xmake  update --root  && exec bash && source ~/.xmake/profile && xmake --version --root
 
-RUN cd cola && xmake --root -vD -y
+# xmake 安装需要 source ~/.xmake/profile ，将apt安装的xmake 更新为 ~/.local/bin、
+# RUN cd cola && xmake --root -vD -y
 
 CMD /bin/sh -c "/bin/bash"
