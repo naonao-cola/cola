@@ -28,6 +28,7 @@ RUN \
     gpg-agent \
     rar \
     unrar \
+    xz-utils \
     valgrind \
     libssl-dev \
     ca-certificates \
