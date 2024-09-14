@@ -22,7 +22,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag cola:$(date +%s)
+      run: docker build . --file Dockerfile --tag cola:latest
 
     - name: Docker image push
-      run: docker push xibei1220/cola/cola:$(date +%s)
+      run: docker push xibei1220/cola:latest
