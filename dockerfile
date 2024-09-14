@@ -26,6 +26,8 @@ RUN \
     wget \
     make \
     gpg-agent \
+    rar \
+    unrar \
     valgrind \
     libssl-dev \
     ca-certificates \
