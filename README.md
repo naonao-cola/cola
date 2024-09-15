@@ -14,8 +14,8 @@ sudo apt install xmake
 ```bash
 #去除缓存
 docker builder prune
-sudo docker build --build-arg HTTP_PROXY="http://127.0.0.1:1082" -t cola-env .
-docker run -itd --net=host --name cola-test cola-env
+sudo docker build  --progress=plain -t xibei1220/cola:latest .
+docker run -itd --net=host --name cola-test xibei1220/cola:latest
 docker exec -it af72aead6bfb  /bin/bash
 
 ```

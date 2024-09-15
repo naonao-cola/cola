@@ -2,6 +2,8 @@
 
 # https://github.com/boostorg/mysql/blob/6d08247bab36da0cb9360f7c932620e167ec390b/tools/docker/build-gcc13.dockerfile#L13
 ENV NAO_PATH /home/COLA
+ENV DOCKER_BUILDKIT=1
+ENV XMAKE_ROOT=y
 
 WORKDIR $NAO_PATH
 
@@ -35,12 +37,10 @@ RUN \
     ln -s /usr/bin/gcc-13 /usr/bin/gcc && \
     g++ --version
 
-RUN add-apt-repository ppa:xmake-io/xmake && apt-get update && apt-get install -y xmake && \
-    git clone https://github.com/naonao-cola/cola.git
+RUN curl -fsSL https://xmake.io/shget.text | bash
+ENV XMAKE_PROFILE_PATH /root/.xmake/profile
+RUN echo 'source /root/.xmake/profile' >> ~/.bashrc
 
-RUN  xmake  update --root  && exec bash && source ~/.xmake/profile && xmake --version --root
-
-# xmake 安装需要 source ~/.xmake/profile ，将apt安装的xmake 更新为 ~/.local/bin、
-# RUN cd cola && xmake --root -vD -y
+RUN git clone https://github.com/naonao-cola/cola.git && cd cola && /bin/bash -c "source $XMAKE_PROFILE_PATH && xmake build -rvD -y && xmake run -a"
 
 CMD /bin/sh -c "/bin/bash"
