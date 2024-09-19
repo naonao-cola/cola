@@ -11,5 +11,6 @@
 #define NAONAO_VMLINCLUDE_H
 
 #include "SVM/VSvm.h"
+#include "SVM/VSvmOneClass.h"
 
 #endif   // NAONAO_VMLINCLUDE_H
