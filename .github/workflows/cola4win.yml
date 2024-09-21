@@ -3,14 +3,12 @@
 on:
   pull_request:
     branches:
-      - main
       - 'dev'
     paths:
       - 'cola/**'
       - '.github/workflows/**'
   push:
     branches:
-      - main
       - 'dev'
     paths:
       - 'cola/**'
