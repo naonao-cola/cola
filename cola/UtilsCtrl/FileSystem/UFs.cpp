@@ -7,13 +7,14 @@
  * @LastEditors  : naonao
  * @LastEditTime : 2024-07-06 10:48:25
  **/
+#include "UFs.h"
 #include <array>
+#include <cstring>
 #include <filesystem>
 #include <iostream>
 #include <regex>
 #include <utility>
-#include <cstring>
-#include "UFs.h"
+
 
 NAO_NAMESPACE_BEGIN
 
@@ -31,7 +32,8 @@ NBool UFs::isDir(const std::string& dirPath)
 NBool UFs::creatDir(const std::string& dirPath)
 {
     fs::path dir = dirPath;
-    if (fs::exists(dir)) return true;
+    if (fs::exists(dir))
+        return true;
     fs::create_directory(dir);
     return fs::exists(dir);
 }
@@ -56,10 +58,15 @@ std::string UFs::getExtensionName(const std::string& filePath)
 {
     return fs::path(filePath).extension().string();
 }
-NVoid UFs::reNameFile(const std::string& filename, const std::string& newname)
+NVoid UFs::renameFile(const std::string& filename, const std::string& newname)
 {
     fs::rename(filename.c_str(), newname.c_str());
 }
+NVoid UFs::copyFile(const std::string& filename, const std::string& newname)
+{
+    fs::copy(filename.c_str(), newname.c_str());
+}
+
 std::string UFs::getParentParh(const std::string& filePath)
 {
     return fs::path(filePath).parent_path().string();
@@ -67,7 +74,8 @@ std::string UFs::getParentParh(const std::string& filePath)
 
 uintmax_t UFs::getFileSize(const std::string& filePath)
 {
-    if (!fs::exists(filePath)) return 0;
+    if (!fs::exists(filePath))
+        return 0;
     return fs::file_size(filePath);
 }
 
@@ -75,7 +83,8 @@ std::vector<std::string> UFs::getAllFiles(const std::string& path, const std::ve
 {
     std::vector<std::string> files;
     fs::path                 file_path = path;
-    if (!fs::exists(file_path)) return std::move(files);
+    if (!fs::exists(file_path))
+        return std::move(files);
     if (fs::is_directory(file_path)) {
         for (const auto& f : fs::recursive_directory_iterator(file_path)) {
             int foundFlag = 0;   // 过滤文件夹
@@ -91,7 +100,8 @@ std::vector<std::string> UFs::getAllFiles(const std::string& path, const std::ve
             }
         }
     }
-    if (!fs::is_directory(file_path)) files.push_back(path);
+    if (!fs::is_directory(file_path))
+        files.push_back(path);
     return std::move(files);
 }
 
@@ -108,8 +118,7 @@ std::vector<std::string> UFs::getAllFormatFiles(const std::string& path, const s
     return std::move(files_path);
 }
 
-std::vector<std::string> UFs::getAllFormatFiles(const std::vector<std::string>& path, const std::string& format,
-                                                const std::vector<std::string>& filter_directory)
+std::vector<std::string> UFs::getAllFormatFiles(const std::vector<std::string>& path, const std::string& format, const std::vector<std::string>& filter_directory)
 {
     std::vector<std::string> files_path;
     for (const auto& path_item : path) {
@@ -123,7 +132,8 @@ UFile::UFile(UFile&& f) noexcept
     : fin_(std::move(f.fin_))
     , fout_(std::move(f.fout_))
     , path_(std::move(f.path_))
-{}
+{
+}
 
 UFile::UFile(NConStr path, std::string mode)
 {
@@ -132,7 +142,8 @@ UFile::UFile(NConStr path, std::string mode)
 
 UFile::UFile(const std::string& path, std::string mode)
     : UFile(path.c_str(), std::move(mode))
-{}
+{
+}
 UFile::~UFile()
 {
     this->close();
@@ -148,7 +159,8 @@ NBool UFile::operator!() const
 }
 const std::string& UFile::path() const
 {
-    if (path_.size() > 0) return path_;
+    if (path_.size() > 0)
+        return path_;
     static std::string kPath;
     return kPath;
 }
@@ -190,20 +202,24 @@ NBool UFile::open(const std::string& path, std::string mode)
 }
 NVoid UFile::close()
 {
-    if (fin_.is_open()) fin_.close();
-    if (fout_.is_open()) fout_.close();
+    if (fin_.is_open())
+        fin_.close();
+    if (fout_.is_open())
+        fout_.close();
 }
 
 NVoid UFile::seek(int64_t off, NInt whence)
 {
     static std::array<NInt, 3> seekfrom = {std::ios::beg, std::ios::cur, std::ios::end};
     whence                              = seekfrom[whence];
-    if (fin_.is_open()) fin_.seekg(off, (std::ios_base::seekdir)whence);
+    if (fin_.is_open())
+        fin_.seekg(off, (std::ios_base::seekdir)whence);
 }
 
 NSize UFile::read(void* buf, NSize n)
 {
-    if (!fin_.is_open()) return 0;
+    if (!fin_.is_open())
+        return 0;
     const NSize N = 1u << 30;   // 1G
     if (n >= N) {
         throw std::logic_error("单次读取文件过大,超过1G");
@@ -213,8 +229,10 @@ NSize UFile::read(void* buf, NSize n)
         std::streampos cur_pos = fin_.tellg();
         fin_.seekg(0, std::ios::end);
         std::streampos remain = fin_.tellg();
-        if (n > static_cast<size_t>(remain - cur_pos)) n = remain - cur_pos;
-        if (n == 0) return 0;
+        if (n > static_cast<size_t>(remain - cur_pos))
+            n = remain - cur_pos;
+        if (n == 0)
+            return 0;
         fin_.seekg(cur_pos);
     }
     fin_.read(static_cast<char*>(buf), n);
@@ -229,7 +247,8 @@ std::string UFile::read(NSize n)
 }
 NSize UFile::write(const void* buf, NSize n)
 {
-    if (!fout_.is_open()) return 0;
+    if (!fout_.is_open())
+        return 0;
     const NSize N = 1u << 30;   // 1G
     if (n >= N) {
         throw std::logic_error("单次读取文件过大,超过1G");
@@ -263,7 +282,8 @@ UFstream::UFstream(UFstream&& fs) noexcept
     : s_(std::move(fs.s_))
     , f_(std::move(fs.f_))
     , cap_(fs.cap_)
-{}
+{
+}
 
 UFstream::UFstream(size_t cap)
     : cap_(cap)
@@ -280,7 +300,8 @@ UFstream::UFstream(NConStr path, const std::string& mode, NSize cap)
 
 UFstream::UFstream(const std::string& path, const std::string& mode, NSize cap)
     : UFstream(path.c_str(), mode, cap)
-{}
+{
+}
 
 UFstream::~UFstream() noexcept
 {
@@ -330,7 +351,8 @@ NVoid UFstream::close()
 
 UFstream& UFstream::append(const void* s, NSize n)
 {
-    if (cap_ < s_.size() + n) this->flush();
+    if (cap_ < s_.size() + n)
+        this->flush();
     n <= cap_ ? ((void)s_.append((char*)s, n)) : ((void)f_.write(s, n));
     return *this;
 }

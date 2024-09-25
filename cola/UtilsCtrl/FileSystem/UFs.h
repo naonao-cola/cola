@@ -87,13 +87,22 @@ public:
     static std::string getExtensionName(const std::string& filePath);
 
     /**
-     * @brief: 重命名文件
+     * @brief: 重命名文件，或者移动文件
      * @param filename
      * @param newname
      * @return
      * @note :
      **/
-    static NVoid reNameFile(const std::string& filename, const std::string& newname);
+    static NVoid renameFile(const std::string& filename, const std::string& newname);
+
+    /**
+     * @brief: 拷贝文件
+     * @param filename
+     * @param newname
+     * @return
+     * @note :
+     **/
+    static NVoid copyFile(const std::string& filename, const std::string& newname);
 
     /**
      * @brief: 获取文件大小
