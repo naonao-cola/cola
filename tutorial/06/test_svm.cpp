@@ -5,10 +5,17 @@
  * @Date         : 2024-07-18 19:51:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 15:40:50
+ * @LastEditTime : 2024-09-25 12:42:33
  **/
 #include "../Common/common.h"
 #include "../Common/config.h"
+
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <string>
+
+
 
 using namespace nao::vision;
 
@@ -102,6 +109,41 @@ void test_pca_read()
     nao::NAO_ECHO("pca_read done");
 }
 
+void test_base64()
+{
+    std::cout << "current_path: " << CURRENT_PATH << std::endl;
+    std::string current_path = CURRENT_PATH;
+    std::string ok_string    = current_path + R"(/data/img/svm/1/0.jpg)";
+    nao::NAO_ECHO("img path %s", ok_string.c_str());
+
+    std::fstream f;
+    f.open(ok_string.c_str(), std::ios::in | std::ios::binary);
+    f.seekg(0, std::ios_base::end);    // 设置偏移量至文件结尾
+    std::streampos sp   = f.tellg();   // 获取文件大小
+    int            size = sp;
+
+    char* buffer = (char*)malloc(sizeof(char) * size);
+    f.seekg(0, std::ios_base::beg);   // 设置偏移量至文件开头
+    f.read(buffer, size);             // 将文件内容读入buffer
+    std::cout << "file size:" << size << std::endl;
+
+    std::string imgBase64 = nao::UBase64::enCode(buffer, size);   // 编码
+    std::cout << "img base64 encode size:" << imgBase64.size() << std::endl;
+
+    std::string imgdecode64 = nao::UBase64::deCode(imgBase64);   // 解码
+    std::cout << "img decode size:" << imgdecode64.size() << std::endl;
+
+    const char*   p = imgdecode64.c_str();
+    std::ofstream fout("./result.jpg", std::ios::out | std::ios::binary);
+    if (!fout) {
+        std::cout << "error" << std::endl;
+    }
+    else {
+        std::cout << "Success!" << std::endl;
+        fout.write(p, size);
+    }
+    fout.close();
+}
 int main()
 {
     printf("----------------- svm -----------------\n");
@@ -110,5 +152,7 @@ int main()
     test_pca();
     printf("----------------- pca_read -----------------\n");
     test_pca_read();
+    printf("----------------- test_base64 -----------------\n");
+    test_base64();
     return 0;
 }

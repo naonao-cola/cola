@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-01 12:20:10
+ * @LastEditTime : 2024-09-25 11:54:29
  * @Copyright    :
  **/
 #ifndef NAO_VALTYPE_H
@@ -25,7 +25,7 @@ using NInt       = nao::internal::NINT;
 using NLong      = nao::internal::NLONG;
 using NULong     = nao::internal::NULONG;
 using NBool      = nao::internal::NBOOL;
-using NIndex     = nao::internal::NINT;   // 表示标识信息，可以为负数
+using NIndex     = nao::internal::NINT;      // 表示标识信息，可以为负数
 using NFloat     = nao::internal::NFLOAT;
 using NDouble    = nao::internal::NDOUBLE;
 using NConStr    = nao::internal::NCONSTR;   // 表示 const char*
